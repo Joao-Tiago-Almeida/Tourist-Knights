@@ -1,5 +1,7 @@
 #include "passeios.h"
 
+#include "util.h"
+
 PasseioTipoA passeio_A_new(Vector2 pos_ini) {
     PasseioTipoA passeio;
 

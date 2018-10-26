@@ -6,7 +6,7 @@ void *checked_malloc(size_t size) {
     void* ptr = malloc(size);
 
     if(ptr == NULL) {
-        sprintf(stderr, "Error allocating memory\n");
+        fprintf(stderr, "Error allocating memory\n");
         exit(1);
     }
 

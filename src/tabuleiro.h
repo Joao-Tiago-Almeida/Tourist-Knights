@@ -12,6 +12,6 @@ Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio);
 void tabuleiro_set_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y, unsigned char cost);
 int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y);
 
-void tabuleiro_free(Tabuleiro* tabuleiro);
+void tabuleiro_free(Tabuleiro *tabuleiro);
 
 #endif

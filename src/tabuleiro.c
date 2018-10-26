@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "tabuleiro.h"
 
+#include "util.h"
+
 Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     Tabuleiro tab;
     
@@ -24,5 +26,5 @@ int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y) {
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro->passeio);
     free(tabuleiro->cost_matrix);
-    free(tabuleiro);
+    //free(tabuleiro);
 }
