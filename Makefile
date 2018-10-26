@@ -1,6 +1,6 @@
 TARGET = executable
 LIBS = -lm
-CC = gcc
+CC = gcc src/*.c
 CFLAGS = -g -Wall -ansi -pedantic -std=c99
 
 .PHONY:	default all clean
