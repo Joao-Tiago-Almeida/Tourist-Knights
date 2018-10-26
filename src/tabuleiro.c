@@ -3,7 +3,6 @@
 
 Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     Tabuleiro tab;
-    
     tab.width = w;
     tab.height = h;
     tab.type_passeio = type_passeio;
