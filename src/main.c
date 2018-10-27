@@ -62,7 +62,7 @@ void read_file(char* filename) {
 
     fclose(fp);
 }
-mains
+
 int main(int argc, char* argv[]) {
     if(argc != 2) {
         printf("Invalid number of arguments\n");
