@@ -12,6 +12,6 @@ $(EXECUTABLE):	$(OBJ)
 
 
 clean::
-			rm	-f	*.o	core	a.out	tuktuk *~
+			rm	-f	*.o	core	tuktuk *~
 
 # TODO comentar isto tudo
