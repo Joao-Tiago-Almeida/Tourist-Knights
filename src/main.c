@@ -42,7 +42,7 @@ void read_file(char* filename) {
         int w, h;
         char modo;
         Tabuleiro tabuleiro;
-        
+
         //Tenta ler o tamanho do tabuleiro e modo
         if(fscanf(fp, "%d %d %c", &w, &h, &modo) != 3) {
             break; //Se não conseguiu ler mais nenhum tabuleiro para a leitura
