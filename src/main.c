@@ -29,6 +29,20 @@ Tabuleiro read_file_modo_A(FILE* fp, int w, int h, char modo) {
     return tabuleiro;
 }
 
+Tabuleiro read_file_modo_B(FILE* fp, int w, int h, char modo) {
+    int num_pts_turisticos;
+    Tabuleiro tabuleiro;
+
+    fscanf(fp, "%d", &num_pts_turisticos);
+
+    //Cria o tabuleiro
+    tabuleiro = tabuleiro_new(w, h, modo);
+    tabuleiro_set_passeio(&tabuleiro, passeio_A_new(vector2_read_from_file(fp)));
+    tabuleiro_read_matrix_from_file(&tabuleiro, fp);
+
+    return tabuleiro;
+}
+
 void read_file(char* filename) {
     FILE* fp = fopen(filename, "r");
 
@@ -50,6 +64,8 @@ void read_file(char* filename) {
 
         if(modo == 'A') {
             tabuleiro = read_file_modo_A(fp, w, h, modo);
+        }else if(modo == 'B') {
+            tabuleiro = read_file_modo_B(fp, w, h, modo);
         } else {
             printf("Erro modo invalido?\n");
             break;
