@@ -18,8 +18,8 @@ OBJ	=	$(SRC:	.c=.o)
 $(EXECUTABLE):	$(OBJ)
 	$(CC)	$(CFLAGS)	$(LIBS)	-o $(EXECUTABLE)	$(OBJ)
 
-
+#FIXME melhor isto para apagar os *.valid e acho que não é perciso o *.c
 clean::
-			rm	-f	*.o	core	tuktuk *~
+			rm	-f	*.o	core	tuktuk  /*.valid*~
 
 # TODO comentar isto tudo
