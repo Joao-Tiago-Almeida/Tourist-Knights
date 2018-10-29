@@ -1,10 +1,18 @@
+#	Compiler
 CC	=	gcc
+#	Compiler Flags
 CFLAGS	=	-g	-Wall	-ansi	-pedantic	-std=c99
-EXECUTABLE	=	tuktuk
+#	Compiler Libraries
 LIBS=	-lm
+#	name of the Program
+EXECUTABLE	=	tuktuk
+#	Sources
 SRC	=	$(wildcard	src/*.c)
+#	Objects
 OBJ	=	$(SRC:	.c=.o)
-%.o: %.c
+
+#se eu apagr isto não era suposto dar!
+#%.o: %.c
 
 
 $(EXECUTABLE):	$(OBJ)

@@ -35,6 +35,7 @@
 *.i*86
 *.x86_64
 *.hex
+tuktuk
 
 # Debug files
 *.dSYM/
@@ -52,5 +53,3 @@ Mkfile.old
 dkms.conf
 
 .vscode/launch.json
-
-tuktuk
