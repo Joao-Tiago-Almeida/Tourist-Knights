@@ -4,6 +4,7 @@
 
 #include "tabuleiro.h"
 #include "passeios.h"
+#include "movimentos.h"
 
 void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
@@ -37,7 +38,7 @@ Tabuleiro read_file_modo_B(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(&tabuleiro, passeio_B_new(num_pts_turisticos, fp));
+    tabuleiro_set_passeio(&tabuleiro, passeio_B_new(num_pts_turisticos, fp, tabuleiro));
     tabuleiro_read_matrix_from_file(&tabuleiro, fp);
 
     return tabuleiro;
@@ -86,6 +87,9 @@ void read_and_write_files(char* filename) {
 
         //analisa o tabuleiro como devido
         if(modoA){
+            if(!(inside_board(((PasseioTipoA*)tabuleiro.passeio)->pos_ini, h, w))){
+                continue;
+            }
             tabuleiro_execute(&tabuleiro);
         }else if(modoB){
             tabuleiro_execute(&tabuleiro);

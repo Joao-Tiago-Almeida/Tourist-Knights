@@ -3,6 +3,7 @@
 
 #include "vector2.h"
 #include "vecdin.h"
+#include "tabuleiro.h"
 
 typedef struct passeiotipoa_t {
     Vector2 pos_ini;
@@ -16,6 +17,6 @@ typedef struct passeiotipob_t {
     Vector2* pontos;
 } PasseioTipoB;
 
-PasseioTipoB* passeio_B_new(int num_pontos, FILE* fp);
+PasseioTipoB* passeio_B_new(int num_pontos, FILE* fp, Tabuleiro tabuleiro);
 
 #endif
