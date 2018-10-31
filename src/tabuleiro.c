@@ -2,6 +2,7 @@
 #include "tabuleiro.h"
 
 #include "util.h"
+#include "passeios.h"
 
 Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     Tabuleiro tab;
@@ -50,10 +51,10 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
     printf("Sou bué fixe e tenho o tabuleiro do tipo %c lido :D\n", tabuleiro->type_passeio);
 }
 
-void tabuleiro_free(Tabuleiro* tabuleiro) {
+void tabuleiro_free(Tabuleiro* tabuleiro, bool modoA, bool modoB, bool modoC) {
+    if(modoB)   free(((PasseioTipoB*)tabuleiro->passeio)->pontos);
     free(tabuleiro->passeio);
     free(tabuleiro->cost_matrix);
-    //free(tabuleiro);
 }
 void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h)
 {

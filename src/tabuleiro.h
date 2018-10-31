@@ -2,10 +2,11 @@
 #define TABULEIRO_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct tabuleiro_t Tabuleiro;
 
-//TODO Mudar para o .c
+//TODO Mudar para o .c --só mudas ao pé de mim, para eu ver as alterações que se tem de fazer
 struct tabuleiro_t {
     unsigned int width, height;
     char* cost_matrix; //Cada custo tem um byte
@@ -25,7 +26,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp);
 
 void tabuleiro_execute(Tabuleiro *tabuleiro);
 
-void tabuleiro_free(Tabuleiro *tabuleiro);
+void tabuleiro_free(Tabuleiro* tabuleiro, bool modoA, bool modoB, bool modoC);
 
 void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h);
 
