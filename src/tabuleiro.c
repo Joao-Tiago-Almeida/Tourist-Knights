@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include "tabuleiro.h"
+
+#include <stdlib.h>
 
 #include "util.h"
 #include "passeios.h"
@@ -56,8 +57,8 @@ void tabuleiro_free(Tabuleiro* tabuleiro, bool modoA, bool modoB, bool modoC) {
     free(tabuleiro->passeio);
     free(tabuleiro->cost_matrix);
 }
-void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h)
-{
+
+void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
     for(int i = 0; i < h; i++)
     {
         for(int j = 0; j < w; j++)

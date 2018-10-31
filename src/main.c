@@ -43,7 +43,7 @@ Tabuleiro read_file_modo_B(FILE* fp, int w, int h, char modo) {
     return tabuleiro;
 }
 
-void read_file(char* filename) {
+void read_and_write_files(char* filename) {
     FILE* fp = fopen(filename, "r");
     bool modoA = false, modoB = false, modoC = false;
 
@@ -80,11 +80,21 @@ void read_file(char* filename) {
             modoC = true;
         } else {
             printf("Erro modo invalido?\n");
-            break;
+            exit(1);
         }
         //print_tabuleiro(&tabuleiro, w, h);
 
-        tabuleiro_execute(&tabuleiro);
+        //analisa o tabuleiro como devido
+        if(modoA){
+            tabuleiro_execute(&tabuleiro);
+        }else if(modoB){
+            tabuleiro_execute(&tabuleiro);
+        }else if(modoC){
+            fprintf(stderr, "we are not ready for C files");
+        }else {
+            printf("Erro modo invalido?\n");
+            exit(1);
+        }
 
         //TODO não sei se é necessário mais para a frente ter o modo A aqui
         tabuleiro_free(&tabuleiro, modoA, modoB, modoC);
@@ -100,7 +110,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    read_file(argv[1]);
+    read_and_write_files(argv[1]);
 
     return 0;
 }
