@@ -27,4 +27,6 @@ void tabuleiro_execute(Tabuleiro *tabuleiro);
 
 void tabuleiro_free(Tabuleiro *tabuleiro);
 
+void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h);
+
 #endif

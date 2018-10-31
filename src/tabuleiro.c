@@ -55,3 +55,14 @@ void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro->cost_matrix);
     //free(tabuleiro);
 }
+void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h)
+{
+    for(int i = 0; i < h; i++)
+    {
+        for(int j = 0; j < w; j++)
+        {
+            printf(" %d", tabuleiro->cost_matrix[j + w*i]);
+        }
+        printf("\n");
+    }
+}

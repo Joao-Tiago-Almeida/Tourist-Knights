@@ -37,7 +37,7 @@ Tabuleiro read_file_modo_B(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(&tabuleiro, passeio_A_new(vector2_read_from_file(fp)));
+    tabuleiro_set_passeio(&tabuleiro, passeio_B_new(num_pts_turisticos, fp, w, h));
     tabuleiro_read_matrix_from_file(&tabuleiro, fp);
 
     return tabuleiro;
@@ -70,6 +70,7 @@ void read_file(char* filename) {
             printf("Erro modo invalido?\n");
             break;
         }
+        //print_tabuleiro(&tabuleiro, w, h);
 
         tabuleiro_execute(&tabuleiro);
 

@@ -15,6 +15,6 @@ typedef struct passeiotipob_t {
     Vector2* pontos;
 } PasseioTipoB;
 
-PasseioTipoB* passeio_B_new(int num_pontos);
+PasseioTipoB* passeio_B_new(int num_pontos, FILE* fp, unsigned int w, unsigned int h);
 
 #endif
