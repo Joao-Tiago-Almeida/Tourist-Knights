@@ -13,7 +13,7 @@ PasseioTipoA* passeio_A_new(Vector2 pos_ini) {
     return passeio;
 }
 
-PasseioTipoB* passeio_B_new(int num_pontos, FILE* fp, Tabuleiro tabuleiro) {
+PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro tabuleiro) {
     PasseioTipoB* passeio = (PasseioTipoB*) checked_malloc(sizeof(PasseioTipoB));
 
     passeio->num_pontos = num_pontos;

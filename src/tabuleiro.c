@@ -4,6 +4,7 @@
 
 #include "util.h"
 #include "passeios.h"
+#include "movimentos.h"
 
 Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     Tabuleiro tab;
@@ -32,6 +33,11 @@ void* tabuleiro_get_passeio(Tabuleiro* tabuleiro) {
     return tabuleiro->passeio;
 }
 
+//Devolve um caracter com o tipo de passeio
+char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
+    return tabuleiro->type_passeio;
+}
+
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     for(unsigned int j = 0; j<tabuleiro->height; j++) {
         for(unsigned int i = 0; i<tabuleiro->width; i++) {
@@ -48,12 +54,42 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     }
 }
 
-void tabuleiro_execute(Tabuleiro *tabuleiro) {
-    printf("Sou bué fixe e tenho o tabuleiro do tipo %c lido :D\n", tabuleiro->type_passeio);
+//Função privada
+//Faz as operações e escreve no ficheiro fp
+void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
+    //NOTA não deve ser preciso fazer verificações
+    if(!(inside_board(((PasseioTipoA*)tabuleiro->passeio)->pos_ini, tabuleiro->height, tabuleiro->width))){
+        fprintf(stderr, "o ponto tá fora do tabuleiro\n");
+        return;
+    }
+
+    printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
 }
 
-void tabuleiro_free(Tabuleiro* tabuleiro, bool modoA, bool modoB, bool modoC) {
-    if(modoB)   free(((PasseioTipoB*)tabuleiro->passeio)->pontos);
+//Função privada
+//Faz as operações e escreve no ficheiro fp
+void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
+    printf("Sou bué fixe e tenho o tabuleiro do tipo B lido :D\n");
+}
+
+//Faz as operações e escreve no ficheiro fp
+void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
+    if(tabuleiro->type_passeio == 'A') {   
+        tabuleiro_execute_tipo_A(tabuleiro, fp);
+    } else if(tabuleiro->type_passeio == 'B') {
+        tabuleiro_execute_tipo_B(tabuleiro, fp);
+    } else if(tabuleiro->type_passeio == 'C') {
+        fprintf(stderr, "we are not ready for C files\n");
+        return;
+    } else {
+        printf("Erro modo invalido?\n");
+        exit(1);
+    }
+}
+
+void tabuleiro_free(Tabuleiro* tabuleiro) {
+    if(tabuleiro->type_passeio == 'B')   free(((PasseioTipoB*)tabuleiro->passeio)->pontos);
+
     free(tabuleiro->passeio);
     free(tabuleiro->cost_matrix);
 }

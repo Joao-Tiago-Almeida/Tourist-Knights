@@ -4,7 +4,6 @@
 
 #include "tabuleiro.h"
 #include "passeios.h"
-#include "movimentos.h"
 
 void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
@@ -38,16 +37,17 @@ Tabuleiro read_file_modo_B(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(&tabuleiro, passeio_B_new(num_pts_turisticos, fp, tabuleiro));
+    tabuleiro_set_passeio(&tabuleiro, passeio_B_new_read_from_file(num_pts_turisticos, fp, tabuleiro));
     tabuleiro_read_matrix_from_file(&tabuleiro, fp);
 
     return tabuleiro;
 }
 
 void read_and_write_files(char* filename) {
-    FILE* fp = fopen(filename, "r");
-    bool modoA = false, modoB = false, modoC = false;
+    FILE* fp = NULL;
+    FILE* file_out = NULL;
 
+    fp = fopen(filename, "r");
     if(fp == NULL) {
         fprintf(stderr, "Error reading file %s\n", filename);
         exit(1);
@@ -66,19 +66,10 @@ void read_and_write_files(char* filename) {
 
         if(modo == 'A') {
             tabuleiro = read_file_modo_A(fp, w, h, modo);
-            modoA = true;
-            modoB = false;
-            modoC = false;
         }else if(modo == 'B') {
             tabuleiro = read_file_modo_B(fp, w, h, modo);
-            modoA = false;
-            modoB = true;
-            modoC = false;
         }else if(modo == 'C') {
             fprintf(stderr, "we are not ready for C files");
-            modoA = false;
-            modoB = false;
-            modoC = true;
         } else {
             printf("Erro modo invalido?\n");
             exit(1);
@@ -86,22 +77,10 @@ void read_and_write_files(char* filename) {
         //print_tabuleiro(&tabuleiro, w, h);
 
         //analisa o tabuleiro como devido
-        if(modoA){
-            if(!(inside_board(((PasseioTipoA*)tabuleiro.passeio)->pos_ini, h, w))){
-                continue;
-            }
-            tabuleiro_execute(&tabuleiro);
-        }else if(modoB){
-            tabuleiro_execute(&tabuleiro);
-        }else if(modoC){
-            fprintf(stderr, "we are not ready for C files");
-        }else {
-            printf("Erro modo invalido?\n");
-            exit(1);
-        }
+        tabuleiro_execute(&tabuleiro, file_out);
 
         //TODO não sei se é necessário mais para a frente ter o modo A aqui
-        tabuleiro_free(&tabuleiro, modoA, modoB, modoC);
+        tabuleiro_free(&tabuleiro);
     }
 
     fclose(fp);
