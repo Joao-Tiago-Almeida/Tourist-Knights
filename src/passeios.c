@@ -33,7 +33,7 @@ PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro t
     for(int i = 0; i < num_pontos; i++)
     {
         (*passeio).pontos[i] = vector2_read_from_file(fp);
-        inside_board(passeio->pontos[i], tabuleiro.height, tabuleiro.width);
+        inside_board(passeio->pontos[i], tabuleiro);
     }
     return passeio;
 }

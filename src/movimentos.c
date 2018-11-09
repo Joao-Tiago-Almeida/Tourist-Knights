@@ -12,17 +12,23 @@
  * @param  w   [description]
  * @return     [description]
  */
-bool inside_board(Vector2 vec, unsigned int h, unsigned int w){
+bool inside_board(Vector2 vec, Tabuleiro tabuleiro){
 
-    if(vec.x < 0 || vec.x > w-1){
+    if(vec.x < 0 || vec.x > tabuleiro.width-1){
         fprintf(stderr, "\npoint out of the board\n");
         return false;
     }
-    else if(vec.y < 0 || vec.y > h-1){
+    else if(vec.y < 0 || vec.y > tabuleiro.height-1){
         fprintf(stderr, "\npoint out of the board\n");
         return false;
     }
     return true;
 }
+void possible_moves(Tabuleiro tabuleiro){
 
-void possible_moves()
+    Vector2 moves[8] = { {1,2}, {2,1}, {2,-1}, {1,-2},
+                        {-1,-2}, {-2,-1}, {-2,1}, {-1,2} };
+
+
+
+}
