@@ -79,7 +79,7 @@ void read_and_write_files(char* filename) {
         //analisa o tabuleiro como devido
         tabuleiro_execute(&tabuleiro, file_out);
 
-        //TODO não sei se é necessário mais para a frente ter o modo A aqui
+        
         tabuleiro_free(&tabuleiro);
     }
 

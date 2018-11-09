@@ -3,7 +3,11 @@
 #include "util.h"
 #include "movimentos.h"
 
-
+/**
+ * [passeio_A_new description]
+ * @param  pos_ini [description]
+ * @return         [description]
+ */
 PasseioTipoA* passeio_A_new(Vector2 pos_ini) {
     PasseioTipoA* passeio = (PasseioTipoA*)checked_malloc(sizeof(PasseioTipoA));
 
@@ -12,7 +16,13 @@ PasseioTipoA* passeio_A_new(Vector2 pos_ini) {
 
     return passeio;
 }
-
+/**
+ * [passeio_B_new_read_from_file description]
+ * @param  num_pontos [description]
+ * @param  fp         [description]
+ * @param  tabuleiro  [description]
+ * @return            [description]
+ */
 PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro tabuleiro) {
     PasseioTipoB* passeio = (PasseioTipoB*) checked_malloc(sizeof(PasseioTipoB));
 

@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 
+/**
+ * [checked_malloc description]
+ * @param  size [description]
+ * @return      [description]
+ */
 void *checked_malloc(size_t size) {
     void* ptr = malloc(size);
 

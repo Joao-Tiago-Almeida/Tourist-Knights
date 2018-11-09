@@ -5,6 +5,13 @@
 
 #include "vector2.h"
 
+/**
+ * [inside_board description]
+ * @param  vec [description]
+ * @param  h   [description]
+ * @param  w   [description]
+ * @return     [description]
+ */
 bool inside_board(Vector2 vec, unsigned int h, unsigned int w){
 
     if(vec.x < 0 || vec.x > w-1){
@@ -17,3 +24,5 @@ bool inside_board(Vector2 vec, unsigned int h, unsigned int w){
     }
     return true;
 }
+
+void possible_moves()
