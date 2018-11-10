@@ -114,8 +114,8 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
  * @param fp        [description]
  */
 void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
-    possible_moves(*tabuleiro);
-    printf("Sou bué fixe e tenho o tabuleiro do tipo B lido :D\n");
+    possible_moves(tabuleiro);
+    //printf("Sou bué fixe e tenho o tabuleiro do tipo B lido :D\n");
 }
 
 /**

@@ -21,7 +21,7 @@ Vector2 vector2_new(int x, int y) {
 Vector2 vector2_read_from_file(FILE* fp) {
     Vector2 vec;
 
-    fscanf(fp, "%d %d", &vec.x, &vec.y);
+    fscanf(fp, "%d %d", &vec.y, &vec.x);
 
     return vec;
 }

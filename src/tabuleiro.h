@@ -18,6 +18,7 @@ struct tabuleiro_t {
 Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio);
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp);
 
+//FIXME mudar para recber um Vector2 em vez de dois pontos
 void tabuleiro_set_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y, unsigned char cost);
 int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y);
 

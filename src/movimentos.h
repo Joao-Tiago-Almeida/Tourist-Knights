@@ -8,6 +8,7 @@
 #include "tabuleiro.h"  //TODO nunca sei qunado é .h ou quando é .c
 
 bool inside_board(Vector2 vec, Tabuleiro tabuleiro);
-void possible_moves(Tabuleiro tabuleiro);
+void possible_moves(Tabuleiro *tabuleiro);
+void resultados_b(Tabuleiro tabuleiro, int valido, int cost );
 
 #endif

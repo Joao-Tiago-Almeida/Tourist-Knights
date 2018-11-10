@@ -15,6 +15,7 @@ PasseioTipoA* passeio_A_new(Vector2 pos_ini);
 typedef struct passeiotipob_t {
     int num_pontos;
     Vector2* pontos;
+    int cost;  //parte 1, para guardar o custo do camimho se válido 
 } PasseioTipoB;
 
 PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro tabuleiro);
