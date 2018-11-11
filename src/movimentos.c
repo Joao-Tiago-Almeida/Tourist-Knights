@@ -127,7 +127,8 @@ void resultados_b(Tabuleiro tabuleiro, int valido, int cost ){
 
     printf("%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
                                 tabuleiro.type_passeio, ((PasseioTipoB*)tabuleiro.passeio)->num_pontos,
-                                valido, cost);
+                                ((PasseioTipoB*)tabuleiro.passeio)->valid,
+                                ((PasseioTipoB*)tabuleiro.passeio)->cost);
 }
 
 /**

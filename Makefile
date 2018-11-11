@@ -20,6 +20,6 @@ $(EXECUTABLE):	$(OBJ)
 
 #FIXME melhor isto para apagar os *.valid e acho que não é perciso o *.c
 clean::
-			rm	-f	*.o	core	tuktuk  /*.valid*~
+			rm	-f	*.o	core	tuktuk  *.valid	*~
 
 # TODO comentar isto tudo

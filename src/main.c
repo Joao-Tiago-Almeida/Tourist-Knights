@@ -52,6 +52,12 @@ void read_and_write_files(char* filename) {
         fprintf(stderr, "Error reading file %s\n", filename);
         exit(1);
     }
+    file_out = fopen("saida.valid", "w");
+    if(file_out == NULL) {
+        fprintf(stderr, "Error reading file %s\n", "saida.valid");
+        exit(1);
+    }
+
 
     while(true) {
         //Lê cada um dos tabuleiros no ficheiro
@@ -79,10 +85,9 @@ void read_and_write_files(char* filename) {
         //analisa o tabuleiro como devido
         tabuleiro_execute(&tabuleiro, file_out);
 
-
         tabuleiro_free(&tabuleiro);
     }
-
+    fclose(file_out);
     fclose(fp);
 }
 

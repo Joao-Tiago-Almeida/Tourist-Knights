@@ -55,4 +55,5 @@ dkms.conf
 .vscode/launch.json
 
 .DS_Store
-.*valid
+
+*.valid

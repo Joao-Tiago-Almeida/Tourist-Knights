@@ -6,6 +6,8 @@
 #include "passeios.h"
 #include "movimentos.h"
 
+#define NUM_PONTOS_A 1
+
 /**
  * [tabuleiro_new description]
  * @param  w            [description]
@@ -101,6 +103,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
     best_choice(tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini);
+    write_valid_file_A(*tabuleiro, fp);
     // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
 }
 /**
@@ -110,6 +113,7 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
  */
 void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
     possible_moves(tabuleiro);
+    write_valid_file_B(*tabuleiro, fp);
     //printf("Sou bué fixe e tenho o tabuleiro do tipo B lido :D\n");
 }
 
@@ -158,4 +162,39 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
         }
         printf("\n");
     }
+}
+
+/**
+ * Cria um ficheiro *.valid e escreve os resultados do tipo A
+ * @param tabuleiro [description]
+ * @param fp        Ficheiro de saída tipo A
+ */
+void write_valid_file_A(Tabuleiro tabuleiro, FILE* fp){
+
+    int valid = ((PasseioTipoA*)tabuleiro.passeio)->valid;
+    int cost = ((PasseioTipoA*)tabuleiro.passeio)->cost;
+
+    if(cost == __INT32_MAX__ || cost < 1)  cost = 0, valid = -1;
+
+    //  Escreve no ficehiro
+    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
+                                tabuleiro.type_passeio, NUM_PONTOS_A,
+                                valid, cost);
+}
+
+/**
+ * Cria um ficheiro *.valid e escreve os resultados do tipo B
+ * @param tabuleiro [description]
+ * @param fp        Ficheiro de saída tipo B
+ */
+void write_valid_file_B(Tabuleiro tabuleiro, FILE* fp){
+
+    int valid = ((PasseioTipoB*)tabuleiro.passeio)->valid;
+    int cost = ((PasseioTipoB*)tabuleiro.passeio)->cost;
+    int num_pontos = ((PasseioTipoB*)tabuleiro.passeio)->num_pontos;
+
+    //  Escreve no ficehiro
+    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
+                                tabuleiro.type_passeio, num_pontos,
+                                valid, cost);
 }
