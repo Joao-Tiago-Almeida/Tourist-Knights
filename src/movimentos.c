@@ -19,7 +19,7 @@
  * @return           Retorna true quando um ponto está dentro do tabuleiro,
  *                          e false quando se encontra fora do tabuleiros
  */
-bool inside_board(Vector2 vec, Tabuleiro tabuleiro){
+bool inside_board(Tabuleiro tabuleiro, Vector2 vec){
 
     //  Ver se o ponto está entre os eixos verticais do tabuleiro
     if(vec.x < 0 || vec.x > tabuleiro.width-1){
@@ -36,6 +36,17 @@ bool inside_board(Vector2 vec, Tabuleiro tabuleiro){
     return true;
 }
 
+/**
+ * Valida a entrada na primeira cidade do mapa
+ * @param  tabuleiro [description]
+ * @param  vec       [description]
+ * @return           retorna true se a cidade não estiver fechada
+ */
+bool valid_start(Tabuleiro tabuleiro, Vector2 vec){
+
+    return tabuleiro_get_cost(&tabuleiro, vec.x, vec.y);
+}
+
 //TODO
 /*
 provavelmente a função irá receber dois pontos e confirmar se estão à distância do cavalo
@@ -49,58 +60,71 @@ void possible_moves(Tabuleiro *tabuleiro){
 
     Vector2 knight_L[MOVES] = { {1,2}, {2,1}, {2,-1}, {1,-2},
                             {-1,-2}, {-2,-1}, {-2,1}, {-1,2} };
-    Vector2 movement[MOVES] = {{0}};
+    Vector2 movement = {0,0};
 
     // NOTA: a cidade de partida não tem custo
     ((PasseioTipoB*)tabuleiro->passeio)->cost = 0;
 
-    if(tabuleiro_get_cost(tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0].x,
-                                    ((PasseioTipoB*)tabuleiro->passeio)->pontos[0].y) == 0){
-        resultados_b( *tabuleiro, -1, ((PasseioTipoB*)tabuleiro->passeio)->cost );
+    //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
+    if(!((inside_board(*tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0]))  &&
+            valid_start(*tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0]))){
+
+        ((PasseioTipoB*)tabuleiro->passeio)->valid = -1;
+        //REMOVE-ME, função com as soluções
+        resultados_b( *tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->valid
+                                , ((PasseioTipoB*)tabuleiro->passeio)->cost );
         return;
     }
 
 
     //  Para cada cidade, verifica-se se a cidade segiunte do caminho é válida
-    for(int i = 0; i < ((PasseioTipoB*)tabuleiro->passeio)->num_pontos - 1; i++)
-    {
-
-
+    for(int i = 0; i < ((PasseioTipoB*)tabuleiro->passeio)->num_pontos - 1; i++){
         for(int j = 0; j < MOVES; j++){
 
             //  Caso a coordenada xx da próxima cidade seja válida
-            movement[j].x = knight_L[j].x + ((PasseioTipoB*)tabuleiro->passeio)->pontos[i].x;
-            if(movement[j].x == ((PasseioTipoB*)tabuleiro->passeio)->pontos[i+1].x){
+            movement.x = knight_L[j].x + ((PasseioTipoB*)tabuleiro->passeio)->pontos[i].x;
+            if(movement.x == ((PasseioTipoB*)tabuleiro->passeio)->pontos[i+1].x){
 
                 //  Caso a coordenada yy da próxima cidade seja válida
-                movement[j].y = knight_L[j].y + ((PasseioTipoB*)tabuleiro->passeio)->pontos[i].y;
-                if(movement[j].y == ((PasseioTipoB*)tabuleiro->passeio)->pontos[i+1].y)
+                movement.y = knight_L[j].y + ((PasseioTipoB*)tabuleiro->passeio)->pontos[i].y;
+                if(movement.y == ((PasseioTipoB*)tabuleiro->passeio)->pontos[i+1].y)
                 {
-                    //  Caso o próximo a próxima cidade esteja fechada
-                    if(tabuleiro_get_cost(tabuleiro, movement[j].x,movement[j].y) == 0){
+                    //  Caso a cidade esteja fora do mapa ou a próxima cidade esteja fechada
+                    if(!(inside_board(*tabuleiro, movement) && (valid_start(*tabuleiro, movement)))){
                         ((PasseioTipoB*)tabuleiro->passeio)->cost = 0;
-                        resultados_b( *tabuleiro, -1, ((PasseioTipoB*)tabuleiro->passeio)->cost );
+                        ((PasseioTipoB*)tabuleiro->passeio)->valid = -1;
+
+                        //REMOVE-ME, função com as soluções
+                        resultados_b( *tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->valid
+                                                , ((PasseioTipoB*)tabuleiro->passeio)->cost );
                         return;
                     }
 
                     //  Caso a cidade seguinte reúna condições para ser visita: Let´s Go!
-                    ((PasseioTipoB*)tabuleiro->passeio)->cost += tabuleiro_get_cost(tabuleiro, movement[j].x,
-                                                                                            movement[j].y);
+                    ((PasseioTipoB*)tabuleiro->passeio)->cost += tabuleiro_get_cost(tabuleiro, movement.x,
+                                                                                            movement.y);
                     break;
                 }
             }
             //  Caso em que o movimento do turista não foi em L
             if(j + 1 == MOVES){
-                resultados_b( *tabuleiro, -1, ((PasseioTipoB*)tabuleiro->passeio)->cost );
+                ((PasseioTipoB*)tabuleiro->passeio)->cost = 0;
+                ((PasseioTipoB*)tabuleiro->passeio)->valid = -1;
+
+                //REMOVE-ME, função com as soluções
+                resultados_b( *tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->valid
+                                        , ((PasseioTipoB*)tabuleiro->passeio)->cost );
                 return;
             }
         }
     }
+    ((PasseioTipoB*)tabuleiro->passeio)->valid = 1;
     //REMOVE-ME, função com as soluções
     resultados_b( *tabuleiro, 1, ((PasseioTipoB*)tabuleiro->passeio)->cost );
 }
 
 void resultados_b(Tabuleiro tabuleiro, int valido, int cost ){
+
     printf("%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
                                 tabuleiro.type_passeio, ((PasseioTipoB*)tabuleiro.passeio)->num_pontos,
                                 valido, cost);
@@ -111,18 +135,24 @@ void resultados_b(Tabuleiro tabuleiro, int valido, int cost ){
  * @param vec       [description]
  * @param tabuleiro [description]
  */
-void best_choice(Vector2 vec, Tabuleiro tabuleiro){
+void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
     int best = __INT32_MAX__;
 
-    //  Caso do ponto inicial estar fora do mapa
-    if(!(inside_board(((PasseioTipoA*)tabuleiro.passeio)->pos_ini, tabuleiro))){
-        resultados_a( tabuleiro, -1, best );
+    //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
+    if(!((inside_board(*tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini))  &&
+            valid_start(*tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini))){
+        ((PasseioTipoA*)tabuleiro->passeio)->cost = 0;
+        ((PasseioTipoA*)tabuleiro->passeio)->valid = -1;
+        //REMOVE-ME, função com as soluções
+        resultados_a( *tabuleiro, -1, 0);
         return;
     }
 
+
     //  Percorre a o mapa
-    for(int xx = 0; xx < tabuleiro.width ; xx++){
-        for(int yy = 0; yy < tabuleiro.height; yy++){
+    //Note: posso fazer da outra maneira, mas o código seria gigante, dps podemos mudar
+    /*for(int xx = 0; xx < tabuleiro->width ; xx++){
+        for(int yy = 0; yy < tabuleiro->height; yy++){
 
             //  Quando encontra uma cidade numa distância igual à de um moviemnto cavalo  (3 cidades)
             if((abs(xx-vec.x) + abs (yy-vec.y)) ==3 ){
@@ -130,16 +160,38 @@ void best_choice(Vector2 vec, Tabuleiro tabuleiro){
                 //  caso uma coordenada seja igual, não é joagda válida,
                     //   pois num salto de cavalo, ambas as coordenadas se alteram
                 if((xx == vec.x) || (yy == vec.y))  break;
-                best = (best < tabuleiro_get_cost(&tabuleiro, xx, yy) ? best : tabuleiro_get_cost(&tabuleiro, xx, yy));
+                best = (best < tabuleiro_get_cost(tabuleiro, xx, yy) ? best : tabuleiro_get_cost(tabuleiro, xx, yy));
+            }
+        }
+    }*/
+    Vector2 knight_L[MOVES] = { {1,2}, {2,1}, {2,-1}, {1,-2},
+                            {-1,-2}, {-2,-1}, {-2,1}, {-1,2} };
+    Vector2 movement = {0,0};
+
+    for(int i = 0; i < NUM_PONTOS_A; i++){
+        for(int j = 0; j < MOVES; j++){
+
+            movement.x = knight_L[j].x + ((PasseioTipoA*)tabuleiro->passeio)->pos_ini.x;
+            movement.y = knight_L[j].y + ((PasseioTipoA*)tabuleiro->passeio)->pos_ini.y;
+
+            if((inside_board(*tabuleiro, movement) && (valid_start(*tabuleiro, movement)))){
+                best = (best < tabuleiro_get_cost(tabuleiro, movement.x, movement.y) ?
+                            best : tabuleiro_get_cost(tabuleiro, movement.x, movement.y));
             }
         }
     }
+
+
+    ((PasseioTipoA*)tabuleiro->passeio)->cost = best;
+    ((PasseioTipoA*)tabuleiro->passeio)->valid = 1;
     //REMOVE-ME, função com as soluções
-    resultados_a( tabuleiro, 1, best);
+    resultados_a( *tabuleiro, 1, best);
 }
 
 void resultados_a(Tabuleiro tabuleiro, int valido, int cost ){
-    if(cost == __INT32_MAX__)  cost = 0, valido = -1;
+
+    if(cost == __INT32_MAX__ || cost < 1)  cost = 0, valido = -1;
+
     printf("%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
                                 tabuleiro.type_passeio, NUM_PONTOS_A,
                                 valido, cost);

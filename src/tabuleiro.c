@@ -100,7 +100,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  * @param fp        [description]
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
-    best_choice(((PasseioTipoA*)tabuleiro->passeio)->pos_ini, *tabuleiro);
+    best_choice(tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini);
     // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
 }
 /**
