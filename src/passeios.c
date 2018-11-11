@@ -8,7 +8,7 @@
  * @param  pos_ini [description]
  * @return         [description]
  */
-PasseioTipoA* passeio_A_new(Vector2 pos_ini) {
+PasseioTipoA* passeio_A_new_read_from_file(Vector2 pos_ini) {
     PasseioTipoA* passeio = (PasseioTipoA*)checked_malloc(sizeof(PasseioTipoA));
 
     passeio->pos_ini = pos_ini;

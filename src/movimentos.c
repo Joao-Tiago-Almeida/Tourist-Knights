@@ -2,10 +2,12 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
-#include "vector2.h"
 #include "passeios.h"
-#include "tabuleiro.h"
+
+#define NUM_PONTOS_A 1
+
 
 #define MOVES 8
 
@@ -98,10 +100,37 @@ void possible_moves(Tabuleiro *tabuleiro){
     resultados_b( *tabuleiro, 1, ((PasseioTipoB*)tabuleiro->passeio)->cost );
 }
 
-void resultados_b(Tabuleiro tabuleiro, int valido, int cost )
-{
-    printf("%d %d %c %d %d %d\n\n", ((PasseioTipoB*)tabuleiro.passeio)->pontos->y,
-                                ((PasseioTipoB*)tabuleiro.passeio)->pontos->x,
+void resultados_b(Tabuleiro tabuleiro, int valido, int cost ){
+    printf("%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
                                 tabuleiro.type_passeio, ((PasseioTipoB*)tabuleiro.passeio)->num_pontos,
+                                valido, cost);
+}
+
+void best_choice(Vector2 vec, Tabuleiro tabuleiro){
+    int best = __INT32_MAX__;
+
+    if(!(inside_board(((PasseioTipoA*)tabuleiro.passeio)->pos_ini, tabuleiro))){
+        resultados_a( tabuleiro, -1, best );
+        return;
+    }
+
+    for(int xx = 0; xx < tabuleiro.width ; xx++){
+        for(int yy = 0; yy < tabuleiro.height; yy++){
+            if((abs(xx-vec.x) + abs (yy-vec.y)) ==3 ){
+
+                //  caso uma coordenada seja igual, não é joagda válida
+                if((xx == vec.x) || (yy == vec.y))  break;
+                best = (best < tabuleiro_get_cost(&tabuleiro, xx, yy) ? best : tabuleiro_get_cost(&tabuleiro, xx, yy));
+            }
+        }
+    }
+    //REMOVE-ME, função com as soluções
+    resultados_a( tabuleiro, 1, best);
+}
+
+void resultados_a(Tabuleiro tabuleiro, int valido, int cost ){
+    if(cost == __INT32_MAX__)  cost = 0, valido = -1;
+    printf("%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
+                                tabuleiro.type_passeio, NUM_PONTOS_A,
                                 valido, cost);
 }

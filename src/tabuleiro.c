@@ -100,13 +100,8 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  * @param fp        [description]
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
-    //NOTA não deve ser preciso fazer verificações
-    if(!(inside_board(((PasseioTipoA*)tabuleiro->passeio)->pos_ini, *tabuleiro))){
-        fprintf(stderr, "o ponto tá fora do tabuleiro\n");
-        return;
-    }
-
-    printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
+    best_choice(((PasseioTipoA*)tabuleiro->passeio)->pos_ini, *tabuleiro);
+    // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
 }
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp

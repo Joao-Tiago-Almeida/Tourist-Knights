@@ -23,7 +23,7 @@ Tabuleiro read_file_modo_A(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(&tabuleiro, passeio_A_new(vector2_read_from_file(fp)));
+    tabuleiro_set_passeio(&tabuleiro, passeio_A_new_read_from_file(vector2_read_from_file(fp)));
     tabuleiro_read_matrix_from_file(&tabuleiro, fp);
 
     return tabuleiro;

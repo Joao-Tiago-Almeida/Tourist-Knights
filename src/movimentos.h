@@ -9,6 +9,9 @@
 
 bool inside_board(Vector2 vec, Tabuleiro tabuleiro);
 void possible_moves(Tabuleiro *tabuleiro);
+void best_choice(Vector2 vec, Tabuleiro tabuleiro);
+
 void resultados_b(Tabuleiro tabuleiro, int valido, int cost );
+void resultados_a(Tabuleiro tabuleiro, int valido, int cost );
 
 #endif
