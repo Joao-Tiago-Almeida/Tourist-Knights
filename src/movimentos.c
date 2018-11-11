@@ -106,19 +106,29 @@ void resultados_b(Tabuleiro tabuleiro, int valido, int cost ){
                                 valido, cost);
 }
 
+/**
+ * Identifica o ponto com menor custo à distância de um salto de cavalo
+ * @param vec       [description]
+ * @param tabuleiro [description]
+ */
 void best_choice(Vector2 vec, Tabuleiro tabuleiro){
     int best = __INT32_MAX__;
 
+    //  Caso do ponto inicial estar fora do mapa
     if(!(inside_board(((PasseioTipoA*)tabuleiro.passeio)->pos_ini, tabuleiro))){
         resultados_a( tabuleiro, -1, best );
         return;
     }
 
+    //  Percorre a o mapa
     for(int xx = 0; xx < tabuleiro.width ; xx++){
         for(int yy = 0; yy < tabuleiro.height; yy++){
+
+            //  Quando encontra uma cidade numa distância igual à de um moviemnto cavalo  (3 cidades)
             if((abs(xx-vec.x) + abs (yy-vec.y)) ==3 ){
 
-                //  caso uma coordenada seja igual, não é joagda válida
+                //  caso uma coordenada seja igual, não é joagda válida,
+                    //   pois num salto de cavalo, ambas as coordenadas se alteram
                 if((xx == vec.x) || (yy == vec.y))  break;
                 best = (best < tabuleiro_get_cost(&tabuleiro, xx, yy) ? best : tabuleiro_get_cost(&tabuleiro, xx, yy));
             }
