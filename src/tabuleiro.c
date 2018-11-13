@@ -128,7 +128,6 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
                                 passeio_A_get_num_pontos((PasseioTipoA*)tabuleiro->passeio),
                                 -1,
                                 0);
-        fprintf(stderr, "Erro modo invalido?\n");
         exit(0);
     }
 }
