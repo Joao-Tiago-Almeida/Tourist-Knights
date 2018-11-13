@@ -164,7 +164,7 @@ void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp){
 
 /**
  * Cria um ficheiro *.valid e escreve os resultados do tipo B
- * @param tabuleiro 
+ * @param tabuleiro
  * @param fp        ficheiro de saída
  */
 void write_valid_file_B(Tabuleiro *tabuleiro, FILE* fp){

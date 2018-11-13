@@ -58,39 +58,40 @@ bool do_points_make_L(Vector2 point1, Vector2 point2) {
  * @param tabuleiro [description]
  */
 void possible_moves(Tabuleiro *tabuleiro){
+
     PasseioTipoB* passeio = (PasseioTipoB*)tabuleiro_get_passeio(tabuleiro);
 
     // NOTA: a cidade de partida não tem custo
-    passeio->cost = 0;
+    passeio_B_set_cost(passeio, 0);
 
     //  Caso da primeira cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(tabuleiro, (passeio)->pontos[0]))  &&
-            city_valid(tabuleiro, (passeio)->pontos[0]))){
-        
+    if(!((inside_board(tabuleiro, passeio_B_get_pontos(passeio)[0]))  &&
+            city_valid(tabuleiro, passeio_B_get_pontos(passeio)[0]))){
+
         //Passeio invalido
-        ((PasseioTipoB*)passeio)->valid = -1;
+        passeio_B_set_valid(passeio, -1);
         return;
     }
 
 
     //  Para cada cidade, verifica-se se a cidade segiunte do caminho é válida
-    for(int i = 0; i < passeio->num_pontos - 1; i++) {
-        Vector2 point1 = passeio->pontos[i];
-        Vector2 point2 = passeio->pontos[i+1];
+    for(int i = 0; i < passeio_B_get_num_pontos(passeio) - 1; i++) {
+        Vector2 point1 = passeio_B_get_pontos(passeio)[i];
+        Vector2 point2 = passeio_B_get_pontos(passeio)[i+1];
 
         //TODO verificar ordem (inside_board e city_valid)
         if(!(inside_board(tabuleiro, point2)) && do_points_make_L(point1, point2) && city_valid(tabuleiro, point2)) {
             //Se os dois pontos não fizerem um L entre si ou não for uma
             //  cidade válida o caminho não é válido
-            passeio->cost = 0;
-            passeio->valid = -1;
+            passeio_B_set_cost(passeio, 0);
+            passeio_B_set_valid(passeio, -1);
             return;
         }
 
-        passeio->cost += tabuleiro_get_cost(tabuleiro, point2.x, point2.y);
+        passeio_B_set_cost(passeio, passeio_B_get_cost(passeio) + tabuleiro_get_cost(tabuleiro, point2.x, point2.y));
     }
 
-    passeio->valid = 1;
+    passeio_B_set_valid(passeio, 1);
 }
 
 /**
@@ -99,43 +100,29 @@ void possible_moves(Tabuleiro *tabuleiro){
  * @param tabuleiro [description]
  */
 void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
+
     int best = __INT32_MAX__;
 
     PasseioTipoA* passeio = (PasseioTipoA*)(tabuleiro_get_passeio(tabuleiro));
 
     //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(tabuleiro, passeio->pos_ini))  &&
-            city_valid(tabuleiro, passeio->pos_ini))){
-        passeio->cost = 0;
-        passeio->valid = -1;
+    if(!((inside_board(tabuleiro, passeio_A_get_pos_ini(passeio)))  &&
+            city_valid(tabuleiro, passeio_A_get_pos_ini(passeio)))){
+        passeio_A_set_cost(passeio, 0);
+        passeio_A_set_valid(passeio, -1);
         return;
     }
-
-
-    //  Percorre a o mapa
-    //Note: posso fazer da outra maneira, mas o código seria gigante, dps podemos mudar
-    /*for(int xx = 0; xx < tabuleiro->width ; xx++){
-        for(int yy = 0; yy < tabuleiro->height; yy++){
-
-            //  Quando encontra uma cidade numa distância igual à de um moviemnto cavalo  (3 cidades)
-            if((abs(xx-vec.x) + abs (yy-vec.y)) ==3 ){
-
-                //  caso uma coordenada seja igual, não é joagda válida,
-                    //   pois num salto de cavalo, ambas as coordenadas se alteram
-                if((xx == vec.x) || (yy == vec.y))  break;
-                best = (best < tabuleiro_get_cost(tabuleiro, xx, yy) ? best : tabuleiro_get_cost(tabuleiro, xx, yy));
-            }
-        }
-    }*/
+    //  vetor que guarda as coordenadas dos oito movimentos possiveis
     Vector2 knight_L[MOVES] = { {1,2}, {2,1}, {2,-1}, {1,-2},
                             {-1,-2}, {-2,-1}, {-2,1}, {-1,2} };
+    // vetor de comparação
     Vector2 movement = {0,0};
 
     for(int i = 0; i < NUM_PONTOS_A; i++){
         for(int j = 0; j < MOVES; j++){
 
-            movement.x = knight_L[j].x + passeio->pos_ini.x;
-            movement.y = knight_L[j].y + passeio->pos_ini.y;
+            movement.x = knight_L[j].x + passeio_A_get_pos_ini(passeio).x;
+            movement.y = knight_L[j].y + passeio_A_get_pos_ini(passeio).y;
 
             if((inside_board(tabuleiro, movement) && (city_valid(tabuleiro, movement)))){
                 best = (best < tabuleiro_get_cost(tabuleiro, movement.x, movement.y) ?
@@ -144,7 +131,6 @@ void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
         }
     }
 
-
-    passeio->cost = best;
-    passeio->valid = 1;
+    passeio_A_set_cost(passeio, best);
+    passeio_A_set_valid(passeio, 1);
 }
