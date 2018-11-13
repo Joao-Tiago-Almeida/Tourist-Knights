@@ -27,6 +27,14 @@ Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     return tab;
 }
 
+unsigned int tabuleiro_get_width(Tabuleiro* tabuleiro) {
+    return tabuleiro->width;
+}
+
+unsigned int tabuleiro_get_height(Tabuleiro* tabuleiro) {
+    return tabuleiro->height;
+}
+
 /**
  * [tabuleiro_set_cost description]
  * @param tabuleiro [description]
