@@ -4,6 +4,7 @@
 
 #include "tabuleiro.h"
 #include "passeios.h"
+#include "util.h"
 
 void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
@@ -47,15 +48,20 @@ void read_and_write_files(char* filename) {
     FILE* fp = NULL;
     FILE* file_out = NULL;
 
+    if(!string_ends_with(filename, ".cities")) {
+        fprintf(stderr, "%s is not a .cites file\n", filename);
+        exit(0);
+    }
+
     fp = fopen(filename, "r");
     if(fp == NULL) {
         fprintf(stderr, "Error reading file %s\n", filename);
-        exit(1);
+        exit(0);
     }
     file_out = fopen("saida.valid", "w");
     if(file_out == NULL) {
         fprintf(stderr, "Error reading file %s\n", "saida.valid");
-        exit(1);
+        exit(0);
     }
 
     Tabuleiro* tabuleiro;
