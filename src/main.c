@@ -81,7 +81,7 @@ void read_and_write_files(char* filename) {
 
     free(file_out_name); //TODO posso fazer free do file_out_name aqui ou tem de ser quando faço fclose
 
-    Tabuleiro* tabuleiro;
+    Tabuleiro* tabuleiro = NULL;
 
     while(true) {
         //Lê cada um dos tabuleiros no ficheiro
@@ -109,6 +109,7 @@ void read_and_write_files(char* filename) {
 
         tabuleiro_free(tabuleiro);
         free(tabuleiro);
+        tabuleiro = NULL;
     }
     fclose(file_out);
     fclose(fp);
