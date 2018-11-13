@@ -6,7 +6,7 @@
 #include "passeios.h"
 #include "movimentos.h"
 
-#define NUM_PONTOS_A 1
+
 
 /**
  * [tabuleiro_new description]
@@ -177,16 +177,19 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
  * @param tabuleiro [description]
  * @param fp        Ficheiro de saída tipo A
  */
-void write_valid_file_A(Tabuleiro tabuleiro, FILE* fp){
+void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp){
 
-    int valid = ((PasseioTipoA*)tabuleiro.passeio)->valid;
-    int cost = ((PasseioTipoA*)tabuleiro.passeio)->cost;
+    PasseioTipoA* passeio = (PasseioTipoA*)tabuleiro_get_passeio(tabuleiro);
+
+    int valid = passeio_A_get_valid(passeio);
+    int cost = passeio_A_get_cost(passeio);
 
     if(cost == __INT32_MAX__ || cost < 1)  cost = 0, valid = -1;
 
     //  Escreve no ficehiro
-    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
-                                tabuleiro.type_passeio, NUM_PONTOS_A,
+    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
+                                tabuleiro->type_passeio,
+                                passeio_A_get_num_pontos(passeio),
                                 valid, cost);
 }
 
@@ -195,14 +198,14 @@ void write_valid_file_A(Tabuleiro tabuleiro, FILE* fp){
  * @param tabuleiro [description]
  * @param fp        Ficheiro de saída tipo B
  */
-void write_valid_file_B(Tabuleiro tabuleiro, FILE* fp){
+void write_valid_file_B(Tabuleiro *tabuleiro, FILE* fp){
 
-    int valid = ((PasseioTipoB*)tabuleiro.passeio)->valid;
-    int cost = ((PasseioTipoB*)tabuleiro.passeio)->cost;
-    int num_pontos = ((PasseioTipoB*)tabuleiro.passeio)->num_pontos;
+    PasseioTipoB* passeio = (PasseioTipoB*)tabuleiro_get_passeio(tabuleiro);
 
     //  Escreve no ficehiro
-    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro.height, tabuleiro.width,
-                                tabuleiro.type_passeio, num_pontos,
-                                valid, cost);
+    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
+                                tabuleiro->type_passeio,
+                                passeio_B_get_num_pontos(passeio),
+                                passeio_B_get_valid(passeio),
+                                passeio_B_get_cost(passeio));
 }

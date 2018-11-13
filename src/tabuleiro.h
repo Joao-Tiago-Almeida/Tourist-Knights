@@ -30,8 +30,8 @@ void* tabuleiro_get_passeio(Tabuleiro* tabuleiro);
 
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro);
 
-void write_valid_file_A(Tabuleiro tabuleiro, FILE* fp);
-void write_valid_file_B(Tabuleiro tabuleiro, FILE* fp);
+void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp);
+void write_valid_file_B(Tabuleiro *tabuleiro, FILE* fp);
 
 void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp);
 
