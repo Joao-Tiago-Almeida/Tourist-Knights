@@ -79,9 +79,9 @@ void possible_moves(Tabuleiro *tabuleiro){
     for(int i = 0; i < passeio_B_get_num_pontos(passeio) - 1; i++) {
         Vector2 point1 = passeio_B_get_pontos(passeio)[i];
         Vector2 point2 = passeio_B_get_pontos(passeio)[i+1];
-
+        
         //TODO verificar ordem (inside_board e city_valid)
-        if(!(inside_board(tabuleiro, point2)) && do_points_make_L(point1, point2) && city_valid(tabuleiro, point2)) {
+        if(!(inside_board(tabuleiro, point2) && do_points_make_L(point1, point2) && city_valid(tabuleiro, point2))) {
             //Se os dois pontos não fizerem um L entre si ou não for uma
             //  cidade válida o caminho não é válido
             passeio_B_set_cost(passeio, 0);

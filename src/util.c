@@ -22,13 +22,13 @@ void *checked_malloc(size_t size) {
 //TODO comentario bonito
 //Verifica se a string str acaba de forma igual à string test
 bool string_ends_with(char* str, char* test) {
-    char* pos = strstr(str, test);
+    char* pos = strstr(str, test); //apontador para o inicio do test no str
 
     if(pos == NULL) {
         return false;
     }
 
-    if(str + (strlen(pos) - strlen(test)) == pos) {
+    if(str + (strlen(str) - strlen(test)) == pos) {
         return true;
     }
     return false;

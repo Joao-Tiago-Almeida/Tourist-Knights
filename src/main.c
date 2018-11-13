@@ -49,7 +49,7 @@ void read_and_write_files(char* filename) {
     FILE* file_out = NULL;
 
     if(!string_ends_with(filename, ".cities")) {
-        fprintf(stderr, "%s is not a .cites file\n", filename);
+        fprintf(stderr, "%s is not a .cities file\n", filename);
         exit(0);
     }
 
