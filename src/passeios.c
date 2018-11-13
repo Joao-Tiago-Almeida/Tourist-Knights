@@ -4,9 +4,6 @@
 #include "movimentos.h"
 #include "vector2.h"
 
-
-#define NUM_PONTOS_A 1
-
 struct passeiotipoa_t {
     Vector2 pos_ini;
     //Vector2 pos_fim;
@@ -27,11 +24,11 @@ struct passeiotipob_t {
  * @param  pos_ini  posição inicial do caminho
  * @return         novo passeio
  */
-PasseioTipoA* passeio_A_new_read_from_file(Vector2 pos_ini) {
+PasseioTipoA* passeio_A_new_read_from_file(int num_pontos, Vector2 pos_ini) {
     PasseioTipoA* passeio = (PasseioTipoA*)checked_malloc(sizeof(PasseioTipoA));
 
     passeio->pos_ini = pos_ini;
-    passeio->num_pontos = NUM_PONTOS_A;
+    passeio->num_pontos = num_pontos;
     //passeio->pos_fim = pos_fim;
 
     return passeio;

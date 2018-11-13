@@ -22,7 +22,10 @@ Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo, bool* do_not_exec
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(tabuleiro, passeio_A_new_read_from_file(vector2_read_from_file(fp)));
+    tabuleiro_set_passeio(tabuleiro, passeio_A_new_read_from_file(num_pts_turisticos, vector2_read_from_file(fp)));
+    for(int i = 0; i < num_pts_turisticos -1; i++){
+        vector2_read_from_file(fp);
+    }
     tabuleiro_read_matrix_from_file(tabuleiro, fp);
 
     return tabuleiro;
@@ -74,7 +77,6 @@ void read_and_write_files(char* filename) {
         if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {  //TODO eu troquei a ordem CONFIRMA
             break; //Se não conseguiu ler mais nenhum tabuleiro para a leitura
         }
-
         if(modo == 'A') {
             tabuleiro = read_file_modo_A(fp, w, h, modo, &do_not_execute);
         }else if(modo == 'B') {
@@ -82,16 +84,14 @@ void read_and_write_files(char* filename) {
         }else if(modo == 'C') {
             fprintf(stderr, "we are not ready for C files");
         } else {
-            printf("Erro modo invalido?\n");
+            fprintf(stderr, "Erro modo invalido?\n");
             exit(0);
         }
         //print_tabuleiro(&tabuleiro, w, h);
 
-        //Na primeira fase de submissão o modo A apenas deve ter um ponto
-        if(!do_not_execute) {
-            //analisa o tabuleiro como devido
-            tabuleiro_execute(tabuleiro, file_out);
-        }
+        //analisa o tabuleiro como devido
+        tabuleiro_execute(tabuleiro, file_out, do_not_execute);
+
         tabuleiro_free(tabuleiro);
         free(tabuleiro);
     }
@@ -101,7 +101,7 @@ void read_and_write_files(char* filename) {
 
 int main(int argc, char* argv[]) {
     if(argc != 2) {
-        printf("Invalid number of arguments\n");
+        fprintf(stderr, "Invalid number of arguments\n");
         print_usage(argv[0]);
         return 1;
     }

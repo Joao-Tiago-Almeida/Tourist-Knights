@@ -8,20 +8,21 @@ LIBS=	-lm
 EXECUTABLE	=	tuktuk
 #	Sources
 SRC	=	$(wildcard	src/*.c)
+#	Headers
+HDRS	=	$(wildcard	src/*.h)
 #	Objects
-OBJ	=	$(SRC:	.c=.o)
+OBJ	=	$(SRC:.c=.o)
 
-#se eu apagr isto não era suposto dar!
-#%.o: %.c
+%.o: %.c HDRS
+	$(CC) $(CFLAGS) -c $<
 
 dirs = $(shell ls testfiles)
 
-
 $(EXECUTABLE):	$(OBJ)
-	$(CC)	$(CFLAGS)	$(LIBS)	-o $(EXECUTABLE)	$(OBJ)
+	$(CC)	-o $(EXECUTABLE)	$(OBJ)	$(LIBS)
 
 #FIXME melhor isto para apagar os *.valid e acho que não é perciso o *.c
 clean::
-			rm	-f	*.o	core	tuktuk  *.valid	*~
+			rm	-f	src/*.o	core	tuktuk  *.valid	*~
 
 # TODO comentar isto tudo

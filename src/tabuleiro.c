@@ -88,8 +88,9 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
-    best_choice(tabuleiro, passeio_A_get_pos_ini((PasseioTipoA*)tabuleiro_get_passeio(tabuleiro)));
+void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execute) {
+    if(!do_not_execute)
+        best_choice(tabuleiro, passeio_A_get_pos_ini((PasseioTipoA*)tabuleiro_get_passeio(tabuleiro)));
     write_valid_file_A(tabuleiro, fp);
     // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
 }
@@ -109,9 +110,9 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
+void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execute) {
     if(tabuleiro->type_passeio == 'A') {
-        tabuleiro_execute_tipo_A(tabuleiro, fp);
+        tabuleiro_execute_tipo_A(tabuleiro, fp, do_not_execute);
     } else if(tabuleiro->type_passeio == 'B') {
         tabuleiro_execute_tipo_B(tabuleiro, fp);
     } else if(tabuleiro->type_passeio == 'C') {
@@ -166,6 +167,7 @@ void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp){
                                 tabuleiro->type_passeio,
                                 passeio_A_get_num_pontos(passeio),
                                 valid, cost);
+
 }
 
 /**

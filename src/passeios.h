@@ -8,7 +8,7 @@
 typedef struct passeiotipoa_t PasseioTipoA;
 typedef struct passeiotipob_t PasseioTipoB;
 
-PasseioTipoA* passeio_A_new_read_from_file(Vector2 pos_ini);
+PasseioTipoA* passeio_A_new_read_from_file(int num_pontos, Vector2 pos_ini);
 PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp);
 
 void passeio_A_set_valid(PasseioTipoA* passeio, char valid);
