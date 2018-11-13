@@ -11,6 +11,8 @@ struct tabuleiro_t {
     char* cost_matrix; //Cada custo tem um byte
     char type_passeio;
     void* passeio;
+
+    int num_pontos;
 };
 
 /**
@@ -21,7 +23,6 @@ struct tabuleiro_t {
  * @return              retorna a estrutura criada
  */
 Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
-
     Tabuleiro* tab = checked_malloc(sizeof(Tabuleiro));
     tab->width = w;
     tab->height = h;
@@ -122,6 +123,11 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
         fprintf(stderr, "we are not ready for C files\n");
         return;
     } else {
+        fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
+                                tabuleiro->type_passeio,
+                                passeio_A_get_num_pontos((PasseioTipoA*)tabuleiro->passeio),
+                                -1,
+                                0);
         fprintf(stderr, "Erro modo invalido?\n");
         exit(0);
     }

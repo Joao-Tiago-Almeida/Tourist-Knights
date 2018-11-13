@@ -8,14 +8,14 @@ struct passeiotipoa_t {
     Vector2 pos_ini;
     //Vector2 pos_fim;
     int num_pontos;
-    char cost;   //Só para a primeira parte
+    int cost;   //Só para a primeira parte
     char valid;
 };
 
 struct passeiotipob_t {
     int num_pontos;
     Vector2* pontos;
-    char cost;  //parte 1, para guardar o custo do camimho se válido
+    int cost;  //parte 1, para guardar o custo do camimho se válido
     char valid;
 };
 
@@ -75,27 +75,27 @@ char passeio_B_get_valid(PasseioTipoB* passeio) {
     return passeio->valid;
 }
 
-void passeio_A_set_cost(PasseioTipoA* passeio, char cost) {
+void passeio_A_set_cost(PasseioTipoA* passeio, int cost) {
     passeio->cost = cost;
 }
 
-char passeio_A_get_cost(PasseioTipoA* passeio) {
+int passeio_A_get_cost(PasseioTipoA* passeio) {
     return passeio->cost;
 }
 
-void passeio_B_set_cost(PasseioTipoB* passeio, char cost) {
+void passeio_B_set_cost(PasseioTipoB* passeio, int cost) {
     passeio->cost = cost;
 }
 
-char passeio_B_get_cost(PasseioTipoB* passeio) {
+int passeio_B_get_cost(PasseioTipoB* passeio) {
     return passeio->cost;
 }
 
-char passeio_A_get_num_pontos(PasseioTipoA* passeio) {
+int passeio_A_get_num_pontos(PasseioTipoA* passeio) {
     return passeio->num_pontos;
 }
 
-char passeio_B_get_num_pontos(PasseioTipoB* passeio) {
+int passeio_B_get_num_pontos(PasseioTipoB* passeio) {
     return passeio->num_pontos;
 }
 

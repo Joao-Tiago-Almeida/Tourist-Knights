@@ -77,6 +77,9 @@ void possible_moves(Tabuleiro *tabuleiro){
 
     //  Para cada cidade, verifica-se se a cidade segiunte do caminho é válida
     for(int i = 0; i < passeio_B_get_num_pontos(passeio) - 1; i++) {
+        //printf("Loop do num pontos %d\n", passeio_B_get_num_pontos(passeio));
+        //printf("i: %d\n", i);
+        
         Vector2 point1 = passeio_B_get_pontos(passeio)[i];
         Vector2 point2 = passeio_B_get_pontos(passeio)[i+1];
         
@@ -89,7 +92,8 @@ void possible_moves(Tabuleiro *tabuleiro){
             return;
         }
 
-        passeio_B_set_cost(passeio, passeio_B_get_cost(passeio) + tabuleiro_get_cost(tabuleiro, point2.x, point2.y));
+        passeio_B_set_cost(passeio, passeio_B_get_cost(passeio) + (int)tabuleiro_get_cost(tabuleiro, point2.x, point2.y));
+        //printf("total: %d\n", passeio_B_get_cost(passeio));
     }
 
     passeio_B_set_valid(passeio, 1);

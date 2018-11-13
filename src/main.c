@@ -92,8 +92,8 @@ void read_and_write_files(char* filename) {
         }else if(modo == 'C' || modo == 'c') {
             fprintf(stderr, "we are not ready for C files");
         } else {
-            fprintf(stderr, "Erro modo invalido?\n");
-            exit(0);
+            tabuleiro = read_file_modo_A(fp, w, h, modo);
+            //fprintf(stderr, "Erro modo invalido?\n");
         }
         //print_tabuleiro(&tabuleiro, w, h);
 
