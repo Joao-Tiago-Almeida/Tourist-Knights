@@ -30,6 +30,8 @@ PasseioTipoA* passeio_A_new_read_from_file(int num_pontos, Vector2 pos_ini) {
     passeio->pos_ini = pos_ini;
     passeio->num_pontos = num_pontos;
     //passeio->pos_fim = pos_fim;
+    passeio->valid = 1;
+    passeio->cost = 0;
 
     return passeio;
 }
@@ -45,6 +47,9 @@ PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp) {
 
     passeio->num_pontos = num_pontos;
     passeio->pontos = (Vector2*) checked_malloc(sizeof(Vector2) * num_pontos);
+
+    passeio->valid = 1;
+    passeio->cost = 0;
 
     //escreve no vetor
     for(int i = 0; i < num_pontos; i++)

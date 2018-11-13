@@ -88,9 +88,10 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execute) {
-    if(!do_not_execute)
+void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
+    if(passeio_A_get_valid((PasseioTipoA*)tabuleiro->passeio) == 1 ) {
         best_choice(tabuleiro, passeio_A_get_pos_ini((PasseioTipoA*)tabuleiro_get_passeio(tabuleiro)));
+    }
     write_valid_file_A(tabuleiro, fp);
     // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
 }
@@ -100,7 +101,9 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execut
  * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
-    possible_moves(tabuleiro);
+    if(passeio_B_get_valid((PasseioTipoB*)tabuleiro->passeio) == 1 ) {
+        possible_moves(tabuleiro);
+    }
     write_valid_file_B(tabuleiro, fp);
     //printf("Sou bué fixe e tenho o tabuleiro do tipo B lido :D\n");
 }
@@ -110,12 +113,12 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execute) {
-    if(tabuleiro->type_passeio == 'A') {
-        tabuleiro_execute_tipo_A(tabuleiro, fp, do_not_execute);
-    } else if(tabuleiro->type_passeio == 'B') {
+void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
+    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'a') {
+        tabuleiro_execute_tipo_A(tabuleiro, fp);
+    } else if(tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'b') {
         tabuleiro_execute_tipo_B(tabuleiro, fp);
-    } else if(tabuleiro->type_passeio == 'C') {
+    } else if(tabuleiro->type_passeio == 'C' || tabuleiro->type_passeio == 'c') {
         fprintf(stderr, "we are not ready for C files\n");
         return;
     } else {

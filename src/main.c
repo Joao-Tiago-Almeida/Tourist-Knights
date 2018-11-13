@@ -10,23 +10,26 @@ void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
 }
 
-Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo, bool* do_not_execute) {
+Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos;
     Tabuleiro* tabuleiro;
+    PasseioTipoA* passeio;
 
     fscanf(fp, "%d", &num_pts_turisticos);
 
-    if(num_pts_turisticos != 1 ){
-        *do_not_execute = true;
-    }
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(tabuleiro, passeio_A_new_read_from_file(num_pts_turisticos, vector2_read_from_file(fp)));
+    passeio = passeio_A_new_read_from_file(num_pts_turisticos, vector2_read_from_file(fp));
+    tabuleiro_set_passeio(tabuleiro, passeio);
     for(int i = 0; i < num_pts_turisticos -1; i++){
         vector2_read_from_file(fp);
     }
     tabuleiro_read_matrix_from_file(tabuleiro, fp);
+
+    if(num_pts_turisticos != 1 || modo == 'a'){
+        passeio_A_set_valid(passeio, -1);
+    }
 
     return tabuleiro;
 }
@@ -34,13 +37,19 @@ Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo, bool* do_not_exec
 Tabuleiro* read_file_modo_B(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos;
     Tabuleiro* tabuleiro;
+    PasseioTipoB* passeio;
 
     fscanf(fp, "%d", &num_pts_turisticos);
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(tabuleiro, passeio_B_new_read_from_file(num_pts_turisticos, fp));
+    passeio = passeio_B_new_read_from_file(num_pts_turisticos, fp);
+    tabuleiro_set_passeio(tabuleiro, passeio);
     tabuleiro_read_matrix_from_file(tabuleiro, fp);
+
+    if(modo == 'b' || num_pts_turisticos < 2){
+        passeio_B_set_valid(passeio, -1);
+    }
 
     return tabuleiro;
 }
@@ -71,14 +80,13 @@ void read_and_write_files(char* filename) {
         //Lê cada um dos tabuleiros no ficheiro
         int w, h;
         char modo;
-        bool do_not_execute = false;
 
         //Tenta ler o tamanho do tabuleiro e modo
         if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {  //TODO eu troquei a ordem CONFIRMA
             break; //Se não conseguiu ler mais nenhum tabuleiro para a leitura
         }
         if(modo == 'A' || modo == 'a') {
-            tabuleiro = read_file_modo_A(fp, w, h, modo, &do_not_execute);
+            tabuleiro = read_file_modo_A(fp, w, h, modo);
         }else if(modo == 'B' || modo == 'b') {
             tabuleiro = read_file_modo_B(fp, w, h, modo);
         }else if(modo == 'C' || modo == 'c') {
@@ -90,7 +98,7 @@ void read_and_write_files(char* filename) {
         //print_tabuleiro(&tabuleiro, w, h);
 
         //analisa o tabuleiro como devido
-        tabuleiro_execute(tabuleiro, file_out, do_not_execute, m);
+        tabuleiro_execute(tabuleiro, file_out);
 
         tabuleiro_free(tabuleiro);
         free(tabuleiro);
