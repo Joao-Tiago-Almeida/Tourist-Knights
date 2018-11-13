@@ -77,11 +77,11 @@ void read_and_write_files(char* filename) {
         if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {  //TODO eu troquei a ordem CONFIRMA
             break; //Se não conseguiu ler mais nenhum tabuleiro para a leitura
         }
-        if(modo == 'A') {
+        if(modo == 'A' || modo == 'a') {
             tabuleiro = read_file_modo_A(fp, w, h, modo, &do_not_execute);
-        }else if(modo == 'B') {
+        }else if(modo == 'B' || modo == 'b') {
             tabuleiro = read_file_modo_B(fp, w, h, modo);
-        }else if(modo == 'C') {
+        }else if(modo == 'C' || modo == 'c') {
             fprintf(stderr, "we are not ready for C files");
         } else {
             fprintf(stderr, "Erro modo invalido?\n");
@@ -90,7 +90,7 @@ void read_and_write_files(char* filename) {
         //print_tabuleiro(&tabuleiro, w, h);
 
         //analisa o tabuleiro como devido
-        tabuleiro_execute(tabuleiro, file_out, do_not_execute);
+        tabuleiro_execute(tabuleiro, file_out, do_not_execute, m);
 
         tabuleiro_free(tabuleiro);
         free(tabuleiro);

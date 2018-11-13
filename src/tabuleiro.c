@@ -73,7 +73,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
             fscanf(fp, "%d", &cost);
 
             if(cost > 255 || cost < 0) {
-                printf("Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
+                fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
                 exit(0);
             }
             //  Escrita no vetor
@@ -119,7 +119,7 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execute) {
         fprintf(stderr, "we are not ready for C files\n");
         return;
     } else {
-        printf("Erro modo invalido?\n");
+        fprintf(stderr, "Erro modo invalido?\n");
         exit(0);
     }
 }
