@@ -74,7 +74,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
 
             if(cost > 255 || cost < 0) {
                 printf("Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
-                exit(1);
+                exit(0);
             }
             //  Escrita no vetor
             tabuleiro_set_cost(tabuleiro, i, j, (char) cost);
@@ -119,7 +119,7 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
         return;
     } else {
         printf("Erro modo invalido?\n");
-        exit(1);
+        exit(0);
     }
 }
 

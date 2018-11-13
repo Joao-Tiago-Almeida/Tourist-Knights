@@ -13,7 +13,7 @@ void *checked_malloc(size_t size) {
 
     if(ptr == NULL) {
         fprintf(stderr, "Error allocating memory\n");
-        exit(1);
+        exit(0);
     }
 
     return ptr;
