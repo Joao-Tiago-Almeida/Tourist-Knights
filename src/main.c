@@ -16,7 +16,7 @@ Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo, bool* do_not_exec
 
     fscanf(fp, "%d", &num_pts_turisticos);
 
-    if(num_pts_turisticos == 1 ){
+    if(num_pts_turisticos != 1 ){
         *do_not_execute = true;
     }
 
