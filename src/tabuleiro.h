@@ -6,16 +6,7 @@
 
 typedef struct tabuleiro_t Tabuleiro;
 
-//TODO Mudar para o .c --só mudas ao pé de mim, para eu ver as alterações que se tem de fazer
-struct tabuleiro_t {
-    unsigned int width, height;
-    char* cost_matrix; //Cada custo tem um byte
-    char type_passeio;
-    void* passeio;
-};
-
-
-Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio);
+Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio);
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp);
 
 unsigned int tabuleiro_get_width(Tabuleiro* tabuleiro);

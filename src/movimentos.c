@@ -46,8 +46,9 @@ bool city_valid(Tabuleiro* tabuleiro, Vector2 vec) {
     return tabuleiro_get_cost(tabuleiro, vec.x, vec.y) != 0;
 }
 
-//TODO comentario bonito
-// Devolve true se dois pontos fizerem um L entre si
+/*
+ * Devolve true se dois pontos fizerem um L entre si
+ */
 bool do_points_make_L(Vector2 point1, Vector2 point2) {
     return (abs(point1.x-point2.x) == 2 && abs(point1.y-point2.y) == 1) ||
         (abs(point1.x-point2.x) == 1 && abs(point1.y-point2.y) == 2);
@@ -55,7 +56,7 @@ bool do_points_make_L(Vector2 point1, Vector2 point2) {
 
 /**
  * Analisa um caminho vê se é válido e calcula o custo desse caminho
- * @param tabuleiro [description]
+ * @param tabuleiro
  */
 void possible_moves(Tabuleiro *tabuleiro){
 
@@ -96,8 +97,8 @@ void possible_moves(Tabuleiro *tabuleiro){
 
 /**
  * Identifica o ponto com menor custo à distância de um salto de cavalo
- * @param vec       [description]
- * @param tabuleiro [description]
+ * @param vec       cidade de partida
+ * @param tabuleiro
  */
 void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
 

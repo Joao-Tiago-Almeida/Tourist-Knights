@@ -6,7 +6,12 @@
 #include "passeios.h"
 #include "movimentos.h"
 
-
+struct tabuleiro_t {
+    unsigned int width, height;
+    char* cost_matrix; //Cada custo tem um byte
+    char type_passeio;
+    void* passeio;
+};
 
 /**
  * Cria uma estrutura que guarda as informações relativas ao tabuleiro a analisar
@@ -15,14 +20,15 @@
  * @param  type_passeio tipo de passeio{A,B,C}
  * @return              retorna a estrutura criada
  */
-Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
-    Tabuleiro tab;
-    tab.width = w;
-    tab.height = h;
-    tab.type_passeio = type_passeio;
-    tab.passeio = NULL;
+Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
 
-    tab.cost_matrix = (char*) checked_malloc(sizeof(char) * (w * h));
+    Tabuleiro* tab = checked_malloc(sizeof(Tabuleiro));
+    tab->width = w;
+    tab->height = h;
+    tab->type_passeio = type_passeio;
+    tab->passeio = NULL;
+
+    tab->cost_matrix = (char*) checked_malloc(sizeof(char) * (w * h));
 
     return tab;
 }

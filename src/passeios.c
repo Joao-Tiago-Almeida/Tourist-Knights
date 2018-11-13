@@ -4,6 +4,7 @@
 #include "movimentos.h"
 #include "vector2.h"
 
+
 #define NUM_PONTOS_A 1
 
 struct passeiotipoa_t {
@@ -42,7 +43,7 @@ PasseioTipoA* passeio_A_new_read_from_file(Vector2 pos_ini) {
  * @param  tabuleiro
  * @return            novo passeio
  */
-PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro tabuleiro) {
+PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp) {
     PasseioTipoB* passeio = (PasseioTipoB*) checked_malloc(sizeof(PasseioTipoB));
 
     passeio->num_pontos = num_pontos;
@@ -52,8 +53,6 @@ PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro t
     for(int i = 0; i < num_pontos; i++)
     {
         (*passeio).pontos[i] = vector2_read_from_file(fp);
-        // //FIXME
-        // inside_board(tabuleiro, passeio->pontos[i]);
     }
     return passeio;
 }

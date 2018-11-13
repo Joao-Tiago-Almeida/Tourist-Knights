@@ -9,9 +9,9 @@ void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
 }
 
-Tabuleiro read_file_modo_A(FILE* fp, int w, int h, char modo) {
+Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos;
-    Tabuleiro tabuleiro;
+    Tabuleiro* tabuleiro;
 
     fscanf(fp, "%d", &num_pts_turisticos);
 
@@ -23,22 +23,22 @@ Tabuleiro read_file_modo_A(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(&tabuleiro, passeio_A_new_read_from_file(vector2_read_from_file(fp)));
-    tabuleiro_read_matrix_from_file(&tabuleiro, fp);
+    tabuleiro_set_passeio(tabuleiro, passeio_A_new_read_from_file(vector2_read_from_file(fp)));
+    tabuleiro_read_matrix_from_file(tabuleiro, fp);
 
     return tabuleiro;
 }
 
-Tabuleiro read_file_modo_B(FILE* fp, int w, int h, char modo) {
+Tabuleiro* read_file_modo_B(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos;
-    Tabuleiro tabuleiro;
+    Tabuleiro* tabuleiro;
 
     fscanf(fp, "%d", &num_pts_turisticos);
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    tabuleiro_set_passeio(&tabuleiro, passeio_B_new_read_from_file(num_pts_turisticos, fp, tabuleiro));
-    tabuleiro_read_matrix_from_file(&tabuleiro, fp);
+    tabuleiro_set_passeio(tabuleiro, passeio_B_new_read_from_file(num_pts_turisticos, fp));
+    tabuleiro_read_matrix_from_file(tabuleiro, fp);
 
     return tabuleiro;
 }
@@ -58,12 +58,12 @@ void read_and_write_files(char* filename) {
         exit(1);
     }
 
+    Tabuleiro* tabuleiro;
 
     while(true) {
         //Lê cada um dos tabuleiros no ficheiro
         int w, h;
         char modo;
-        Tabuleiro tabuleiro;
 
         //Tenta ler o tamanho do tabuleiro e modo
         if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {  //TODO eu troquei a ordem CONFIRMA
@@ -83,9 +83,9 @@ void read_and_write_files(char* filename) {
         //print_tabuleiro(&tabuleiro, w, h);
 
         //analisa o tabuleiro como devido
-        tabuleiro_execute(&tabuleiro, file_out);
-
-        tabuleiro_free(&tabuleiro);
+        tabuleiro_execute(tabuleiro, file_out);
+        tabuleiro_free(tabuleiro);
+        free(tabuleiro);
     }
     fclose(file_out);
     fclose(fp);
