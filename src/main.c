@@ -9,16 +9,14 @@ void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
 }
 
-Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
+Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo, bool* do_not_execute) {
     int num_pts_turisticos;
     Tabuleiro* tabuleiro;
 
     fscanf(fp, "%d", &num_pts_turisticos);
 
-    //Na primeira fase de submissão o modo A apenas deve ter um ponto
-    if(num_pts_turisticos != 1) {
-        printf("Erro num_pts_turisticos != 1?\n");
-        exit(1);
+    if(num_pts_turisticos == 1 ){
+        *do_not_execute = true;
     }
 
     //Cria o tabuleiro
@@ -50,12 +48,12 @@ void read_and_write_files(char* filename) {
     fp = fopen(filename, "r");
     if(fp == NULL) {
         fprintf(stderr, "Error reading file %s\n", filename);
-        exit(1);
+        exit(0);
     }
     file_out = fopen("saida.valid", "w");
     if(file_out == NULL) {
         fprintf(stderr, "Error reading file %s\n", "saida.valid");
-        exit(1);
+        exit(0);
     }
 
     Tabuleiro* tabuleiro;
@@ -64,6 +62,7 @@ void read_and_write_files(char* filename) {
         //Lê cada um dos tabuleiros no ficheiro
         int w, h;
         char modo;
+        bool do_not_execute = false;
 
         //Tenta ler o tamanho do tabuleiro e modo
         if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {  //TODO eu troquei a ordem CONFIRMA
@@ -71,19 +70,22 @@ void read_and_write_files(char* filename) {
         }
 
         if(modo == 'A') {
-            tabuleiro = read_file_modo_A(fp, w, h, modo);
+            tabuleiro = read_file_modo_A(fp, w, h, modo, &do_not_execute);
         }else if(modo == 'B') {
             tabuleiro = read_file_modo_B(fp, w, h, modo);
         }else if(modo == 'C') {
             fprintf(stderr, "we are not ready for C files");
         } else {
             printf("Erro modo invalido?\n");
-            exit(1);
+            exit(0);
         }
         //print_tabuleiro(&tabuleiro, w, h);
 
-        //analisa o tabuleiro como devido
-        tabuleiro_execute(tabuleiro, file_out);
+        //Na primeira fase de submissão o modo A apenas deve ter um ponto
+        if(!do_not_execute) {
+            //analisa o tabuleiro como devido
+            tabuleiro_execute(tabuleiro, file_out);
+        }
         tabuleiro_free(tabuleiro);
         free(tabuleiro);
     }
