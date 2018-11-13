@@ -14,6 +14,8 @@ OBJ	=	$(SRC:	.c=.o)
 #se eu apagr isto não era suposto dar!
 #%.o: %.c
 
+dirs = $(shell ls testfiles)
+
 
 $(EXECUTABLE):	$(OBJ)
 	$(CC)	$(CFLAGS)	$(LIBS)	-o $(EXECUTABLE)	$(OBJ)
