@@ -3,9 +3,9 @@
 #include <stdio.h>
 
 /**
- * [checked_malloc description]
- * @param  size [description]
- * @return      [description]
+ * Alocação limitada de memória
+ * @param  size tamanho finito de memória a alocar
+ * @return      ponteiro para o espaço de memória alocado
  */
 void *checked_malloc(size_t size) {
     void* ptr = malloc(size);

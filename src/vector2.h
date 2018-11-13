@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
+/*
+ * Estrutuar auxiliar que guarda dois inteiros como forma de uma coordenada num espaço euclidiano de dimensão
+ */
 typedef struct vector2_t {
     int x, y;
 } Vector2;

@@ -9,11 +9,11 @@
 
 
 /**
- * [tabuleiro_new description]
- * @param  w            [description]
- * @param  h            [description]
- * @param  type_passeio [description]
- * @return              [description]
+ * Cria uma estrutura que guarda as informações relativas ao tabuleiro a analisar
+ * @param  w            largura do tabueleiro
+ * @param  h            alrura do tabueleiro
+ * @param  type_passeio tipo de passeio{A,B,C}
+ * @return              retorna a estrutura criada
  */
 Tabuleiro tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     Tabuleiro tab;
@@ -35,57 +35,30 @@ unsigned int tabuleiro_get_height(Tabuleiro* tabuleiro) {
     return tabuleiro->height;
 }
 
-/**
- * [tabuleiro_set_cost description]
- * @param tabuleiro [description]
- * @param x         [description]
- * @param y         [description]
- * @param cost      [description]
- */
 void tabuleiro_set_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y, unsigned char cost) {
     tabuleiro->cost_matrix[x + y*tabuleiro->width] = cost;
 }
 
-/**
- * [tabuleiro_get_cost description]
- * @param  tabuleiro [description]
- * @param  x         [description]
- * @param  y         [description]
- * @return           [description]
- */
 int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y) {
     return tabuleiro->cost_matrix[x + y*tabuleiro->width];
 }
 
-/**
- * [tabuleiro_set_passeio description]
- * @param tabuleiro [description]
- * @param passeio   [description]
- */
 void tabuleiro_set_passeio(Tabuleiro* tabuleiro, void* passeio) {
     tabuleiro->passeio = passeio;
 }
 
-/**
- * [tabuleiro_get_passeio description]
- * @param tabuleiro [description]
- */
 void* tabuleiro_get_passeio(Tabuleiro* tabuleiro) {
     return tabuleiro->passeio;
 }
 
-/**
- * Devolve um caracter com o tipo de passeio
- * @param  tabuleiro [description]
- * @return           [description]
- */
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
     return tabuleiro->type_passeio;
 }
+
 /**
- * [tabuleiro_read_matrix_from_file description]
- * @param tabuleiro [description]
- * @param fp        [description]
+ * Lê o mapa o analisar e passa-o para um vetor
+ * @param tabuleiro
+ * @param fp        ficheiro de entrada
  */
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     for(unsigned int j = 0; j<tabuleiro->height; j++) {
@@ -97,7 +70,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
                 printf("Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
                 exit(1);
             }
-
+            //  Escrita no vetor
             tabuleiro_set_cost(tabuleiro, i, j, (char) cost);
         }
     }
@@ -106,8 +79,8 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
 
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
- * @param tabuleiro [description]
- * @param fp        [description]
+ * @param tabuleiro
+ * @param fp        ficheiro de saída
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
     best_choice(tabuleiro, passeio_A_get_pos_ini((PasseioTipoA*)tabuleiro_get_passeio(tabuleiro)));
@@ -116,8 +89,8 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
 }
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
- * @param tabuleiro [description]
- * @param fp        [description]
+ * @param tabuleiro
+ * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
     possible_moves(tabuleiro);
@@ -127,8 +100,8 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
 
 /**
  * Faz as operações e escreve no ficheiro fp
- * @param tabuleiro [description]
- * @param fp        [description]
+ * @param tabuleiro
+ * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
     if(tabuleiro->type_passeio == 'A') {
@@ -145,8 +118,8 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
 }
 
 /**
- * [tabuleiro_free description]
- * @param tabuleiro [description]
+ * Libertação de toda a memória alocada
+ * @param tabuleiro
  */
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     if(tabuleiro->type_passeio == 'B')
@@ -156,12 +129,7 @@ void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro->cost_matrix);
 }
 
-/**
- * [print_tabuleiro description]
- * @param tabuleiro [description]
- * @param w         [description]
- * @param h         [description]
- */
+//TODO apagar
 void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
     for(int i = 0; i < h; i++)
     {
@@ -175,8 +143,8 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
 
 /**
  * Cria um ficheiro *.valid e escreve os resultados do tipo A
- * @param tabuleiro [description]
- * @param fp        Ficheiro de saída tipo A
+ * @param tabuleiro
+ * @param fp        ficheiro de saída
  */
 void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp){
 
@@ -196,8 +164,8 @@ void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp){
 
 /**
  * Cria um ficheiro *.valid e escreve os resultados do tipo B
- * @param tabuleiro [description]
- * @param fp        Ficheiro de saída tipo B
+ * @param tabuleiro 
+ * @param fp        ficheiro de saída
  */
 void write_valid_file_B(Tabuleiro *tabuleiro, FILE* fp){
 

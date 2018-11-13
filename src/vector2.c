@@ -1,10 +1,10 @@
 #include "vector2.h"
 
 /**
- * [vector2_new description]
- * @param  x [description]
- * @param  y [description]
- * @return   [description]
+ * Cria um Vector de 2 dimensões
+ * @param  x coordenada relativa ao eixo dos xx
+ * @param  y coordenada relativa ao eixo dos yy
+ * @return   vetor 2D criado
  */
 Vector2 vector2_new(int x, int y) {
     Vector2 vec;
@@ -14,9 +14,9 @@ Vector2 vector2_new(int x, int y) {
 }
 
 /**
- * [vector2_read_from_file description]
- * @param  fp [description]
- * @return    [description]
+ * Lê um vetor do ficehiro
+ * @param  fp ficehiro de entrada
+ * @return    vertor lido
  */
 Vector2 vector2_read_from_file(FILE* fp) {
     Vector2 vec;

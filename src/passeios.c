@@ -22,9 +22,9 @@ struct passeiotipob_t {
 };
 
 /**
- * [passeio_A_new description]
- * @param  pos_ini [description]
- * @return         [description]
+ * Escreve a posição inicial do caminho na estrutura do novo passeio
+ * @param  pos_ini  posição inicial do caminho
+ * @return         novo passeio
  */
 PasseioTipoA* passeio_A_new_read_from_file(Vector2 pos_ini) {
     PasseioTipoA* passeio = (PasseioTipoA*)checked_malloc(sizeof(PasseioTipoA));
@@ -36,11 +36,11 @@ PasseioTipoA* passeio_A_new_read_from_file(Vector2 pos_ini) {
     return passeio;
 }
 /**
- * [passeio_B_new_read_from_file description]
- * @param  num_pontos [description]
- * @param  fp         [description]
- * @param  tabuleiro  [description]
- * @return            [description]
+ * Escreve o número de cidades e lê as coordenadas de cidade a visitar do novo passeio do ficehiro, e escreve na estrutura do novo passeio
+ * @param  num_pontos   número de cidades a visitar
+ * @param  fp         ficheiro de leitura
+ * @param  tabuleiro
+ * @return            novo passeio
  */
 PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro tabuleiro) {
     PasseioTipoB* passeio = (PasseioTipoB*) checked_malloc(sizeof(PasseioTipoB));

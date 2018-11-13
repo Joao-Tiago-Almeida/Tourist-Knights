@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
         print_usage(argv[0]);
         return 1;
     }
-
+    //  Lê o ficehiro de entrada (argv[1], analisa o(s) tabuleiro(s) e escreve no ficheiro de saída)
     read_and_write_files(argv[1]);
 
     return 0;
