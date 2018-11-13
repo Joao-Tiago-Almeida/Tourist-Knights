@@ -115,7 +115,8 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
  * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
-    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'a') {
+    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio ==
+    'a') {
         tabuleiro_execute_tipo_A(tabuleiro, fp);
     } else if(tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'b') {
         tabuleiro_execute_tipo_B(tabuleiro, fp);
@@ -128,7 +129,6 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
                                 passeio_A_get_num_pontos((PasseioTipoA*)tabuleiro->passeio),
                                 -1,
                                 0);
-        exit(0);
     }
 }
 

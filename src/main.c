@@ -27,7 +27,7 @@ Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
     }
     tabuleiro_read_matrix_from_file(tabuleiro, fp);
 
-    if(num_pts_turisticos != 1 || modo == 'a'){
+    if(num_pts_turisticos != 1 || modo != 'A'){
         passeio_A_set_valid(passeio, -1);
     }
 
