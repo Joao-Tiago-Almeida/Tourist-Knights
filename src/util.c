@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#define DOT_VALID_LENGTH 6
+#define DOT_CITIES_LENGHT 7
+
 /**
  * Alocação limitada de memória
  * @param  size tamanho finito de memória a alocar
@@ -32,4 +35,11 @@ bool string_ends_with(char* str, char* test) {
         return true;
     }
     return false;
+}
+
+char* create_dot_valid_filename(char* filename) {
+    char* file_out_name = malloc(sizeof(char) * (strlen(filename) + DOT_VALID_LENGTH + 1));
+    strncpy(file_out_name, filename, strlen(filename) - DOT_CITIES_LENGHT);
+    strcat(file_out_name, ".valid\0");
+    return file_out_name;
 }
