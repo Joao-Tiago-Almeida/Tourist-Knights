@@ -2,6 +2,7 @@
 
 #include "util.h"
 #include "movimentos.h"
+#include "vector2.h"
 
 #define NUM_PONTOS_A 1
 
@@ -76,6 +77,11 @@ int passeio_B_get_cost(PasseioTipoB* passeio) {
 int passeio_A_get_num_pontos(PasseioTipoA* passeio) {
     return passeio->num_pontos;
 }
-int passeio_B_get_num_pontos(PasseioTipoB* passeio) {
+
+int passeio_B_get_pos_ini(PasseioTipoB* passeio) {
     return passeio->num_pontos;
+}
+
+Vector2* passeio_B_get_pontos(PasseioTipoB* passeio) {
+    return passeio->pontos;
 }

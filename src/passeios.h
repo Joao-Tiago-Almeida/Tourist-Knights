@@ -14,9 +14,11 @@ PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp, Tabuleiro t
 
 int passeio_A_get_valid(PasseioTipoA* passeio);
 int passeio_B_get_valid(PasseioTipoB* passeio);
-int passeio_A_get_cost(PasseioTipoB* passeio)
+int passeio_A_get_cost(PasseioTipoA* passeio);
 int passeio_B_get_cost(PasseioTipoB* passeio);
 int passeio_A_get_num_pontos(PasseioTipoA* passeio);
 int passeio_B_get_num_pontos(PasseioTipoB* passeio);
+Vector2 passeio_A_get_pos_ini(PasseioTipoA* passeio);
+Vector2* passeio_B_get_pontos(PasseioTipoB* passeio);
 
 #endif
