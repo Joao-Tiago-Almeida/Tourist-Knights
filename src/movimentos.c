@@ -19,16 +19,16 @@
  * @return           Retorna true quando um ponto está dentro do tabuleiro,
  *                          e false quando se encontra fora do tabuleiros
  */
-bool inside_board(Tabuleiro tabuleiro, Vector2 vec){
+bool inside_board(Tabuleiro* tabuleiro, Vector2 vec){
 
     //  Ver se o ponto está entre os eixos verticais do tabuleiro
-    if(vec.x < 0 || vec.x > tabuleiro.width-1){
+    if(vec.x < 0 || vec.x > tabuleiro_get_width(tabuleiro)-1){
 
         //fprintf(stderr, "\npoint out of the board\n");
         return false;
     }
     //  Ver se o ponto está entre os eixos horizointais do tabuleiro
-    else if(vec.y < 0 || vec.y > tabuleiro.height-1){
+    else if(vec.y < 0 || vec.y > tabuleiro->height-1){
 
         //fprintf(stderr, "\npoint out of the board\n");
         return false;
@@ -42,9 +42,8 @@ bool inside_board(Tabuleiro tabuleiro, Vector2 vec){
  * @param  vec       [description]
  * @return           retorna true se a cidade não estiver fechada
  */
-bool valid_start(Tabuleiro tabuleiro, Vector2 vec){
-
-    return tabuleiro_get_cost(&tabuleiro, vec.x, vec.y);
+bool valid_start(Tabuleiro* tabuleiro, Vector2 vec) {
+    return tabuleiro_get_cost(tabuleiro, vec.x, vec.y);
 }
 
 //TODO
@@ -66,8 +65,8 @@ void possible_moves(Tabuleiro *tabuleiro){
     ((PasseioTipoB*)tabuleiro->passeio)->cost = 0;
 
     //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(*tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0]))  &&
-            valid_start(*tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0]))){
+    if(!((inside_board(tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0]))  &&
+            valid_start(tabuleiro, ((PasseioTipoB*)tabuleiro->passeio)->pontos[0]))){
 
         ((PasseioTipoB*)tabuleiro->passeio)->valid = -1;
         //REMOVE-ME, função com as soluções
@@ -90,7 +89,7 @@ void possible_moves(Tabuleiro *tabuleiro){
                 if(movement.y == ((PasseioTipoB*)tabuleiro->passeio)->pontos[i+1].y)
                 {
                     //  Caso a cidade esteja fora do mapa ou a próxima cidade esteja fechada
-                    if(!(inside_board(*tabuleiro, movement) && (valid_start(*tabuleiro, movement)))){
+                    if(!(inside_board(tabuleiro, movement) && (valid_start(tabuleiro, movement)))){
                         ((PasseioTipoB*)tabuleiro->passeio)->cost = 0;
                         ((PasseioTipoB*)tabuleiro->passeio)->valid = -1;
 
@@ -140,8 +139,8 @@ void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
     int best = __INT32_MAX__;
 
     //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(*tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini))  &&
-            valid_start(*tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini))){
+    if(!((inside_board(tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini))  &&
+            valid_start(tabuleiro, ((PasseioTipoA*)tabuleiro->passeio)->pos_ini))){
         ((PasseioTipoA*)tabuleiro->passeio)->cost = 0;
         ((PasseioTipoA*)tabuleiro->passeio)->valid = -1;
         //REMOVE-ME, função com as soluções
@@ -175,7 +174,7 @@ void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
             movement.x = knight_L[j].x + ((PasseioTipoA*)tabuleiro->passeio)->pos_ini.x;
             movement.y = knight_L[j].y + ((PasseioTipoA*)tabuleiro->passeio)->pos_ini.y;
 
-            if((inside_board(*tabuleiro, movement) && (valid_start(*tabuleiro, movement)))){
+            if((inside_board(tabuleiro, movement) && (valid_start(tabuleiro, movement)))){
                 best = (best < tabuleiro_get_cost(tabuleiro, movement.x, movement.y) ?
                             best : tabuleiro_get_cost(tabuleiro, movement.x, movement.y));
             }
