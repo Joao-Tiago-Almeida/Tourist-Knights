@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <string.h> //TODO remove
+
 #include "tabuleiro.h"
 #include "passeios.h"
 #include "util.h"
@@ -59,11 +61,16 @@ void read_and_write_files(char* filename) {
         fprintf(stderr, "Error reading file %s\n", filename);
         exit(0);
     }
-    file_out = fopen("saida.valid", "w");
+
+    char* file_out_name = create_dot_valid_filename(filename);
+    file_out = fopen("a.valid", "w");
+    
     if(file_out == NULL) {
         fprintf(stderr, "Error reading file %s\n", "saida.valid");
         exit(0);
     }
+
+    free(file_out_name); //TODO posso fazer free do file_out_name aqui ou tem de ser quando faço fclose
 
     Tabuleiro* tabuleiro;
 
