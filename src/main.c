@@ -72,7 +72,7 @@ void read_and_write_files(char* filename) {
     }
 
     char* file_out_name = create_dot_valid_filename(filename);
-    file_out = fopen("a.valid", "w");
+    file_out = fopen(file_out_name, "w");
     
     if(file_out == NULL) {
         fprintf(stderr, "Error reading file %s\n", "saida.valid");
