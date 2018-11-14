@@ -111,7 +111,7 @@ void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
+void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     if(passeio_get_valid((Passeio*)tabuleiro->passeio) == 1 ) {
         best_choice(tabuleiro);
     }
@@ -121,7 +121,7 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
+void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
     if(passeio_get_valid((Passeio*)tabuleiro->passeio) == 1 ) {
         possible_moves(tabuleiro);
     }
