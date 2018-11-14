@@ -132,7 +132,7 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
+void tabuleiro_execute(Tabuleiro *tabuleiro) {
     if(tabuleiro->type_passeio == 'A') {
         tabuleiro_execute_tipo_A(tabuleiro);
     } else if(tabuleiro->type_passeio == 'B') {

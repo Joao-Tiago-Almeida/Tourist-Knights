@@ -91,7 +91,7 @@ void read_and_write_files(char* filename) {
         }
 
         //Analisa o tabuleiro como devido
-        tabuleiro_execute(tabuleiro, file_out);
+        tabuleiro_execute(tabuleiro);
         //Escreve o resultado
         tabuleiro_write_valid_file(tabuleiro, file_out);
 
