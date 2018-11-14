@@ -134,9 +134,9 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
  */
 void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
     if(tabuleiro->type_passeio == 'A') {
-        tabuleiro_execute_tipo_A(tabuleiro, fp);
+        tabuleiro_execute_tipo_A(tabuleiro);
     } else if(tabuleiro->type_passeio == 'B') {
-        tabuleiro_execute_tipo_B(tabuleiro, fp);
+        tabuleiro_execute_tipo_B(tabuleiro);
     } else if(tabuleiro->type_passeio == 'C') {
         fprintf(stderr, "we are not ready for C files\n");
         
