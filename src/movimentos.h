@@ -10,6 +10,6 @@
 bool inside_board(Tabuleiro *tabuleiro, Vector2 vec);
 bool city_valid(Tabuleiro *tabuleiro, Vector2 vec);
 void possible_moves(Tabuleiro *tabuleiro);
-void best_choice(Tabuleiro *tabuleiro, Vector2 vec);
+void best_choice(Tabuleiro *tabuleiro);
 
 #endif

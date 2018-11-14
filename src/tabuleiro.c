@@ -71,7 +71,10 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     for(unsigned int j = 0; j<tabuleiro->height; j++) {
         for(unsigned int i = 0; i<tabuleiro->width; i++) {
             int cost;
-            fscanf(fp, "%d", &cost);
+            if(fscanf(fp, "%d", &cost) != 1) {
+                fprintf(stderr, "Erro de leitura");
+                exit(0);
+            }
 
             if(cost > 255 || cost < 0) {
                 fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
@@ -91,7 +94,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
     if(passeio_A_get_valid((PasseioTipoA*)tabuleiro->passeio) == 1 ) {
-        best_choice(tabuleiro, passeio_A_get_pos_ini((PasseioTipoA*)tabuleiro_get_passeio(tabuleiro)));
+        best_choice(tabuleiro);
     }
     write_valid_file_A(tabuleiro, fp);
     // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");

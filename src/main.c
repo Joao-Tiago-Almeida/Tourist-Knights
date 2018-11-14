@@ -17,7 +17,10 @@ Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
     Tabuleiro* tabuleiro;
     PasseioTipoA* passeio;
 
-    fscanf(fp, "%d", &num_pts_turisticos);
+    if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
+        fprintf(stderr, "Erro de leitura");
+        exit(0);
+    }
 
 
     //Cria o tabuleiro
@@ -41,7 +44,10 @@ Tabuleiro* read_file_modo_B(FILE* fp, int w, int h, char modo) {
     Tabuleiro* tabuleiro;
     PasseioTipoB* passeio;
 
-    fscanf(fp, "%d", &num_pts_turisticos);
+    if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
+        fprintf(stderr, "Erro de leitura");
+        exit(0);
+    }
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);

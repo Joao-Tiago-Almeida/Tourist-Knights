@@ -22,13 +22,13 @@
 bool inside_board(Tabuleiro* tabuleiro, Vector2 vec){
 
     //  Ver se o ponto está entre os eixos verticais do tabuleiro
-    if(vec.x < 0 || vec.x > tabuleiro_get_width(tabuleiro)-1){
+    if(vec.x < 0 || vec.x > (int)tabuleiro_get_width(tabuleiro)-1){
 
         //fprintf(stderr, "\npoint out of the board\n");
         return false;
     }
     //  Ver se o ponto está entre os eixos horizointais do tabuleiro
-    else if(vec.y < 0 || vec.y > tabuleiro_get_height(tabuleiro)-1){
+    else if(vec.y < 0 || vec.y > (int)tabuleiro_get_height(tabuleiro)-1){
 
         //fprintf(stderr, "\npoint out of the board\n");
         return false;
@@ -104,7 +104,7 @@ void possible_moves(Tabuleiro *tabuleiro){
  * @param vec       cidade de partida
  * @param tabuleiro
  */
-void best_choice(Tabuleiro *tabuleiro, Vector2 vec){
+void best_choice(Tabuleiro *tabuleiro){
 
     int best = __INT32_MAX__;
 
