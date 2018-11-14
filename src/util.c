@@ -39,7 +39,7 @@ bool string_ends_with(char* str, char* test) {
 
 char* create_dot_valid_filename(char* filename) {
     char* file_out_name = malloc(sizeof(char) * (strlen(filename) + DOT_VALID_LENGTH + 1));
-    strncpy(file_out_name, filename, strlen(filename) - DOT_CITIES_LENGHT);
+    memcpy(file_out_name, filename, sizeof(char)*(strlen(filename) - DOT_CITIES_LENGHT));
     strcat(file_out_name, ".valid\0");
     return file_out_name;
 }

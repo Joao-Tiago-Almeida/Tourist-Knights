@@ -24,7 +24,7 @@ char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro);
 void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp);
 void write_valid_file_B(Tabuleiro *tabuleiro, FILE* fp);
 
-void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp, bool do_not_execute);
+void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp);
 
 void tabuleiro_free(Tabuleiro* tabuleiro);
 
