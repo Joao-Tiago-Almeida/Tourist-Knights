@@ -12,37 +12,17 @@ void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
 }
 
-Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
-    int num_pts_turisticos;
-    Tabuleiro* tabuleiro;
-    PasseioTipoA* passeio;
-
-    if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
-        fprintf(stderr, "Erro de leitura");
-        exit(0);
-    }
-
-
-    //Cria o tabuleiro
-    tabuleiro = tabuleiro_new(w, h, modo);
-    passeio = passeio_A_new_read_from_file(num_pts_turisticos, vector2_read_from_file(fp));
-    tabuleiro_set_passeio(tabuleiro, passeio);
-    for(int i = 0; i < num_pts_turisticos -1; i++){
-        vector2_read_from_file(fp);
-    }
-    tabuleiro_read_matrix_from_file(tabuleiro, fp);
-
-    if(num_pts_turisticos != 1 || modo != 'A'){
-        passeio_A_set_valid(passeio, -1);
-    }
-
-    return tabuleiro;
+bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
+    char modo = tabuleiro_get_tipo_passeio(tab);
+    Passeio* passeio = (Passeio*)tabuleiro_get_passeio(tab);
+    return ((modo == 'A' && passeio_get_num_pontos(passeio) == 1) || (modo == 'B' && passeio_get_num_pontos(passeio) >= 2))
+        && passeio_get_valid((Passeio*)tabuleiro_get_passeio(tab));
 }
 
-Tabuleiro* read_file_modo_B(FILE* fp, int w, int h, char modo) {
+Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos;
     Tabuleiro* tabuleiro;
-    PasseioTipoB* passeio;
+    Passeio* passeio;
 
     if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
         fprintf(stderr, "Erro de leitura");
@@ -51,12 +31,16 @@ Tabuleiro* read_file_modo_B(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    passeio = passeio_B_new_read_from_file(num_pts_turisticos, fp);
+    passeio = passeio_new_read_from_file(tabuleiro, num_pts_turisticos, fp);
     tabuleiro_set_passeio(tabuleiro, passeio);
-    tabuleiro_read_matrix_from_file(tabuleiro, fp);
-
-    if(modo == 'b' || num_pts_turisticos < 2){
-        passeio_B_set_valid(passeio, -1);
+    
+    if(!tabuleiro_and_passeio_is_valid(tabuleiro)) {
+        //Se for inválido não vale a pena ler a matriz para o tabuleiro
+        passeio_set_valid(passeio, -1);
+        tabuleiro_read_matrix_from_file_invalid(tabuleiro, fp);
+    } else {
+        //Se for válido lê matriz para o tabuleiro
+        tabuleiro_read_matrix_from_file(tabuleiro, fp);
     }
 
     return tabuleiro;
@@ -90,28 +74,26 @@ void read_and_write_files(char* filename) {
     Tabuleiro* tabuleiro = NULL;
 
     while(true) {
-        //Lê cada um dos tabuleiros no ficheiro
         int w, h;
         char modo;
+        //Lê cada um dos tabuleiros no ficheiro
 
-        //Tenta ler o tamanho do tabuleiro e modo
-        if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {  //TODO eu troquei a ordem CONFIRMA
-            break; //Se não conseguiu ler mais nenhum tabuleiro para a leitura
+        //Tenta ler o cabeçalho(tamanho do tabuleiro e modo)
+        if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {
+            break; // Fim do ficheiro (Se não conseguiu ler mais nenhum tabuleiro para a leitura)
         }
-        if(modo == 'A' || modo == 'a') {
-            tabuleiro = read_file_modo_A(fp, w, h, modo);
-        }else if(modo == 'B' || modo == 'b') {
-            tabuleiro = read_file_modo_B(fp, w, h, modo);
-        }else if(modo == 'C' || modo == 'c') {
+
+        if(modo == 'C' || modo == 'c') {
             fprintf(stderr, "we are not ready for C files");
+            continue;
         } else {
-            tabuleiro = read_file_modo_A(fp, w, h, modo);
-            //fprintf(stderr, "Erro modo invalido?\n");
+            tabuleiro = read_file(fp, w, h, modo);
         }
-        //print_tabuleiro(&tabuleiro, w, h);
 
-        //analisa o tabuleiro como devido
+        //Analisa o tabuleiro como devido
         tabuleiro_execute(tabuleiro, file_out);
+        //Escreve o resultado
+        tabuleiro_write_valid_file(tabuleiro, file_out);
 
         tabuleiro_free(tabuleiro);
         free(tabuleiro);

@@ -2,31 +2,20 @@
 #define PASSEIO_H
 
 #include "vector2.h"
-// #include "vecdin.h"
 #include "tabuleiro.h"
+typedef struct passeiotipob_t Passeio;
 
-typedef struct passeiotipoa_t PasseioTipoA;
-typedef struct passeiotipob_t PasseioTipoB;
+Passeio* passeio_new_read_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE* fp);
 
-PasseioTipoA* passeio_A_new_read_from_file(int num_pontos, Vector2 pos_ini);
-PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp);
+void passeio_set_valid(Passeio* passeio, char valid);
+char passeio_get_valid(Passeio* passeio);
 
-void passeio_A_set_valid(PasseioTipoA* passeio, char valid);
-char passeio_A_get_valid(PasseioTipoA* passeio);
+void passeio_B_set_cost(Passeio* passeio, int cost);
+int passeio_B_get_cost(Passeio* passeio);
 
-void passeio_B_set_valid(PasseioTipoB* passeio, char valid);
-char passeio_B_get_valid(PasseioTipoB* passeio);
+int passeio_get_num_pontos(Passeio* passeio);
 
-void passeio_A_set_cost(PasseioTipoA* passeio, int cost);
-int passeio_A_get_cost(PasseioTipoA* passeio);
-
-void passeio_B_set_cost(PasseioTipoB* passeio, int cost);
-int passeio_B_get_cost(PasseioTipoB* passeio);
-
-int passeio_A_get_num_pontos(PasseioTipoA* passeio);
-int passeio_B_get_num_pontos(PasseioTipoB* passeio);
-
-Vector2 passeio_A_get_pos_ini(PasseioTipoA* passeio);
-Vector2* passeio_B_get_pontos(PasseioTipoB* passeio);
+Vector2* passeio_B_get_pontos(Passeio* passeio);
+Vector2 passeio_get_pos_ini(Passeio* passeio);
 
 #endif

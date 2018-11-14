@@ -4,14 +4,6 @@
 #include "movimentos.h"
 #include "vector2.h"
 
-struct passeiotipoa_t {
-    Vector2 pos_ini;
-    //Vector2 pos_fim;
-    int num_pontos;
-    int cost;   //Só para a primeira parte
-    char valid;
-};
-
 struct passeiotipob_t {
     int num_pontos;
     Vector2* pontos;
@@ -20,30 +12,14 @@ struct passeiotipob_t {
 };
 
 /**
- * Escreve a posição inicial do caminho na estrutura do novo passeio
- * @param  pos_ini  posição inicial do caminho
- * @return         novo passeio
- */
-PasseioTipoA* passeio_A_new_read_from_file(int num_pontos, Vector2 pos_ini) {
-    PasseioTipoA* passeio = (PasseioTipoA*)checked_malloc(sizeof(PasseioTipoA));
-
-    passeio->pos_ini = pos_ini;
-    passeio->num_pontos = num_pontos;
-    //passeio->pos_fim = pos_fim;
-    passeio->valid = 1;
-    passeio->cost = 0;
-
-    return passeio;
-}
-/**
  * Escreve o número de cidades e lê as coordenadas de cidade a visitar do novo passeio do ficehiro, e escreve na estrutura do novo passeio
  * @param  num_pontos   número de cidades a visitar
  * @param  fp         ficheiro de leitura
  * @param  tabuleiro
  * @return            novo passeio
  */
-PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp) {
-    PasseioTipoB* passeio = (PasseioTipoB*) checked_malloc(sizeof(PasseioTipoB));
+Passeio* passeio_new_read_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE* fp) {
+    Passeio* passeio = (Passeio*) checked_malloc(sizeof(Passeio));
 
     passeio->num_pontos = num_pontos;
     passeio->pontos = (Vector2*) checked_malloc(sizeof(Vector2) * num_pontos);
@@ -54,55 +30,41 @@ PasseioTipoB* passeio_B_new_read_from_file(int num_pontos, FILE* fp) {
     //escreve no vetor
     for(int i = 0; i < num_pontos; i++)
     {
-        (*passeio).pontos[i] = vector2_read_from_file(fp);
+        Vector2 vec = vector2_read_from_file(fp);
+        (*passeio).pontos[i] = vec;
+
+        if(!inside_board(tabuleiro, vec)) {
+            //Se algum dos pontos estiver fora do tabuleiro marca o passeio como invalido
+            passeio->valid = -1;
+        }
+
     }
     return passeio;
 }
 
-void passeio_A_set_valid(PasseioTipoA* passeio, char valid) {
+void passeio_set_valid(Passeio* passeio, char valid) {
     passeio->valid = valid;
 }
 
-char passeio_A_get_valid(PasseioTipoA* passeio) {
+char passeio_get_valid(Passeio* passeio) {
     return passeio->valid;
 }
 
-void passeio_B_set_valid(PasseioTipoB* passeio, char valid) {
-    passeio->valid = valid;
-}
-
-char passeio_B_get_valid(PasseioTipoB* passeio) {
-    return passeio->valid;
-}
-
-void passeio_A_set_cost(PasseioTipoA* passeio, int cost) {
+void passeio_B_set_cost(Passeio* passeio, int cost) {
     passeio->cost = cost;
 }
 
-int passeio_A_get_cost(PasseioTipoA* passeio) {
+int passeio_B_get_cost(Passeio* passeio) {
     return passeio->cost;
 }
 
-void passeio_B_set_cost(PasseioTipoB* passeio, int cost) {
-    passeio->cost = cost;
-}
-
-int passeio_B_get_cost(PasseioTipoB* passeio) {
-    return passeio->cost;
-}
-
-int passeio_A_get_num_pontos(PasseioTipoA* passeio) {
+int passeio_get_num_pontos(Passeio* passeio) {
     return passeio->num_pontos;
 }
 
-int passeio_B_get_num_pontos(PasseioTipoB* passeio) {
-    return passeio->num_pontos;
-}
-
-Vector2 passeio_A_get_pos_ini(PasseioTipoA* passeio) {
-    return passeio->pos_ini;
-}
-
-Vector2* passeio_B_get_pontos(PasseioTipoB* passeio) {
+Vector2* passeio_B_get_pontos(Passeio* passeio) {
     return passeio->pontos;
+}
+Vector2 passeio_get_pos_ini(Passeio* passeio) {
+    return passeio->pontos[0];
 }
