@@ -28,8 +28,8 @@ Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     tab->height = h;
     tab->type_passeio = type_passeio;
     tab->passeio = NULL;
-
-    tab->cost_matrix = (char*) checked_malloc(sizeof(char) * (w * h));
+    if(tab->type_passeio == 'A' || tab->type_passeio == 'B' || tab->type_passeio == 'C')
+        tab->cost_matrix = (char*) checked_malloc(sizeof(char) * (w * h));
 
     return tab;
 }
@@ -68,21 +68,30 @@ char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
  * @param fp        ficheiro de entrada
  */
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
-    for(unsigned int j = 0; j<tabuleiro->height; j++) {
-        for(unsigned int i = 0; i<tabuleiro->width; i++) {
-            int cost;
-            fscanf(fp, "%d", &cost);
 
-            if(cost > 255 || cost < 0) {
-                fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
-                exit(0);
+    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C') {
+        for(unsigned int j = 0; j<tabuleiro->height; j++) {
+            for(unsigned int i = 0; i<tabuleiro->width; i++) {
+                int cost;
+                fscanf(fp, "%d", &cost);
+
+                if(cost > 255 || cost < 0) {
+                    fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
+                    exit(0);
+                }
+                //  Escrita no vetor
+                tabuleiro_set_cost(tabuleiro, i, j, (char) cost);
             }
-            //  Escrita no vetor
-            tabuleiro_set_cost(tabuleiro, i, j, (char) cost);
+        }
+    }else{
+        for(unsigned int j = 0; j<tabuleiro->height; j++) {
+            for(unsigned int i = 0; i<tabuleiro->width; i++) {
+                int cost;
+                fscanf(fp, "%d", &cost);
+            }
         }
     }
 }
-
 
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
@@ -141,7 +150,8 @@ void tabuleiro_free(Tabuleiro* tabuleiro) {
         free(passeio_B_get_pontos((PasseioTipoB*)tabuleiro_get_passeio(tabuleiro)));
 
     free(tabuleiro->passeio);
-    free(tabuleiro->cost_matrix);
+    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
+        free(tabuleiro->cost_matrix);
 }
 
 //TODO apagar
