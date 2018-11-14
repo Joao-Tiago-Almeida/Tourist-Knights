@@ -1,9 +1,12 @@
 for file in testfiles/*; do
     filename="$(basename "$file")"
-    
-    filename_without_extension="${filename%.*}"
-    echo FICHEIRO: $filename_without_extension
+    if [ ${file: -7} == ".cities" ]
+    then
+        
+        filename_without_extension="${filename%.*}"
+        echo FICHEIRO: $filename_without_extension
 
-    ./tuktuk testfiles/$filename
-    diff saida.valid testfiles_valid/$filename_without_extension.valid;
+        ./tuktuk testfiles/$filename
+        diff testfiles/$filename_without_extension.valid testfiles_valid/$filename_without_extension.valid;
+    fi
 done

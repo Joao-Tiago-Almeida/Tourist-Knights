@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <string.h> //TODO remove
+
 #include "tabuleiro.h"
 #include "passeios.h"
 #include "util.h"
@@ -15,7 +17,10 @@ Tabuleiro* read_file_modo_A(FILE* fp, int w, int h, char modo) {
     Tabuleiro* tabuleiro;
     PasseioTipoA* passeio;
 
-    fscanf(fp, "%d", &num_pts_turisticos);
+    if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
+        fprintf(stderr, "Erro de leitura");
+        exit(0);
+    }
 
 
     //Cria o tabuleiro
@@ -39,7 +44,10 @@ Tabuleiro* read_file_modo_B(FILE* fp, int w, int h, char modo) {
     Tabuleiro* tabuleiro;
     PasseioTipoB* passeio;
 
-    fscanf(fp, "%d", &num_pts_turisticos);
+    if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
+        fprintf(stderr, "Erro de leitura");
+        exit(0);
+    }
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
@@ -68,13 +76,18 @@ void read_and_write_files(char* filename) {
         fprintf(stderr, "Error reading file %s\n", filename);
         exit(0);
     }
-    file_out = fopen("saida.valid", "w");
+
+    char* file_out_name = create_dot_valid_filename(filename);
+    file_out = fopen(file_out_name, "w");
+    
     if(file_out == NULL) {
         fprintf(stderr, "Error reading file %s\n", "saida.valid");
         exit(0);
     }
 
-    Tabuleiro* tabuleiro;
+    free(file_out_name); //TODO posso fazer free do file_out_name aqui ou tem de ser quando faço fclose
+
+    Tabuleiro* tabuleiro = NULL;
 
     while(true) {
         //Lê cada um dos tabuleiros no ficheiro
@@ -102,6 +115,7 @@ void read_and_write_files(char* filename) {
 
         tabuleiro_free(tabuleiro);
         free(tabuleiro);
+        tabuleiro = NULL;
     }
     fclose(file_out);
     fclose(fp);
