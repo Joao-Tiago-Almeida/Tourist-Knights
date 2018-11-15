@@ -34,6 +34,7 @@ void *checked_calloc(size_t size, size_t n) {
 }
 
 //TODO comentario bonito
+//Nota, vai devover false se for um ficheiro a.cities.cities
 //Verifica se a string str acaba de forma igual à string test
 bool string_ends_with(char* str, char* test) {
     char* pos = strstr(str, test); //apontador para o inicio do test no str
