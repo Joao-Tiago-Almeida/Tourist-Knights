@@ -8,7 +8,7 @@
 
 struct tabuleiro_t {
     unsigned int width, height;
-    char* cost_matrix; //Cada custo tem um byte
+    unsigned char* cost_matrix; //Cada custo tem um byte
     char type_passeio;
     void* passeio;
 
@@ -68,7 +68,7 @@ char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
  * @param fp        ficheiro de entrada
  */
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
-    tabuleiro->cost_matrix = (char*) checked_malloc(sizeof(char) * (tabuleiro->width * tabuleiro->height));
+    tabuleiro->cost_matrix = (unsigned char*) checked_malloc(sizeof(unsigned char) * (tabuleiro->width * tabuleiro->height));
 
     for(unsigned int j = 0; j<tabuleiro->height; j++) {
         for(unsigned int i = 0; i<tabuleiro->width; i++) {
