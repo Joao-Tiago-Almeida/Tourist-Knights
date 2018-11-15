@@ -34,10 +34,18 @@ void *checked_calloc(size_t size, size_t n) {
 }
 
 //TODO comentario bonito
-//Nota, vai devover false se for um ficheiro a.cities.cities
 //Verifica se a string str acaba de forma igual à string test
 bool string_ends_with(char* str, char* test) {
-    char* pos = strstr(str, test); //apontador para o inicio do test no str
+    int len = strlen(str);
+    int testlen = strlen(test);
+
+    if(len < testlen) {
+        return false;
+    }
+
+    return (strcmp(str+(len-testlen), test) == 0);
+
+    /*char* pos = strstr(str, test); //apontador para o inicio do test no str
 
     if(pos == NULL) {
         return false;
@@ -46,7 +54,7 @@ bool string_ends_with(char* str, char* test) {
     if(str + (strlen(str) - strlen(test)) == pos) {
         return true;
     }
-    return false;
+    return false;*/
 }
 
 char* create_dot_valid_filename(char* filename) {
