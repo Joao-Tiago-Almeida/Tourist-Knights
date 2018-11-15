@@ -83,7 +83,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
                 exit(0);
             }
             //  Escrita no vetor
-            tabuleiro_set_cost(tabuleiro, i, j, (char) cost);
+            tabuleiro_set_cost(tabuleiro, i, j, (unsigned char) cost);
         }
     }
 }
