@@ -112,9 +112,10 @@ void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp) {
  * @param fp        ficheiro de saída
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
-    if(passeio_get_valid((Passeio*)tabuleiro->passeio) == 1 ) {
-        best_choice(tabuleiro);
-    }
+    if(passeio_get_valid((Passeio*)tabuleiro->passeio) != 1)
+        return;
+    
+    best_choice(tabuleiro);
 }
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
@@ -122,9 +123,10 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
  * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
-    if(passeio_get_valid((Passeio*)tabuleiro->passeio) == 1 ) {
-        possible_moves(tabuleiro);
-    }
+    if(passeio_get_valid((Passeio*)tabuleiro->passeio) != 1)
+        return;
+        
+    possible_moves(tabuleiro);
 }
 
 /**
