@@ -1,7 +1,7 @@
 #	Compiler
 CC	=	gcc
 #	Compiler Flags
-CFLAGS	=	-g	-Wall	-ansi	-pedantic	-std=c99 -Wextra
+CFLAGS	=	-g	-Wall	-ansi	-pedantic	-std=c99
 #	Compiler Libraries
 LIBS=	-lm
 #	name of the Program
@@ -21,8 +21,14 @@ dirs = $(shell ls testfiles)
 $(EXECUTABLE):	$(OBJ)
 	$(CC)	-o $(EXECUTABLE)	$(OBJ)	$(LIBS)
 
-#FIXME melhor isto para apagar os *.valid e acho que não é perciso o *.c
+v:
+	valgrind --leak-check=full ./$(EXECUTABLE) testfiles/${file}
+
+O3:
+	$(CC) ${SRC} -O3 -Wall -o tuktuk $(LIBS)
+
 clean::
 			rm	-f	src/*.o	core	tuktuk  *.valid	*~
+
 
 # TODO comentar isto tudo
