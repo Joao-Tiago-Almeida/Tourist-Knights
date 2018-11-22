@@ -8,11 +8,14 @@
 
 struct tabuleiro_t {
     unsigned int width, height;
-    char* cost_matrix; //Cada custo tem um byte
+    unsigned char* cost_matrix; //Cada custo tem um byte
     char type_passeio;
     void* passeio;
 
     int num_pontos;
+    Vector2* pontos;
+    int cost;  //parte 1, para guardar o custo do camimho se válido
+    char valid;
 };
 
 /**
@@ -28,8 +31,8 @@ Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     tab->height = h;
     tab->type_passeio = type_passeio;
     tab->passeio = NULL;
-    if(tab->type_passeio == 'A' || tab->type_passeio == 'B' || tab->type_passeio == 'C')
-        tab->cost_matrix = (char*) checked_malloc(sizeof(char) * (w * h));
+
+    tab->cost_matrix = NULL; // Nao aloca ainda a matriz porque pode ser que o passeio seja invalido
 
     return tab;
 }
@@ -50,14 +53,6 @@ int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y) {
     return tabuleiro->cost_matrix[x + y*tabuleiro->width];
 }
 
-void tabuleiro_set_passeio(Tabuleiro* tabuleiro, void* passeio) {
-    tabuleiro->passeio = passeio;
-}
-
-void* tabuleiro_get_passeio(Tabuleiro* tabuleiro) {
-    return tabuleiro->passeio;
-}
-
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
     return tabuleiro->type_passeio;
 }
@@ -68,26 +63,39 @@ char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
  * @param fp        ficheiro de entrada
  */
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
+    tabuleiro->cost_matrix = (unsigned char*) checked_malloc(sizeof(unsigned char) * (tabuleiro->width * tabuleiro->height));
 
-    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C') {
-        for(unsigned int j = 0; j<tabuleiro->height; j++) {
-            for(unsigned int i = 0; i<tabuleiro->width; i++) {
-                int cost;
-                fscanf(fp, "%d", &cost);
-
-                if(cost > 255 || cost < 0) {
-                    fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
-                    exit(0);
-                }
-                //  Escrita no vetor
-                tabuleiro_set_cost(tabuleiro, i, j, (char) cost);
+    for(unsigned int j = 0; j<tabuleiro->height; j++) {
+        for(unsigned int i = 0; i<tabuleiro->width; i++) {
+            int cost;
+            if(fscanf(fp, "%d", &cost) != 1) {
+                fprintf(stderr, "Erro de leitura");
+                exit(0);
             }
+
+            if(cost > 255 || cost < 0) {
+                fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
+                exit(0);
+            }
+            //  Escrita no vetor
+            tabuleiro_set_cost(tabuleiro, i, j, (unsigned char) cost);
         }
-    }else{
-        for(unsigned int j = 0; j<tabuleiro->height; j++) {
-            for(unsigned int i = 0; i<tabuleiro->width; i++) {
-                int cost;
-                fscanf(fp, "%d", &cost);
+    }
+}
+
+/**
+ * Lê o mapa mas apenas para avançar o cursor do ficheiro, porque o tabuleiro é invalido,
+ *      logo não vale a pena guardar os valores
+ * @param tabuleiro
+ * @param fp        ficheiro de entrada
+ */
+void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp) {
+    for(unsigned int j = 0; j<tabuleiro->height; j++) {
+        for(unsigned int i = 0; i<tabuleiro->width; i++) {
+            int cost;
+            if(fscanf(fp, "%d", &cost) != 1) {
+                fprintf(stderr, "Erro de leitura");
+                exit(0);
             }
         }
     }
@@ -98,24 +106,22 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro, FILE* fp) {
-    if(passeio_A_get_valid((PasseioTipoA*)tabuleiro->passeio) == 1 ) {
-        best_choice(tabuleiro, passeio_A_get_pos_ini((PasseioTipoA*)tabuleiro_get_passeio(tabuleiro)));
-    }
-    write_valid_file_A(tabuleiro, fp);
-    // printf("Sou bué fixe e tenho o tabuleiro do tipo A lido :D\n");
+void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
+    if(passeio_get_valid(tabuleiro) != 1)
+        return;
+
+    best_choice(tabuleiro);
 }
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
-    if(passeio_B_get_valid((PasseioTipoB*)tabuleiro->passeio) == 1 ) {
-        possible_moves(tabuleiro);
-    }
-    write_valid_file_B(tabuleiro, fp);
-    //printf("Sou bué fixe e tenho o tabuleiro do tipo B lido :D\n");
+void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
+    if(passeio_get_valid(tabuleiro) != 1)
+        return;
+
+    possible_moves(tabuleiro);
 }
 
 /**
@@ -123,21 +129,14 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro, FILE* fp) {
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
-    if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio ==
-    'a') {
-        tabuleiro_execute_tipo_A(tabuleiro, fp);
-    } else if(tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'b') {
-        tabuleiro_execute_tipo_B(tabuleiro, fp);
-    } else if(tabuleiro->type_passeio == 'C' || tabuleiro->type_passeio == 'c') {
+void tabuleiro_execute(Tabuleiro *tabuleiro) {
+    if(tabuleiro->type_passeio == 'A') {
+        tabuleiro_execute_tipo_A(tabuleiro);
+    } else if(tabuleiro->type_passeio == 'B') {
+        tabuleiro_execute_tipo_B(tabuleiro);
+    } else if(tabuleiro->type_passeio == 'C') {
         fprintf(stderr, "we are not ready for C files\n");
-        return;
-    } else {
-        fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
-                                tabuleiro->type_passeio,
-                                passeio_A_get_num_pontos((PasseioTipoA*)tabuleiro->passeio),
-                                -1,
-                                0);
+
     }
 }
 
@@ -146,8 +145,7 @@ void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp) {
  * @param tabuleiro
  */
 void tabuleiro_free(Tabuleiro* tabuleiro) {
-    if(tabuleiro->type_passeio == 'B')
-        free(passeio_B_get_pontos((PasseioTipoB*)tabuleiro_get_passeio(tabuleiro)));
+    free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
 
     free(tabuleiro->passeio);
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
@@ -167,40 +165,71 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
 }
 
 /**
- * Cria um ficheiro *.valid e escreve os resultados do tipo A
- * @param tabuleiro
- * @param fp        ficheiro de saída
- */
-void write_valid_file_A(Tabuleiro *tabuleiro, FILE* fp){
-
-    PasseioTipoA* passeio = (PasseioTipoA*)tabuleiro_get_passeio(tabuleiro);
-
-    int valid = passeio_A_get_valid(passeio);
-    int cost = passeio_A_get_cost(passeio);
-
-    if(cost == __INT32_MAX__ || cost < 1)  cost = 0, valid = -1;
-
-    //  Escreve no ficehiro
-    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
-                                tabuleiro->type_passeio,
-                                passeio_A_get_num_pontos(passeio),
-                                valid, cost);
-
-}
-
-/**
  * Cria um ficheiro *.valid e escreve os resultados do tipo B
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void write_valid_file_B(Tabuleiro *tabuleiro, FILE* fp){
-
-    PasseioTipoB* passeio = (PasseioTipoB*)tabuleiro_get_passeio(tabuleiro);
-
+void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
     //  Escreve no ficehiro
     fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
                                 tabuleiro->type_passeio,
-                                passeio_B_get_num_pontos(passeio),
-                                passeio_B_get_valid(passeio),
-                                passeio_B_get_cost(passeio));
+                                tabuleiro->num_pontos,
+                                tabuleiro->valid,
+                                tabuleiro->cost);
+}
+
+
+
+/**
+ * Escreve o número de cidades e lê as coordenadas de cidade a visitar do novo passeio do ficehiro
+ * @param  tabuleiro
+ * @param  num_pontos   número de cidades a visitar
+ * @param  fp         ficheiro de leitura
+ */
+void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE* fp) {
+    tabuleiro->num_pontos = num_pontos;
+    tabuleiro->pontos = (Vector2*) checked_malloc(sizeof(Vector2) * num_pontos);
+
+    tabuleiro->valid = 1;
+    tabuleiro->cost = 0;
+
+    //escreve no vetor
+    for(int i = 0; i < num_pontos; i++)
+    {
+        Vector2 vec = vector2_read_from_file(fp);
+        tabuleiro->pontos[i] = vec;
+
+        if(!inside_board(tabuleiro, vec)) {
+            //Se algum dos pontos estiver fora do tabuleiro marca o passeio como invalido
+            tabuleiro->valid = -1;
+        }
+
+    }
+}
+
+void tabuleiro_set_valid(Tabuleiro* tabuleiro, char valid) {
+    tabuleiro->valid = valid;
+}
+
+char passeio_get_valid(Tabuleiro* tabuleiro) {
+    return tabuleiro->valid;
+}
+
+void tabuleiro_passeio_set_cost(Tabuleiro* tabuleiro, int cost) {
+    tabuleiro->cost = cost;
+}
+
+int tabuleiro_passeio_get_cost(Tabuleiro* tabuleiro) {
+    return tabuleiro->cost;
+}
+
+int tabuleiro_get_num_pontos(Tabuleiro* tabuleiro) {
+    return tabuleiro->num_pontos;
+}
+
+Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro) {
+    return tabuleiro->pontos;
+}
+Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro) {
+    return tabuleiro->pontos[0];
 }

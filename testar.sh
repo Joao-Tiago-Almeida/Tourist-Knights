@@ -1,9 +1,19 @@
+#Metam na pasta do tuktuk, os ficheiros .cities numa pasta testfiles, os valid do professor numa chamada testfiles_valid.
+#Na primeira execução fazer chmod +x testar.sh
+#Para correr fazer ./testar.sh
+
+#Ele imprime FICHEIRO NOME_DO_FICHEIRO e de seguida imprime as diferenças entre o gerado e o do professor
+#Apenas imprimir os nomes dos ficheiros é porque todos funcionam bem
+
 for file in testfiles/*; do
     filename="$(basename "$file")"
-    
-    filename_without_extension="${filename%.*}"
-    echo FICHEIRO: $filename_without_extension
+    if [ ${file: -7} == ".cities" ]
+    then
+        
+        filename_without_extension="${filename%.*}"
+        echo FICHEIRO: $filename_without_extension
 
-    ./tuktuk testfiles/$filename
-    diff saida.valid testfiles_valid/$filename_without_extension.valid;
+        ./tuktuk testfiles/$filename
+        diff testfiles/$filename_without_extension.valid testfiles_valid/$filename_without_extension.valid;
+    fi
 done

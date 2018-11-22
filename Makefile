@@ -21,10 +21,17 @@ dirs = $(shell ls testfiles)
 $(EXECUTABLE):	$(OBJ)
 	$(CC)	-o $(EXECUTABLE)	$(OBJ)	$(LIBS)
 
+<<<<<<< HEAD
 v::
 	valgrind --leak-check=full ./$(EXECUTABLE) testfiles/${file}
 
 O3::
+=======
+v:
+	valgrind --leak-check=full ./$(EXECUTABLE) testfiles/${file}
+
+O3:
+>>>>>>> master
 	$(CC) ${SRC} -O3 -Wall -o tuktuk $(LIBS)
 
 clean::
