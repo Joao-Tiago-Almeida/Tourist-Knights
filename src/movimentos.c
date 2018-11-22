@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "passeios.h"
+
 #define NUM_PONTOS_A 1
 
 

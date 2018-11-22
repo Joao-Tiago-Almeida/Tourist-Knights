@@ -5,6 +5,7 @@
 #include <string.h> //TODO remove
 
 #include "tabuleiro.h"
+#include "passeios.h"
 #include "util.h"
 
 void print_usage(char* program_name) {
