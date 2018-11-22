@@ -58,14 +58,9 @@ bool string_ends_with(char* str, char* test) {
 }
 
 char* create_dot_valid_filename(char* filename) {
-<<<<<<< HEAD
-    char* file_out_name = malloc(sizeof(char) * (strlen(filename) + DOT_VALID_LENGTH + 1));
-    memcpy(file_out_name, filename, sizeof(char)*(strlen(filename) - DOT_CITIES_LENGHT));
-=======
     size_t filename_size = strlen(filename);
     char* file_out_name = checked_calloc(sizeof(char), (filename_size + DOT_VALID_LENGTH + 1));
     memcpy(file_out_name, filename, sizeof(char)*(filename_size - DOT_CITIES_LENGHT));
->>>>>>> d825077fad73e9c3374410819a8a6a238f404190
     strcat(file_out_name, ".valid\0");
     return file_out_name;
 }
