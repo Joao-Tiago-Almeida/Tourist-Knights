@@ -22,10 +22,30 @@ void *checked_malloc(size_t size) {
     return ptr;
 }
 
+void *checked_calloc(size_t size, size_t n) {
+    void* ptr = calloc(size, n);
+
+    if(ptr == NULL) {
+        fprintf(stderr, "Error allocating memory\n");
+        exit(0);
+    }
+
+    return ptr;
+}
+
 //TODO comentario bonito
 //Verifica se a string str acaba de forma igual à string test
 bool string_ends_with(char* str, char* test) {
-    char* pos = strstr(str, test); //apontador para o inicio do test no str
+    int len = strlen(str);
+    int testlen = strlen(test);
+
+    if(len < testlen) {
+        return false;
+    }
+
+    return (strcmp(str+(len-testlen), test) == 0);
+
+    /*char* pos = strstr(str, test); //apontador para o inicio do test no str
 
     if(pos == NULL) {
         return false;
@@ -34,12 +54,18 @@ bool string_ends_with(char* str, char* test) {
     if(str + (strlen(str) - strlen(test)) == pos) {
         return true;
     }
-    return false;
+    return false;*/
 }
 
 char* create_dot_valid_filename(char* filename) {
+<<<<<<< HEAD
     char* file_out_name = malloc(sizeof(char) * (strlen(filename) + DOT_VALID_LENGTH + 1));
     memcpy(file_out_name, filename, sizeof(char)*(strlen(filename) - DOT_CITIES_LENGHT));
+=======
+    size_t filename_size = strlen(filename);
+    char* file_out_name = checked_calloc(sizeof(char), (filename_size + DOT_VALID_LENGTH + 1));
+    memcpy(file_out_name, filename, sizeof(char)*(filename_size - DOT_CITIES_LENGHT));
+>>>>>>> d825077fad73e9c3374410819a8a6a238f404190
     strcat(file_out_name, ".valid\0");
     return file_out_name;
 }
