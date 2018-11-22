@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "util.h"
-#include "passeios.h"
 #include "movimentos.h"
 
 struct tabuleiro_t {
