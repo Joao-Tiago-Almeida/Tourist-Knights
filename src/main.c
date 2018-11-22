@@ -14,15 +14,13 @@ void print_usage(char* program_name) {
 
 bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
     char modo = tabuleiro_get_tipo_passeio(tab);
-    Passeio* passeio = (Passeio*)tabuleiro_get_passeio(tab);
-    return ((modo == 'A' && passeio_get_num_pontos(passeio) == 1) || (modo == 'B' && passeio_get_num_pontos(passeio) >= 2))
-        && passeio_get_valid((Passeio*)tabuleiro_get_passeio(tab));
+    return ((modo == 'A' && tabuleiro_get_num_pontos(tab) == 1) || (modo == 'B' && tabuleiro_get_num_pontos(tab) >= 2))
+        && passeio_get_valid(tab);
 }
 
 Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos;
     Tabuleiro* tabuleiro;
-    Passeio* passeio;
 
     if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
         fprintf(stderr, "Erro de leitura");
@@ -31,12 +29,11 @@ Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
-    passeio = passeio_new_read_from_file(tabuleiro, num_pts_turisticos, fp);
-    tabuleiro_set_passeio(tabuleiro, passeio);
+    tabuleiro_read_passeio_from_file(tabuleiro, num_pts_turisticos, fp);
     
     if(!tabuleiro_and_passeio_is_valid(tabuleiro)) {
         //Se for inválido não vale a pena ler a matriz para o tabuleiro
-        passeio_set_valid(passeio, -1);
+        tabuleiro_set_valid(tabuleiro, -1);
         tabuleiro_read_matrix_from_file_invalid(tabuleiro, fp);
     } else {
         //Se for válido lê matriz para o tabuleiro

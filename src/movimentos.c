@@ -59,44 +59,41 @@ bool do_points_make_L(Vector2 point1, Vector2 point2) {
  * @param tabuleiro
  */
 void possible_moves(Tabuleiro *tabuleiro){
-
-    Passeio* passeio = (Passeio*)tabuleiro_get_passeio(tabuleiro);
-
     // NOTA: a cidade de partida não tem custo
-    passeio_B_set_cost(passeio, 0);
+    tabuleiro_passeio_set_cost(tabuleiro, 0);
 
     //  Caso da primeira cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(tabuleiro, passeio_B_get_pontos(passeio)[0]))  &&
-            city_valid(tabuleiro, passeio_B_get_pontos(passeio)[0]))){
+    if(!((inside_board(tabuleiro, tabuleiro_passeio_get_pontos(tabuleiro)[0]))  &&
+            city_valid(tabuleiro, tabuleiro_passeio_get_pontos(tabuleiro)[0]))){
 
         //Passeio invalido
-        passeio_set_valid(passeio, -1);
+        tabuleiro_set_valid(tabuleiro, -1);
         return;
     }
 
 
     //  Para cada cidade, verifica-se se a cidade segiunte do caminho é válida
-    for(int i = 0; i < passeio_get_num_pontos(passeio) - 1; i++) {
-        //printf("Loop do num pontos %d\n", passeio_get_num_pontos(passeio));
+    for(int i = 0; i < tabuleiro_get_num_pontos(tabuleiro) - 1; i++) {
+        //printf("Loop do num pontos %d\n", tabuleiro_get_num_pontos(passeio));
         //printf("i: %d\n", i);
         
-        Vector2 point1 = passeio_B_get_pontos(passeio)[i];
-        Vector2 point2 = passeio_B_get_pontos(passeio)[i+1];
+        Vector2 point1 = tabuleiro_passeio_get_pontos(tabuleiro)[i];
+        Vector2 point2 = tabuleiro_passeio_get_pontos(tabuleiro)[i+1];
         
         //TODO verificar ordem (inside_board e city_valid)
         if(!(inside_board(tabuleiro, point2) && do_points_make_L(point1, point2) && city_valid(tabuleiro, point2))) {
             //Se os dois pontos não fizerem um L entre si ou não for uma
             //  cidade válida o caminho não é válido
-            passeio_B_set_cost(passeio, 0);
-            passeio_set_valid(passeio, -1);
+            tabuleiro_passeio_set_cost(tabuleiro, 0);
+            tabuleiro_set_valid(tabuleiro, -1);
             return;
         }
 
-        passeio_B_set_cost(passeio, passeio_B_get_cost(passeio) + (int)tabuleiro_get_cost(tabuleiro, point2.x, point2.y));
-        //printf("total: %d\n", passeio_B_get_cost(passeio));
+        tabuleiro_passeio_set_cost(tabuleiro, tabuleiro_passeio_get_cost(tabuleiro) + (int)tabuleiro_get_cost(tabuleiro, point2.x, point2.y));
+        //printf("total: %d\n", tabuleiro_passeio_get_cost(passeio));
     }
 
-    passeio_set_valid(passeio, 1);
+    tabuleiro_set_valid(tabuleiro, 1);
 }
 
 /**
@@ -108,13 +105,11 @@ void best_choice(Tabuleiro *tabuleiro){
 
     int best = __INT32_MAX__;
 
-    Passeio* passeio = (Passeio*)(tabuleiro_get_passeio(tabuleiro));
-
     //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(tabuleiro, passeio_get_pos_ini(passeio)))  &&
-            city_valid(tabuleiro, passeio_get_pos_ini(passeio)))){
-        passeio_B_set_cost(passeio, 0);
-        passeio_set_valid(passeio, -1);
+    if(!((inside_board(tabuleiro, tabuleiro_passeio_get_pos_ini(tabuleiro)))  &&
+            city_valid(tabuleiro, tabuleiro_passeio_get_pos_ini(tabuleiro)))){
+        tabuleiro_passeio_set_cost(tabuleiro, 0);
+        tabuleiro_set_valid(tabuleiro, -1);
         return;
     }
     //  vetor que guarda as coordenadas dos oito movimentos possiveis
@@ -125,8 +120,8 @@ void best_choice(Tabuleiro *tabuleiro){
 
     for(int i = 0; i < NUM_PONTOS_A; i++) {
         for(int j = 0; j < MOVES; j++) {
-            movement.x = knight_L[j].x + passeio_get_pos_ini(passeio).x;
-            movement.y = knight_L[j].y + passeio_get_pos_ini(passeio).y;
+            movement.x = knight_L[j].x + tabuleiro_passeio_get_pos_ini(tabuleiro).x;
+            movement.y = knight_L[j].y + tabuleiro_passeio_get_pos_ini(tabuleiro).y;
 
             if((inside_board(tabuleiro, movement) && (city_valid(tabuleiro, movement)))){
                 best = (best < tabuleiro_get_cost(tabuleiro, movement.x, movement.y) ?
@@ -136,11 +131,11 @@ void best_choice(Tabuleiro *tabuleiro){
     }
 
     if(best == __INT32_MAX__) {
-        passeio_B_set_cost(passeio, 0);
-        passeio_set_valid(passeio, -1); //TODO criar passeio set invalid
+        tabuleiro_passeio_set_cost(tabuleiro, 0);
+        tabuleiro_set_valid(tabuleiro, -1); //TODO criar passeio set invalid
         return;
     }
 
-    passeio_B_set_cost(passeio, best);
-    passeio_set_valid(passeio, 1);
+    tabuleiro_passeio_set_cost(tabuleiro, best);
+    tabuleiro_set_valid(tabuleiro, 1);
 }

@@ -13,6 +13,9 @@ struct tabuleiro_t {
     void* passeio;
 
     int num_pontos;
+    Vector2* pontos;
+    int cost;  //parte 1, para guardar o custo do camimho se válido
+    char valid;
 };
 
 /**
@@ -48,14 +51,6 @@ void tabuleiro_set_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y, un
 
 int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y) {
     return tabuleiro->cost_matrix[x + y*tabuleiro->width];
-}
-
-void tabuleiro_set_passeio(Tabuleiro* tabuleiro, void* passeio) {
-    tabuleiro->passeio = passeio;
-}
-
-void* tabuleiro_get_passeio(Tabuleiro* tabuleiro) {
-    return tabuleiro->passeio;
 }
 
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
@@ -112,7 +107,7 @@ void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp) {
  * @param fp        ficheiro de saída
  */
 void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
-    if(passeio_get_valid((Passeio*)tabuleiro->passeio) != 1)
+    if(passeio_get_valid(tabuleiro) != 1)
         return;
     
     best_choice(tabuleiro);
@@ -123,7 +118,7 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
  * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
-    if(passeio_get_valid((Passeio*)tabuleiro->passeio) != 1)
+    if(passeio_get_valid(tabuleiro) != 1)
         return;
         
     possible_moves(tabuleiro);
@@ -150,7 +145,7 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
  * @param tabuleiro
  */
 void tabuleiro_free(Tabuleiro* tabuleiro) {
-    free(passeio_B_get_pontos((Passeio*)tabuleiro_get_passeio(tabuleiro)));
+    free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
 
     free(tabuleiro->passeio);
     free(tabuleiro->cost_matrix);
@@ -174,12 +169,66 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
  * @param fp        ficheiro de saída
  */
 void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
-    Passeio* passeio = (Passeio*)tabuleiro_get_passeio(tabuleiro);
-
     //  Escreve no ficehiro
     fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
                                 tabuleiro->type_passeio,
-                                passeio_get_num_pontos(passeio),
-                                passeio_get_valid(passeio),
-                                passeio_B_get_cost(passeio));
+                                tabuleiro->num_pontos,
+                                tabuleiro->valid,
+                                tabuleiro->cost);
+}
+
+
+
+/**
+ * Escreve o número de cidades e lê as coordenadas de cidade a visitar do novo passeio do ficehiro
+ * @param  tabuleiro
+ * @param  num_pontos   número de cidades a visitar
+ * @param  fp         ficheiro de leitura
+ */
+void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE* fp) {
+    tabuleiro->num_pontos = num_pontos;
+    tabuleiro->pontos = (Vector2*) checked_malloc(sizeof(Vector2) * num_pontos);
+
+    tabuleiro->valid = 1;
+    tabuleiro->cost = 0;
+
+    //escreve no vetor
+    for(int i = 0; i < num_pontos; i++)
+    {
+        Vector2 vec = vector2_read_from_file(fp);
+        tabuleiro->pontos[i] = vec;
+
+        if(!inside_board(tabuleiro, vec)) {
+            //Se algum dos pontos estiver fora do tabuleiro marca o passeio como invalido
+            tabuleiro->valid = -1;
+        }
+
+    }
+}
+
+void tabuleiro_set_valid(Tabuleiro* tabuleiro, char valid) {
+    tabuleiro->valid = valid;
+}
+
+char passeio_get_valid(Tabuleiro* tabuleiro) {
+    return tabuleiro->valid;
+}
+
+void tabuleiro_passeio_set_cost(Tabuleiro* tabuleiro, int cost) {
+    tabuleiro->cost = cost;
+}
+
+int tabuleiro_passeio_get_cost(Tabuleiro* tabuleiro) {
+    return tabuleiro->cost;
+}
+
+int tabuleiro_get_num_pontos(Tabuleiro* tabuleiro) {
+    return tabuleiro->num_pontos;
+}
+
+Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro) {
+    return tabuleiro->pontos;
+}
+Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro) {
+    return tabuleiro->pontos[0];
 }
