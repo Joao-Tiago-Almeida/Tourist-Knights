@@ -19,9 +19,9 @@ bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
 }
 
 Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
-    int num_pts_turisticos;
-    Tabuleiro* tabuleiro;
-    PasseioTipoB* passeio;
+    int num_pts_turisticos = 0;
+    Tabuleiro* tabuleiro = NULL;
+    PasseioTipoB* passeio = NULL;
 
     if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
         fprintf(stderr, "Erro de leitura");

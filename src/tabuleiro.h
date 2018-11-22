@@ -23,11 +23,7 @@ char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro);
 
 void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp);
 
-<<<<<<< HEAD
-void tabuleiro_execute(Tabuleiro *tabuleiro, FILE* fp);
-=======
 void tabuleiro_execute(Tabuleiro *tabuleiro);
->>>>>>> d825077fad73e9c3374410819a8a6a238f404190
 
 void tabuleiro_free(Tabuleiro* tabuleiro);
 
