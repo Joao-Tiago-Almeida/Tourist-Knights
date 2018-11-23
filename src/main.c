@@ -71,7 +71,7 @@ void read_and_write_files(char* filename) {
         exit(0);
     }
 
-    free(file_out_name); //TODO posso fazer free do file_out_name aqui ou tem de ser quando faço fclose
+    free(file_out_name);
 
     Tabuleiro* tabuleiro = NULL;
 
