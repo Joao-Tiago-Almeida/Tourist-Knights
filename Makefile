@@ -28,7 +28,7 @@ O3:
 	$(CC) ${SRC} -O3 -Wall -o tuktuk $(LIBS)
 
 clean::
-			rm	-f	src/*.o	core	tuktuk  *.valid	*~
+			rm	-f	src/*.o	core	tuktuk  testfiles/*.valid	*~
 
 
 # TODO comentar isto tudo
