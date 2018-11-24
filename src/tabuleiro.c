@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "util.h"
-#include "passeios.h"
 #include "movimentos.h"
 
 struct tabuleiro_t {
@@ -115,6 +114,7 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
 
     best_choice(tabuleiro);
 }
+
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
  * @param tabuleiro
@@ -181,8 +181,6 @@ void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
                                 tabuleiro->cost);
 }
 
-
-
 /**
  * Escreve o número de cidades e lê as coordenadas de cidade a visitar do novo passeio do ficehiro
  * @param  tabuleiro
@@ -233,6 +231,7 @@ int tabuleiro_get_num_pontos(Tabuleiro* tabuleiro) {
 Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro) {
     return tabuleiro->pontos;
 }
+
 Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro) {
     return tabuleiro->pontos[0];
 }
