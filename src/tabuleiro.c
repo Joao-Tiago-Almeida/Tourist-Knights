@@ -45,12 +45,12 @@ unsigned int tabuleiro_get_height(Tabuleiro* tabuleiro) {
     return tabuleiro->height;
 }
 
-void tabuleiro_set_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y, unsigned char cost) {
-    tabuleiro->cost_matrix[x + y*tabuleiro->width] = cost;
+void tabuleiro_set_cost(Tabuleiro* tabuleiro, Vector2 vec,  unsigned char cost) {
+    tabuleiro->cost_matrix[vec.x + vec.y*tabuleiro->width] = cost;
 }
 
-int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y) {
-    return tabuleiro->cost_matrix[x + y*tabuleiro->width];
+int tabuleiro_get_cost(Tabuleiro* tabuleiro, Vector2 vec) {
+    return tabuleiro->cost_matrix[vec.x + vec.y*tabuleiro->width];
 }
 
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
@@ -65,6 +65,8 @@ char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
 void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     tabuleiro->cost_matrix = (unsigned char*) checked_malloc(sizeof(unsigned char) * (tabuleiro->width * tabuleiro->height));
 
+    Vector2 vec;
+
     for(unsigned int j = 0; j<tabuleiro->height; j++) {
         for(unsigned int i = 0; i<tabuleiro->width; i++) {
             int cost;
@@ -78,7 +80,8 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
                 exit(0);
             }
             //  Escrita no vetor
-            tabuleiro_set_cost(tabuleiro, i, j, (unsigned char) cost);
+            vec = vector2_new(i,j);
+            tabuleiro_set_cost(tabuleiro, vec, (unsigned char) cost);
         }
     }
 }

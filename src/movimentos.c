@@ -43,7 +43,7 @@ bool inside_board(Tabuleiro* tabuleiro, Vector2 vec){
  * @return           retorna true se a cidade não estiver fechada
  */
 bool city_valid(Tabuleiro* tabuleiro, Vector2 vec) {
-    return tabuleiro_get_cost(tabuleiro, vec.x, vec.y) != 0;
+    return tabuleiro_get_cost(tabuleiro, vec) != 0;
 }
 
 /*
@@ -89,7 +89,7 @@ void possible_moves(Tabuleiro *tabuleiro){
             return;
         }
 
-        tabuleiro_passeio_set_cost(tabuleiro, tabuleiro_passeio_get_cost(tabuleiro) + (int)tabuleiro_get_cost(tabuleiro, point2.x, point2.y));
+        tabuleiro_passeio_set_cost(tabuleiro, tabuleiro_passeio_get_cost(tabuleiro) + (int)tabuleiro_get_cost(tabuleiro, point2));
         //printf("total: %d\n", tabuleiro_passeio_get_cost(passeio));
     }
 
@@ -124,8 +124,8 @@ void best_choice(Tabuleiro *tabuleiro){
             movement.y = knight_L[j].y + tabuleiro_passeio_get_pos_ini(tabuleiro).y;
 
             if((inside_board(tabuleiro, movement) && (city_valid(tabuleiro, movement)))){
-                best = (best < tabuleiro_get_cost(tabuleiro, movement.x, movement.y) ?
-                            best : tabuleiro_get_cost(tabuleiro, movement.x, movement.y));
+                best = (best < tabuleiro_get_cost(tabuleiro, movement) ?
+                            best : tabuleiro_get_cost(tabuleiro, movement));
             }
         }
     }
