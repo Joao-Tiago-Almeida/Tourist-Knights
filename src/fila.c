@@ -32,6 +32,10 @@ Fila* new_size(Fila *f, int *size){
     return f = (Fila*) realloc(f, *size);
 }
 
+void insert_node(Fila *f){
+
+}
+
 /**
  * Compara dois elementos
  * @param  a elemento 1

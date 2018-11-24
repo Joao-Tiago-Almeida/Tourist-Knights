@@ -9,7 +9,7 @@ typedef struct fila_t Fila;
 
 Fila *new_fila(int size);
 Fila *new_size(Fila *f, int *size);
-void insert_node();
+void insert_node(Fila *f);
 void pick_best_node();
 void remove_node();
 bool feather_node(int, int);
