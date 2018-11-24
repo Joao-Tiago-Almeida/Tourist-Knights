@@ -37,59 +37,48 @@ Acervo *new_size(Acervo *acervo) {
 }
 
 /**
- * insire uma cidade da acervo
- * @param acervo
- * @param vec coordenadas na cidade
- */
-void insert_city(Acervo *acervo, Vector2 vec) {
-
-    // realocar vetor quando está totalmente preenchido
-    if((acervo->free + 1) > acervo->size){
-        new_size(acervo);
-    }
-    // inserir a casa na acervo
-    acervo->vetor[get_insert_pos(acervo)] = vec;
-    (acervo->free)++;
-}
-
-/**
- * Devolve a cidade com menor custo
- * param acervo
- * @return   primeiro elemento da acervo
- */
+* Devolve a cidade com menor custo, chamar a seguir a função bubble_acervo
+* param acervo
+* @return   primeiro elemento da acervo
+*/
 Vector2 pick_best_city(Acervo *acervo) {
     return acervo->vetor[0];
 }
 
 /**
- * Compara o custo de duas cidades
- * @param  a cidade 1
- * @param  b cidade 2
- * @tabuleiro
- * @return   cidade com menor custo
- */
+* Compara o custo de duas cidades
+* @param  a cidade 1
+* @param  b cidade 2
+* @tabuleiro
+* @return   cidade com menor custo
+*/
 int feather_city(Vector2 a, Vector2 b, Tabuleiro *tabuleiro) {
     if(tabuleiro_get_cost(tabuleiro, b) < tabuleiro_get_cost(tabuleiro, a))
-        return 2;
+    return 2;
     return 1;
 }
 
 /**
- * Procura o "pai"
- * @param  v cidade
- * @return   a cidade acima no acervo
- */
-unsigned int acervo_get_upper(int v) {
-    return (v -1)/2;
+* Calcula a próxima posição vazia
+* @param  acervo
+* @return   posição vazia
+*/
+int get_insert_pos(Acervo *acervo) {
+    int a = 0, b;
+    do {
+        b = (acervo->size)/2;
+        a += b;
+    } while( b != 1 );
+    return  a + acervo->free;
 }
 
 /**
- * Procura o "filho" com menor peso
- * @param  acervo
- * @param  v    cidade
- * @param  n    qual o "filho a procurar" {1,2}
- * @return      a cidade abaixo no acervo
- */
+* Procura o "filho" com menor peso
+* @param  acervo
+* @param  v    cidade
+* @param  n    qual o "filho a procurar" {1,2}
+* @return      a cidade abaixo no acervo
+*/
 int acervo_get_lower(Acervo *acervo, int v, int n) {
 
     int a;
@@ -101,7 +90,51 @@ int acervo_get_lower(Acervo *acervo, int v, int n) {
     return a;
 }
 
-void bubble_down_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
+/**
+* Procura o "pai"
+* @param  v cidade
+* @return   a cidade acima no acervo
+*/
+unsigned int acervo_get_upper(int v) {
+    return (v -1)/2;
+}
+
+/**
+* Comparação entre duas cidades
+* @param  vec1
+* @param  vec2
+* @return      true se as coordenadas coincidirem
+*/
+bool reach_final_city(Vector2 vec1, Vector2 vec2) {
+    if((vec1.x == vec2.x) && (vec1.y == vec2.y)) return true;
+    return false;
+}
+
+/**
+ * insire uma cidade da acervo
+ * @param acervo
+ * @param vec coordenadas na cidade
+ * @param tabuleiro
+ */
+void insert_city(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
+
+    // realocar vetor quando está totalmente preenchido
+    if((acervo->free + 1) > acervo->size){
+        new_size(acervo);
+    }
+    // inserir a casa na acervo
+    acervo->vetor[get_insert_pos(acervo)] = vec;
+    fix_up_acervo(acervo, get_insert_pos(acervo), tabuleiro);
+    (acervo->free)++;
+}
+
+/**
+ * Faz subir o "filho" mais leve
+ * @param acervo
+ * @param p         cidade
+ * @param tabuleiro
+ */
+void bubble_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
 
     int feather;
     // a cidade não tem filhos
@@ -115,7 +148,7 @@ void bubble_down_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
         feather = acervo_get_lower(acervo, p, feather_city(acervo->vetor[acervo_get_lower(acervo, p, 1)], acervo->vetor[acervo_get_lower(acervo, p, 2)], tabuleiro));
         // bubble
         acervo->vetor[p] = acervo->vetor[feather];
-        bubble_down_acervo(acervo, feather, tabuleiro);
+        bubble_acervo(acervo, feather, tabuleiro);
     }
     // escreve o último elemento da acervo no filho que subiu e retrocede a próxima posição de escrita
     if(feather != -1) {
@@ -123,24 +156,23 @@ void bubble_down_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
     }
 }
 
-void bubble_up_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
+/**
+ * [fix_up_acervo description]
+ * @param acervo    [description]
+ * @param p         [description]
+ * @param tabuleiro [description]
+ */
+void fix_up_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
+
+    // cidade mais leve
+    if(p == 0)  return;
+
+    // se o a cidade "filha" tiver um custo menor que a cidade "mãe"
     if(feather_city(acervo->vetor[acervo_get_upper(p)], acervo->vetor[p], tabuleiro) == 2) {
         switch_cities_acervo(acervo, p);
+        p = acervo_get_upper(p);
+        fix_up_acervo(acervo, p, tabuleiro);
     }
-}
-
-/**
- * Calcula a próxima posição vazia
- * @param  acervo
- * @return   posição vazia
- */
-int get_insert_pos(Acervo *acervo) {
-    int a = 0, b;
-    do {
-        b = (acervo->size)/2;
-        a += b;
-    } while( b != 1 );
-    return  a + acervo->free;
 }
 
 /**
@@ -154,3 +186,5 @@ void switch_cities_acervo(Acervo *acervo, int p) {
     acervo->vetor[acervo_get_upper(p)] = acervo->vetor[p];
     acervo->vetor[p] = vec;
 }
+
+//TODO falta fazer o free do acervo
