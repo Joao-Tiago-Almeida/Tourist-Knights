@@ -10,7 +10,6 @@ struct tabuleiro_t {
     unsigned int width, height;
     unsigned char* cost_matrix; //Cada custo tem um byte
     char type_passeio;
-    void* passeio;
 
     int num_pontos;
     Vector2* pontos;
@@ -30,7 +29,6 @@ Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     tab->width = w;
     tab->height = h;
     tab->type_passeio = type_passeio;
-    tab->passeio = NULL;
 
     tab->cost_matrix = NULL; // Nao aloca ainda a matriz porque pode ser que o passeio seja invalido
 
@@ -147,7 +145,6 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
 
-    free(tabuleiro->passeio);
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
 }
