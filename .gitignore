@@ -58,3 +58,4 @@ dkms.conf
 
 *.valid
 testfiles/t8013.cities
+.walks
