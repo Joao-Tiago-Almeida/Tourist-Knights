@@ -5,8 +5,6 @@
 #include "util.h"
 #include "movimentos.h"
 
-const Vector2 knight_L[8] = { {1,2}, {2,1}, {2,-1}, {1,-2},
-                            {-1,-2}, {-2,-1}, {-2,1}, {-1,2} };
 struct tabuleiro_t {
     unsigned int width, height;
     unsigned char* cost_matrix; //Cada custo tem um byte
@@ -75,10 +73,10 @@ void tabuleiro_init_st_wt(Tabuleiro* tabuleiro) {
     
     tabuleiro->wt = (int*)checked_malloc(w * h * sizeof(int));
     tabuleiro->st = (char*)checked_malloc(w * h * sizeof(char));
-    for(int i = 0; i<w; i++) {
-        for(int j = 0; j<h; j++) {
-            tabuleiro->wt[i + j*h] = -1;
-            tabuleiro->st[i + j*h] = -1;
+    for(int j = 0; j<h; j++) {
+        for(int i = 0; i<w; i++) {
+            tabuleiro->wt[i + j*w] = -1;
+            tabuleiro->st[i + j*w] = -1;
         }
     }
 }
@@ -150,7 +148,9 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     if(passeio_get_valid(tabuleiro) != 1)
         return;
 
-    best_choice(tabuleiro);
+    movimentos_find_path(tabuleiro,
+        tabuleiro_passeio_get_pos_ini(tabuleiro),
+        tabuleiro_passeio_get_pontos(tabuleiro)[1]);
 }
 
 /**

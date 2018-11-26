@@ -9,17 +9,20 @@
 typedef struct acervo_t Acervo;
 
 Acervo *new_acervo(int size);
-Acervo *new_size(Acervo *acervo);
-Vector2 pick_best_city(Acervo *acervo);
-int feather_city(Vector2 a, Vector2 b, Tabuleiro *tabuleiro);
-int get_insert_pos(Acervo *acervo);
+Vector2 acervo_get_top(Acervo *acervo);
+void acervo_insert(Acervo *f, Vector2 vec, Tabuleiro *tabuleiro);
+void acervo_update_or_insert(Acervo* acervo, Vector2 vec, int old_value, Tabuleiro* tabuleiro);
+bool acervo_is_empty(Acervo* acervo);
+void acervo_remove_top(Acervo *acervo, Tabuleiro* tabuleiro);
+void acervo_print(Acervo *acervo);
+void acervo_free(Acervo** acervo);
+
+/*int acervo_get_insert_pos(Acervo *acervo);
 int acervo_get_lower(Acervo *acervo, int v, int n);
 unsigned int acervo_get_upper(int v);
-bool reach_final_city(Vector2 vec1, Vector2 vec2);
-void insert_city(Acervo *f, Vector2 vec, Tabuleiro *tabuleiro);
-void bubble_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro);
-void fix_up_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro);
-void switch_cities_acervo(Acervo *acervo, int p);
+void acervo_fix_up(Acervo *acervo, int p, Tabuleiro *tabuleiro);
+void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro);
+void exchange_cities_acervo(Acervo *acervo, int p);*/
 //NOTE: talvez possam ser precisas
 // void sort_acervo();
 // void remove_city();

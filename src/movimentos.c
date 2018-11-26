@@ -144,48 +144,65 @@ void best_choice(Tabuleiro *tabuleiro){
 void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     Acervo* fila = new_acervo(100); //TODO valor inicial
 
+    acervo_print(fila);
     //Init matrizes
     tabuleiro_init_st_wt(tabuleiro);
 
     //Init algoritmo
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
-    insert_city(fila, ini, tabuleiro);
+    acervo_insert(fila, ini, tabuleiro);
+    printf("Insere %d,%d\n", ini.x, ini.y);
 
     while(!acervo_is_empty(fila)) {
-        Vector2 v = pick_best_city(fila);
+        Vector2 v = acervo_get_top(fila);
+        printf("\nV <- (%d,%d)\n", v.x, v.y);
+        acervo_print(fila);
+        acervo_remove_top(fila, tabuleiro);
+
         int wt_value = tabuleiro_get_wt_val(tabuleiro, v);
-        if(wt_value != -1) {
-            acervo_remove(fila, tabuleiro, v);
-        }
+        /*if(wt_value != -1) {
+            acervo_remove(fila, v, tabuleiro);
+        }*/
 
         for(int mov_rel = 0; mov_rel<8; mov_rel++) {
             //Vizinhos de v
             Vector2 pos_to_try = vector2_add(v, knight_L[mov_rel]);
 
-            if(!inside_board(tabuleiro, pos_to_try)) {
+            if(!(inside_board(tabuleiro, pos_to_try) && tabuleiro_get_cost(tabuleiro, pos_to_try) != 0)) {
                 //Se for uma posicao invalida, passa à frente
                 continue;
             }
 
             int old_wt_val = tabuleiro_get_wt_val(tabuleiro, pos_to_try);
+            int new_wt_val = wt_value + tabuleiro_get_cost(tabuleiro, pos_to_try);
+
             if(old_wt_val != -1) {
                 //Se o custo não for infinito
-                int cost = tabuleiro_get_cost(tabuleiro, pos_to_try);
-                int new_wt_val = wt_value + cost;
 
                 if(old_wt_val > new_wt_val) {
                     //Se agora o custo for menor até lá, mudar a sua posicao na fila
                     
                     tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
-                    acervo_update_or_insert(fila, tabuleiro, pos_to_try);  // (atualiza se já tiver no acervo/ insere ordenado)
+                    //atualiza se já tiver no acervo/insere ordenado
+                    acervo_update_or_insert(fila, pos_to_try, old_wt_val, tabuleiro);
+                    printf("Insere/Atualiza %d,%d\n", pos_to_try.x, pos_to_try.y);
+                    
 
                     //Fica ao contrario (em vez de dizer que subiu 2, tá a dizer que desceu dois)
                     //Pq o st é suposto dizer a direção para ir do pos_to_try ao v, e não o contrario
                     tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
                 }
+            } else {
+                //Se for a primeira vez que a casa é considerada
+                tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
+                acervo_insert(fila, pos_to_try, tabuleiro);
+                printf("Insere %d,%d\n", pos_to_try.x, pos_to_try.y);
+                tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
             }
         }
     }
+
+    //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
 
 
     //Percorrer o caminho ao contrario
@@ -204,5 +221,5 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
 
     tabuleiro_free_st_wt(tabuleiro);
-    free(fila);
+    acervo_free(&fila);
 }
