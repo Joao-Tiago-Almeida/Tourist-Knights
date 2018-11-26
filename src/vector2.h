@@ -12,5 +12,6 @@ typedef struct vector2_t {
 
 Vector2 vector2_new(int x, int y);
 Vector2 vector2_read_from_file(FILE* fp);
+Vector2 vector2_add(Vector2 a, Vector2 b);
 
 #endif
