@@ -16,6 +16,7 @@ OBJ	=	$(SRC:.c=.o)
 %.o: %.c HDRS
 	$(CC) $(CFLAGS) -c $<
 
+	#não sei oq isto é
 dirs = $(shell ls testfiles)
 
 $(EXECUTABLE):	$(OBJ)
