@@ -15,9 +15,16 @@ void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp);
 unsigned int tabuleiro_get_width(Tabuleiro* tabuleiro);
 unsigned int tabuleiro_get_height(Tabuleiro* tabuleiro);
 
-//FIXME mudar para recber um Vector2 em vez de dois pontos
-void tabuleiro_set_cost(Tabuleiro* tabuleiro, Vector2 vec,  unsigned char cost);
+void tabuleiro_set_cost(Tabuleiro* tabuleiro, Vector2 vec, unsigned char cost);
 int tabuleiro_get_cost(Tabuleiro* tabuleiro, Vector2 vec);
+
+void tabuleiro_set_wt_val(Tabuleiro* tabuleiro, Vector2 vec, int value);
+int tabuleiro_get_wt_val(Tabuleiro* tabuleiro, Vector2 vec);
+void tabuleiro_set_st_val(Tabuleiro* tabuleiro, Vector2 vec, char value);
+char tabuleiro_get_st_val(Tabuleiro* tabuleiro, Vector2 vec);
+
+void tabuleiro_init_st_wt(Tabuleiro* tabuleiro);
+void tabuleiro_free_st_wt(Tabuleiro* tabuleiro);
 
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro);
 

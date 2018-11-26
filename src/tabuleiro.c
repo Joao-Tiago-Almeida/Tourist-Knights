@@ -9,7 +9,9 @@ struct tabuleiro_t {
     unsigned int width, height;
     unsigned char* cost_matrix; //Cada custo tem um byte
     char type_passeio;
-    void* passeio;
+
+    int* wt;
+    char* st;
 
     int num_pontos;
     Vector2* pontos;
@@ -29,7 +31,6 @@ Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     tab->width = w;
     tab->height = h;
     tab->type_passeio = type_passeio;
-    tab->passeio = NULL;
 
     tab->cost_matrix = NULL; // Nao aloca ainda a matriz porque pode ser que o passeio seja invalido
 
@@ -44,12 +45,47 @@ unsigned int tabuleiro_get_height(Tabuleiro* tabuleiro) {
     return tabuleiro->height;
 }
 
-void tabuleiro_set_cost(Tabuleiro* tabuleiro, Vector2 vec,  unsigned char cost) {
+void tabuleiro_set_cost(Tabuleiro* tabuleiro, Vector2 vec, unsigned char cost) {
     tabuleiro->cost_matrix[vec.x + vec.y*tabuleiro->width] = cost;
 }
 
 int tabuleiro_get_cost(Tabuleiro* tabuleiro, Vector2 vec) {
     return tabuleiro->cost_matrix[vec.x + vec.y*tabuleiro->width];
+}
+
+void tabuleiro_set_wt_val(Tabuleiro* tabuleiro, Vector2 vec, int value) {
+    tabuleiro->wt[vec.x + vec.y*tabuleiro->width] = value;
+}
+int tabuleiro_get_wt_val(Tabuleiro* tabuleiro, Vector2 vec) {
+    return tabuleiro->wt[vec.x + vec.y*tabuleiro->width];
+}
+void tabuleiro_set_st_val(Tabuleiro* tabuleiro, Vector2 vec, char value) {
+    tabuleiro->st[vec.x + vec.y*tabuleiro->width] = value;
+}
+char tabuleiro_get_st_val(Tabuleiro* tabuleiro, Vector2 vec) {
+    return tabuleiro->st[vec.x + vec.y*tabuleiro->width];
+}
+
+void tabuleiro_init_st_wt(Tabuleiro* tabuleiro) {
+    int w, h;
+    w = tabuleiro_get_width(tabuleiro);
+    h = tabuleiro_get_height(tabuleiro);
+    
+    tabuleiro->wt = (int*)checked_malloc(w * h * sizeof(int));
+    tabuleiro->st = (char*)checked_malloc(w * h * sizeof(char));
+    for(int j = 0; j<h; j++) {
+        for(int i = 0; i<w; i++) {
+            tabuleiro->wt[i + j*w] = -1;
+            tabuleiro->st[i + j*w] = -1;
+        }
+    }
+}
+
+void tabuleiro_free_st_wt(Tabuleiro* tabuleiro) {
+    free(tabuleiro->wt);
+    tabuleiro->wt = NULL;
+    free(tabuleiro->st);
+    tabuleiro->st = NULL;
 }
 
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro) {
@@ -112,7 +148,9 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     if(passeio_get_valid(tabuleiro) != 1)
         return;
 
-    best_choice(tabuleiro);
+    movimentos_find_path(tabuleiro,
+        tabuleiro_passeio_get_pos_ini(tabuleiro),
+        tabuleiro_passeio_get_pontos(tabuleiro)[1]);
 }
 
 /**
@@ -150,7 +188,6 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
 
-    free(tabuleiro->passeio);
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
 }

@@ -15,7 +15,7 @@ void print_usage(char* program_name) {
 
 bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
     char modo = tabuleiro_get_tipo_passeio(tab);
-    return ((modo == 'A' && tabuleiro_get_num_pontos(tab) == 1) || (modo == 'B' && tabuleiro_get_num_pontos(tab) >= 2))
+    return ((modo == 'A' && tabuleiro_get_num_pontos(tab) == 2) || (modo == 'B' && tabuleiro_get_num_pontos(tab) >= 2))
         && passeio_get_valid(tab);
 }
 

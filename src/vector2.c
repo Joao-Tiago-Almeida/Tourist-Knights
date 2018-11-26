@@ -31,3 +31,14 @@ Vector2 vector2_read_from_file(FILE* fp) {
 
     return vec;
 }
+
+bool vector2_equals(Vector2 a, Vector2 b) {
+    return a.x == b.x && a.y == b.y;
+}
+
+Vector2 vector2_add(Vector2 a, Vector2 b) {
+    Vector2 res;
+    res.x = a.x + b.x;
+    res.y = a.y + b.y;
+    return res;
+}

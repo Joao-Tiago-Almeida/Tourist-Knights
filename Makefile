@@ -1,7 +1,7 @@
 #	Compiler
 CC	=	gcc
 #	Compiler Flags
-CFLAGS	=	-g	-Wall	-ansi	-pedantic	-std=c99
+CFLAGS	=	-g	-Wall	-ansi	-pedantic	-std=c99 -Wextra
 #	Compiler Libraries
 LIBS=	-lm
 #	name of the Program

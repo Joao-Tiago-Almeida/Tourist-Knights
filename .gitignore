@@ -53,8 +53,10 @@ Mkfile.old
 dkms.conf
 
 .vscode/launch.json
+.vscode
 
 .DS_Store
 
 *.valid
 testfiles/t8013.cities
+*.walks
