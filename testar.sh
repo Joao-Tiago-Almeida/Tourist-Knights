@@ -1,4 +1,4 @@
-#Metam na pasta do tuktuk, os ficheiros .cities numa pasta testfiles, os valid do professor numa chamada testfiles_valid.
+#Metam na pasta do tuktuk, os ficheiros .cities numa pasta testfiles, os walks do professor numa chamada testfiles_walks.
 #Na primeira execução fazer chmod +x testar.sh
 #Para correr fazer ./testar.sh
 
@@ -9,7 +9,7 @@ for file in testfiles/*; do
     filename="$(basename "$file")"
     if [ ${file: -7} == ".check" ]
     then
-        
+
         filename_without_extension="${filename%.*}"
         echo FICHEIRO: $filename_without_extension
 

@@ -2,11 +2,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include <string.h> //TODO remove
+//#include <string.h> //TODO remove
 
 #include "tabuleiro.h"
-#include "passeios.h"
 #include "util.h"
+
+#define CONSTANTE 0.20
 
 void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
@@ -21,7 +22,6 @@ bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
 Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos = 0;
     Tabuleiro* tabuleiro = NULL;
-    PasseioTipoB* passeio = NULL;
 
     if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
         fprintf(stderr, "Erro de leitura");
@@ -39,10 +39,6 @@ Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
     } else {
         //Se for válido lê matriz para o tabuleiro
         tabuleiro_read_matrix_from_file(tabuleiro, fp);
-    }
-
-    if(modo == 'b' || num_pts_turisticos < 2){
-        passeio_B_set_valid(passeio, -1);
     }
 
     return tabuleiro;
@@ -71,7 +67,7 @@ void read_and_write_files(char* filename) {
         exit(0);
     }
 
-    free(file_out_name); //TODO posso fazer free do file_out_name aqui ou tem de ser quando faço fclose
+    free(file_out_name);
 
     Tabuleiro* tabuleiro = NULL;
 

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DOT_VALID_LENGTH 6
+#define DOT_WALKS_LENGTH 5
 #define DOT_CITIES_LENGHT 7
 
 /**
@@ -45,22 +45,13 @@ bool string_ends_with(char* str, char* test) {
 
     return (strcmp(str+(len-testlen), test) == 0);
 
-    /*char* pos = strstr(str, test); //apontador para o inicio do test no str
 
-    if(pos == NULL) {
-        return false;
-    }
-
-    if(str + (strlen(str) - strlen(test)) == pos) {
-        return true;
-    }
-    return false;*/
 }
 
 char* create_dot_valid_filename(char* filename) {
     size_t filename_size = strlen(filename);
-    char* file_out_name = checked_calloc(sizeof(char), (filename_size + DOT_VALID_LENGTH + 1));
+    char* file_out_name = checked_calloc(sizeof(char), (filename_size + DOT_WALKS_LENGTH + 1));
     memcpy(file_out_name, filename, sizeof(char)*(filename_size - DOT_CITIES_LENGHT));
-    strcat(file_out_name, ".valid\0");
+    strcat(file_out_name, ".walks\0");
     return file_out_name;
 }

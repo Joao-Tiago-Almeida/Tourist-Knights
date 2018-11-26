@@ -16,8 +16,8 @@ unsigned int tabuleiro_get_width(Tabuleiro* tabuleiro);
 unsigned int tabuleiro_get_height(Tabuleiro* tabuleiro);
 
 //FIXME mudar para recber um Vector2 em vez de dois pontos
-void tabuleiro_set_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y, unsigned char cost);
-int tabuleiro_get_cost(Tabuleiro* tabuleiro, unsigned int x, unsigned int y);
+void tabuleiro_set_cost(Tabuleiro* tabuleiro, Vector2 vec,  unsigned char cost);
+int tabuleiro_get_cost(Tabuleiro* tabuleiro, Vector2 vec);
 
 char tabuleiro_get_tipo_passeio(Tabuleiro* tabuleiro);
 
