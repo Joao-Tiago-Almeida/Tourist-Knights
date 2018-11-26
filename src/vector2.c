@@ -16,7 +16,7 @@ Vector2 vector2_new(int x, int y) {
 }
 
 /**
- * Lê um vetor do ficehiro
+ * Lê um vetor do ficehiroma
  * @param  fp ficehiro de entrada
  * @return    vertor lido
  */

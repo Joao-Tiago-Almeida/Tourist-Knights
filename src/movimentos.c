@@ -181,12 +181,12 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
                 if(old_wt_val > new_wt_val) {
                     //Se agora o custo for menor até lá, mudar a sua posicao na fila
-                    
+
                     tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                     //atualiza se já tiver no acervo/insere ordenado
                     acervo_update_or_insert(fila, pos_to_try, old_wt_val, tabuleiro);
                     printf("Insere/Atualiza %d,%d\n", pos_to_try.x, pos_to_try.y);
-                    
+
 
                     //Fica ao contrario (em vez de dizer que subiu 2, tá a dizer que desceu dois)
                     //Pq o st é suposto dizer a direção para ir do pos_to_try ao v, e não o contrario
