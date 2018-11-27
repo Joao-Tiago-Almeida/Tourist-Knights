@@ -3,6 +3,7 @@
 #include "util.h"
 
 #define CONSTANTE    1.1 // 110% de um número
+#define NUMERO_DE_ESPACO_INICIALMENTE_ALOCADO   1
 
 static int acervo_get_priority(Acervo* acervo, int position, Tabuleiro* tabuleiro);
 static unsigned int acervo_get_upper(int v);
@@ -25,11 +26,12 @@ int acervo_get_priority(Acervo* acervo, int position, Tabuleiro* tabuleiro) {
 /**size = CONSTANTE * tabuleiro_get_width(tabuleiro) * tabuleiro_get_height(tabuleiro)
 TODO passar para o main.c*/
 /**
- * Cria uma acervo prioritária
+ * Cria um acervo prioritária
  * @param  size tamanho da acervo
  * @return      acervo
  */
 Acervo *new_acervo(int size) {
+    // size =  NUMERO_DE_ESPACO_INICIALMENTE_ALOCADO;
     Acervo *new = (Acervo*) checked_malloc(sizeof(Acervo));
     new->vetor = (Vector2*) checked_malloc(size * sizeof(Vector2));
     new->size = size;
@@ -42,6 +44,8 @@ void acervo_print(Acervo *acervo) {
     printf("Acervo: %d elementos %d de capacidade\n", acervo->num_elems, acervo->size);
     if(acervo->num_elems > 0)
         printf("Primeiro: %d,%d\n", acervo->vetor[0].x, acervo->vetor[0].y);
+        printf("Filho 1: %d,%d\n", acervo->vetor[1].x, acervo->vetor[1].y);
+        printf("Filho 2: %d,%d\n", acervo->vetor[2].x, acervo->vetor[2].y);
 }
 
 /**
@@ -53,8 +57,9 @@ void acervo_print(Acervo *acervo) {
 void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
     // realocar vetor quando está totalmente preenchido
     if(acervo->num_elems+1 > acervo->size) {
-        acervo->size *= 2;
-        acervo->vetor = (Vector2*) realloc(acervo->vetor, acervo->size * sizeof(Vector2)); //TODO checked_realloc
+        //  aloca espaço para o todo nível seguinte
+        acervo->size = 2 * acervo->size + 1;
+        acervo->vetor = (Vector2*) checked_realloc(acervo->vetor, acervo->size * sizeof(Vector2));
     }
 
 
@@ -66,7 +71,13 @@ void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
     //(acervo->free)++;
 }
 
-//Reposiciona o elemento vec no acervo ou insere se não existir
+/**
+ * Reposiciona o elemento vec no acervo ou insere se não existir
+ * @param acervo    [description]
+ * @param vec       [description]
+ * @param old_value [description]
+ * @param tabuleiro [description]
+ */
 void acervo_update_or_insert(Acervo* acervo, Vector2 vec, int old_value, Tabuleiro* tabuleiro) {
     int index = -1; //Indice onde está o vec (-1 se não estiver na tabela)
     for(int i = 0; i<acervo->num_elems; i++) {
@@ -162,6 +173,12 @@ void acervo_fix_up(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
     }
 }
 
+/**
+ * [acervo_fix_down description]
+ * @param acervo    [description]
+ * @param p         [description]
+ * @param tabuleiro [description]
+ */
 void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
     int child;
 
@@ -181,10 +198,13 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
             break;
         }
 
+        //  TODO já tinha uma função de troca, exchange_cities_acervo
         //Troca o pai com filho mais prioritario (mais leve)
-        Vector2 tmp = acervo->vetor[p];
-        acervo->vetor[p] = acervo->vetor[child];
-        acervo->vetor[child] = tmp;
+
+        // Vector2 tmp = acervo->vetor[p];
+        // acervo->vetor[p] = acervo->vetor[child];
+        // acervo->vetor[child] = tmp;
+         exchange_cities_acervo(acervo, child);
         p = child;
     }
 }

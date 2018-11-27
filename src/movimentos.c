@@ -142,7 +142,8 @@ void best_choice(Tabuleiro *tabuleiro){
 
 
 void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
-    Acervo* fila = new_acervo(100); //TODO valor inicial
+    int expression = tabuleiro_get_width(tabuleiro) * tabuleiro_get_height(tabuleiro) * .25;
+    Acervo* fila = new_acervo(expression);
 
     acervo_print(fila);
     //Init matrizes
@@ -205,19 +206,8 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
 
 
-    //Percorrer o caminho ao contrario
-    Vector2 p = dest;
-    int st;
-    while(true) {
-        st = tabuleiro_get_st_val(tabuleiro, p);
-        printf("%d %d\n", p.x, p.y);
-
-        if(st == -1)
-            break; //Se chegou ao fim
-
-        p.x = p.x - knight_L[st].x;
-        p.y = p.y - knight_L[st].y;
-    }
+    //já escreve bem, mas chamo duas vezes o mesmo elemento por causa da recursiva
+     imprime_caminho(tabuleiro, dest, dest, (Vector2*) knight_L);
 
 
     tabuleiro_free_st_wt(tabuleiro);

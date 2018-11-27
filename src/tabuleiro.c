@@ -70,7 +70,7 @@ void tabuleiro_init_st_wt(Tabuleiro* tabuleiro) {
     int w, h;
     w = tabuleiro_get_width(tabuleiro);
     h = tabuleiro_get_height(tabuleiro);
-    
+
     tabuleiro->wt = (int*)checked_malloc(w * h * sizeof(int));
     tabuleiro->st = (char*)checked_malloc(w * h * sizeof(char));
     for(int j = 0; j<h; j++) {
@@ -271,4 +271,23 @@ Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro) {
 
 Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro) {
     return tabuleiro->pontos[0];
+}
+
+void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 dest_1, Vector2 *knight_L) {
+    Vector2 p = dest;
+    int st;
+
+    st = tabuleiro_get_st_val(tabuleiro, p);
+
+    if(st == -1)
+        return; //Se chegou ao fim
+
+    p.x = p.x - knight_L[st].x;
+    p.y = p.y - knight_L[st].y;
+
+    imprime_caminho(tabuleiro, p, dest_1, knight_L);
+
+    printf("%d %d\n", p.x, p.y);
+    if(vector2_equals(dest, dest_1))  printf("%d %d\t\n", dest.x, dest.y);
+
 }

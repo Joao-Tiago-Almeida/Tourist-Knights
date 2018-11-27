@@ -2,12 +2,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-//#include <string.h> //TODO remove
-
 #include "tabuleiro.h"
 #include "util.h"
 
-#define CONSTANTE 0.20
 
 void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);

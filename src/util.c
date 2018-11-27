@@ -22,6 +22,23 @@ void *checked_malloc(size_t size) {
     return ptr;
 }
 
+/**
+ * Alocação limitada de memória
+ * @param  size tamanho finito de memória a alocar
+ * @return      ponteiro para o espaço de memória alocado
+ */
+void *checked_realloc(void * ptr, size_t size) {
+
+    ptr = realloc(ptr, size);
+
+    if(ptr == NULL) {
+        fprintf(stderr, "Error allocating memory\n");
+        exit(0);
+    }
+
+    return ptr;
+}
+
 void *checked_calloc(size_t size, size_t n) {
     void* ptr = calloc(size, n);
 
