@@ -204,4 +204,20 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
 
 
+    //Percorrer o caminho ao contrario
+    Vector2 p = dest;
+    int st;
+    while(true) {
+        st = tabuleiro_get_st_val(tabuleiro, p);
+        printf("%d %d\n", p.x, p.y);
+
+        if(st == -1)
+            break; //Se chegou ao fim
+
+        p.x = p.x - knight_L[st].x;
+        p.y = p.y - knight_L[st].y;
+    }
+
+    tabuleiro_free_st_wt(tabuleiro);
+    acervo_free(&fila);
 }
