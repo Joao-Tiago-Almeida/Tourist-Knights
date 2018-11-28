@@ -23,6 +23,9 @@ int tabuleiro_get_wt_val(Tabuleiro* tabuleiro, Vector2 vec);
 void tabuleiro_set_st_val(Tabuleiro* tabuleiro, Vector2 vec, char value);
 char tabuleiro_get_st_val(Tabuleiro* tabuleiro, Vector2 vec);
 
+//  TODO perguntar ao prof
+void *tabuleiro_get_fila(Tabuleiro* tabuleiro);
+
 void tabuleiro_init_st_wt(Tabuleiro* tabuleiro);
 void tabuleiro_free_st_wt(Tabuleiro* tabuleiro);
 
@@ -50,5 +53,5 @@ int tabuleiro_get_num_pontos(Tabuleiro* tabuleiro);
 Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro);
 Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro);
 
-void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 dest_1, Vector2 *knight_L);
+void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 *knight_L, FILE * fp);
 #endif

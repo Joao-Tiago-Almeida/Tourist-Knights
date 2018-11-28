@@ -4,6 +4,7 @@
 
 #include "util.h"
 #include "movimentos.h"
+#include "acervo.h"
 
 struct tabuleiro_t {
     unsigned int width, height;
@@ -12,6 +13,7 @@ struct tabuleiro_t {
 
     int* wt;
     char* st;
+    Acervo *fila;
 
     int num_pontos;
     Vector2* pontos;
@@ -66,13 +68,15 @@ char tabuleiro_get_st_val(Tabuleiro* tabuleiro, Vector2 vec) {
     return tabuleiro->st[vec.x + vec.y*tabuleiro->width];
 }
 
+void *tabuleiro_get_fila(Tabuleiro* tabuleiro) {
+    return tabuleiro->fila;
+}
+
 void tabuleiro_init_st_wt(Tabuleiro* tabuleiro) {
     int w, h;
     w = tabuleiro_get_width(tabuleiro);
     h = tabuleiro_get_height(tabuleiro);
 
-    tabuleiro->wt = (int*)checked_malloc(w * h * sizeof(int));
-    tabuleiro->st = (char*)checked_malloc(w * h * sizeof(char));
     for(int j = 0; j<h; j++) {
         for(int i = 0; i<w; i++) {
             tabuleiro->wt[i + j*w] = -1;
@@ -119,6 +123,13 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
             tabuleiro_set_cost(tabuleiro, vec, (unsigned char) cost);
         }
     }
+
+    // Expressão inicial de alocação de memómira
+    int expression = tabuleiro->width * tabuleiro->height * .25;
+    tabuleiro->fila = new_acervo(expression);
+
+    tabuleiro->wt = (int*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(int));
+    tabuleiro->st = (char*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(char));
 }
 
 /**
@@ -187,7 +198,8 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
  */
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
-
+    tabuleiro_free_st_wt(tabuleiro);
+    acervo_free(&(tabuleiro->fila));
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
 }
@@ -273,7 +285,7 @@ Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro) {
     return tabuleiro->pontos[0];
 }
 
-void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 dest_1, Vector2 *knight_L) {
+void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 *knight_L, FILE * fp) {
     Vector2 p = dest;
     int st;
 
@@ -282,12 +294,12 @@ void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 dest_1, Vector2
     if(st == -1)
         return; //Se chegou ao fim
 
-    p.x = p.x - knight_L[st].x;
-    p.y = p.y - knight_L[st].y;
+    p = vector2_sub(p, knight_L[st]);
 
-    imprime_caminho(tabuleiro, p, dest_1, knight_L);
+    imprime_caminho(tabuleiro, p, knight_L, fp);
 
-    printf("%d %d\n", p.x, p.y);
-    if(vector2_equals(dest, dest_1))  printf("%d %d\t\n", dest.x, dest.y);
+    p = vector2_add(p, knight_L[st]);
+
+    fprintf(fp, "%d %d %d\n", p.y, p.x, tabuleiro_get_cost(tabuleiro, p));
 
 }

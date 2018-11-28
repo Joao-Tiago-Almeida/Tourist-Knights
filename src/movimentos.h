@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #include "vector2.h"
-#include "tabuleiro.h"  //TODO nunca sei qunado é .h ou quando é .c
+#include "tabuleiro.h"
 
 bool inside_board(Tabuleiro *tabuleiro, Vector2 vec);
 bool city_valid(Tabuleiro *tabuleiro, Vector2 vec);

@@ -142,27 +142,25 @@ void best_choice(Tabuleiro *tabuleiro){
 
 
 void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
-    int expression = tabuleiro_get_width(tabuleiro) * tabuleiro_get_height(tabuleiro) * .25;
-    Acervo* fila = new_acervo(expression);
 
-    acervo_print(fila);
-    //Init matrizes
+    acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
+    //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
     tabuleiro_init_st_wt(tabuleiro);
 
     //Init algoritmo
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
-    acervo_insert(fila, ini, tabuleiro);
+    acervo_insert((Acervo *)(Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
     printf("Insere %d,%d\n", ini.x, ini.y);
 
-    while(!acervo_is_empty(fila)) {
-        Vector2 v = acervo_get_top(fila);
+    while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
+        Vector2 v = acervo_get_top((Acervo *)tabuleiro_get_fila(tabuleiro));
         printf("\nV <- (%d,%d)\n", v.x, v.y);
-        acervo_print(fila);
-        acervo_remove_top(fila, tabuleiro);
+        acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
+        acervo_remove_top((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
 
         int wt_value = tabuleiro_get_wt_val(tabuleiro, v);
         /*if(wt_value != -1) {
-            acervo_remove(fila, v, tabuleiro);
+            acervo_remove((Acervo *)tabuleiro_get_fila(tabuleiro), v, tabuleiro);
         }*/
 
         for(int mov_rel = 0; mov_rel<8; mov_rel++) {
@@ -185,7 +183,7 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
                     tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                     //atualiza se já tiver no acervo/insere ordenado
-                    acervo_update_or_insert(fila, pos_to_try, old_wt_val, tabuleiro);
+                    acervo_update_or_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, old_wt_val, tabuleiro);
                     printf("Insere/Atualiza %d,%d\n", pos_to_try.x, pos_to_try.y);
 
 
@@ -196,7 +194,7 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
             } else {
                 //Se for a primeira vez que a casa é considerada
                 tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
-                acervo_insert(fila, pos_to_try, tabuleiro);
+                acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, tabuleiro);
                 printf("Insere %d,%d\n", pos_to_try.x, pos_to_try.y);
                 tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
             }
@@ -206,10 +204,4 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
 
 
-    //já escreve bem, mas chamo duas vezes o mesmo elemento por causa da recursiva
-     imprime_caminho(tabuleiro, dest, dest, (Vector2*) knight_L);
-
-
-    tabuleiro_free_st_wt(tabuleiro);
-    acervo_free(&fila);
 }

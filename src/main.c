@@ -85,6 +85,7 @@ void read_and_write_files(char* filename) {
             tabuleiro = read_file(fp, w, h, modo);
         }
 
+
         //Analisa o tabuleiro como devido
         tabuleiro_execute(tabuleiro);
         //Escreve o resultado

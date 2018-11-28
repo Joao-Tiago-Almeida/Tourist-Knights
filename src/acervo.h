@@ -17,7 +17,7 @@ void acervo_remove_top(Acervo *acervo, Tabuleiro* tabuleiro);
 void acervo_print(Acervo *acervo);
 void acervo_free(Acervo** acervo);
 
-//nao sei se é para tar aqui 
+//nao sei se é para tar aqui
 int acervo_feather_city(Acervo* acervo, int a, int b, Tabuleiro *tabuleiro);
 
 /*int acervo_get_insert_pos(Acervo *acervo);

@@ -16,5 +16,6 @@ Vector2 vector2_read_from_file(FILE* fp);
 
 bool vector2_equals(Vector2 a, Vector2 b);
 Vector2 vector2_add(Vector2 a, Vector2 b);
+Vector2 vector2_sub(Vector2 a, Vector2 b);
 
 #endif

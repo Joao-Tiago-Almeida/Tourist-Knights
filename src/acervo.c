@@ -43,9 +43,13 @@ Acervo *new_acervo(int size) {
 void acervo_print(Acervo *acervo) {
     printf("Acervo: %d elementos %d de capacidade\n", acervo->num_elems, acervo->size);
     if(acervo->num_elems > 0)
+    {
         printf("Primeiro: %d,%d\n", acervo->vetor[0].x, acervo->vetor[0].y);
+            if(acervo->num_elems > 1)
         printf("Filho 1: %d,%d\n", acervo->vetor[1].x, acervo->vetor[1].y);
-        printf("Filho 2: %d,%d\n", acervo->vetor[2].x, acervo->vetor[2].y);
+        if(acervo->num_elems > 2)
+            printf("Filho 2: %d,%d\n", acervo->vetor[2].x, acervo->vetor[2].y);
+    }
 }
 
 /**
@@ -201,9 +205,6 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
         //  TODO já tinha uma função de troca, exchange_cities_acervo
         //Troca o pai com filho mais prioritario (mais leve)
 
-        // Vector2 tmp = acervo->vetor[p];
-        // acervo->vetor[p] = acervo->vetor[child];
-        // acervo->vetor[child] = tmp;
          exchange_cities_acervo(acervo, child);
         p = child;
     }
