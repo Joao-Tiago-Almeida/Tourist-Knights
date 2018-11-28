@@ -5,6 +5,7 @@
 #include "util.h"
 #include "movimentos.h"
 #include "acervo.h"
+#include "path.h"
 
 struct tabuleiro_t {
     unsigned int width, height;
@@ -14,6 +15,7 @@ struct tabuleiro_t {
     int* wt;
     char* st;
     Acervo *fila;
+    Path* paths;
 
     int num_pontos;
     Vector2* pontos;
@@ -159,7 +161,7 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     if(passeio_get_valid(tabuleiro) != 1)
         return;
 
-    movimentos_find_path(tabuleiro,
+    tabuleiro->paths[0] = movimentos_find_path(tabuleiro,
         tabuleiro_passeio_get_pos_ini(tabuleiro),
         tabuleiro_passeio_get_pontos(tabuleiro)[1]);
 }
@@ -173,7 +175,7 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
     if(passeio_get_valid(tabuleiro) != 1)
         return;
 
-    possible_moves(tabuleiro);
+    //possible_moves(tabuleiro);
 }
 
 /**
@@ -216,6 +218,14 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
     }
 }
 
+static void imprime_caminho(Tabuleiro* tabuleiro, Path path, FILE * fp) {
+    for(int i = 0; i<path.length; i++) {
+        Vector2 p = path.points[i];
+        fprintf(fp, "%d %d %d\n", p.y, p.x, tabuleiro_get_cost(tabuleiro, p));
+    }
+}
+
+
 /**
  * Cria um ficheiro *.valid e escreve os resultados do tipo B
  * @param tabuleiro
@@ -228,6 +238,11 @@ void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
                                 tabuleiro->num_pontos,
                                 tabuleiro->valid,
                                 tabuleiro->cost);
+
+    for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
+        //Imprime cada caminho
+        imprime_caminho(tabuleiro, tabuleiro->paths[path_i], fp);
+    }
 }
 
 /**
@@ -239,6 +254,9 @@ void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
 void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE* fp) {
     tabuleiro->num_pontos = num_pontos;
     tabuleiro->pontos = (Vector2*) checked_malloc(sizeof(Vector2) * num_pontos);
+
+    //Vão haver num_pontos-1 caminhos, porque vai haver um caminho entre cada dois pontos
+    tabuleiro->paths = (Path*) checked_malloc((num_pontos-1) * sizeof(Path));
 
     tabuleiro->valid = 1;
     tabuleiro->cost = 0;
@@ -283,23 +301,4 @@ Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro) {
 
 Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro) {
     return tabuleiro->pontos[0];
-}
-
-void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 *knight_L, FILE * fp) {
-    Vector2 p = dest;
-    int st;
-
-    st = tabuleiro_get_st_val(tabuleiro, p);
-
-    if(st == -1)
-        return; //Se chegou ao fim
-
-    p = vector2_sub(p, knight_L[st]);
-
-    imprime_caminho(tabuleiro, p, knight_L, fp);
-
-    p = vector2_add(p, knight_L[st]);
-
-    fprintf(fp, "%d %d %d\n", p.y, p.x, tabuleiro_get_cost(tabuleiro, p));
-
 }

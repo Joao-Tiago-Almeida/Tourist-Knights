@@ -52,6 +52,4 @@ int tabuleiro_get_num_pontos(Tabuleiro* tabuleiro);
 
 Vector2* tabuleiro_passeio_get_pontos(Tabuleiro* tabuleiro);
 Vector2 tabuleiro_passeio_get_pos_ini(Tabuleiro* tabuleiro);
-
-void imprime_caminho(Tabuleiro *tabuleiro, Vector2 dest, Vector2 *knight_L, FILE * fp);
 #endif

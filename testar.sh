@@ -7,7 +7,7 @@
 
 for file in testfiles/*; do
     filename="$(basename "$file")"
-    if [ ${file: -7} == ".check" ]
+    if [ ${file: -7} == ".cities" ]
     then
 
         filename_without_extension="${filename%.*}"

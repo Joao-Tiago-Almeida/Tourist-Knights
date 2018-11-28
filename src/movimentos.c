@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "util.h"
 #include "acervo.h"
 
 #define NUM_PONTOS_A 1
@@ -141,8 +142,8 @@ void best_choice(Tabuleiro *tabuleiro){
 }
 
 
-void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
-
+Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
+    Path path;
     acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
     //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
     tabuleiro_init_st_wt(tabuleiro);
@@ -203,21 +204,37 @@ void movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
     //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
 
-
-    //Percorrer o caminho ao contrario
+    path.length = 0;
+    //Percorrer o caminho ao contrario para saber o tamanho necessario para o vetor
     Vector2 p = dest;
     int st;
     while(true) {
         st = tabuleiro_get_st_val(tabuleiro, p);
-        printf("%d %d\n", p.x, p.y);
+        if(st == -1)
+            break; //Se chegou ao fim
+        p.x = p.x - knight_L[st].x;
+        p.y = p.y - knight_L[st].y;
+
+        path.length++;
+    }
+    
+    int i = 0;
+    path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
+
+    p = dest;
+    while(true) {
+        st = tabuleiro_get_st_val(tabuleiro, p);
 
         if(st == -1)
             break; //Se chegou ao fim
 
         p.x = p.x - knight_L[st].x;
         p.y = p.y - knight_L[st].y;
+        path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
+        i++;
     }
 
     tabuleiro_free_st_wt(tabuleiro);
-    acervo_free(&fila);
+
+    return path;
 }
