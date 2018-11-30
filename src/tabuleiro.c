@@ -204,6 +204,12 @@ void tabuleiro_free(Tabuleiro* tabuleiro) {
     acervo_free(&(tabuleiro->fila));
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
+
+    for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
+        //Liberta cada caminho
+        free(tabuleiro->paths[path_i].points);
+    }
+    free(tabuleiro->paths);
 }
 
 //TODO apagar
@@ -233,7 +239,7 @@ static void imprime_caminho(Tabuleiro* tabuleiro, Path path, FILE * fp) {
  */
 void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
     //  Escreve no ficehiro
-    fprintf(fp, "%d %d %c %d %d %d\n\n", tabuleiro->height, tabuleiro->width,
+    fprintf(fp, "%d %d %c %d %d %d\n", tabuleiro->height, tabuleiro->width,
                                 tabuleiro->type_passeio,
                                 tabuleiro->num_pontos,
                                 tabuleiro->valid,
@@ -242,6 +248,7 @@ void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
     for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
         //Imprime cada caminho
         imprime_caminho(tabuleiro, tabuleiro->paths[path_i], fp);
+        fprintf(fp, "\n");
     }
 }
 

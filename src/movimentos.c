@@ -227,12 +227,15 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
         if(st == -1)
             break; //Se chegou ao fim
+        
+        path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
 
         p.x = p.x - knight_L[st].x;
         p.y = p.y - knight_L[st].y;
-        path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
         i++;
     }
+
+    //path.points[(path.length-1)] = dest;
 
     tabuleiro_free_st_wt(tabuleiro);
 
