@@ -5,6 +5,7 @@
 
 typedef struct path_t {
     int length;
+    int cost;
     Vector2* points;
 } Path;
 

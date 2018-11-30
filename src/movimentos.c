@@ -71,7 +71,7 @@ void possible_moves(Tabuleiro *tabuleiro){
             city_valid(tabuleiro, tabuleiro_passeio_get_pontos(tabuleiro)[0]))){
 
         //Passeio invalido
-        tabuleiro_set_valid(tabuleiro, -1);
+        tabuleiro_set_valid(tabuleiro, false);
         return;
     }
 
@@ -89,7 +89,7 @@ void possible_moves(Tabuleiro *tabuleiro){
             //Se os dois pontos não fizerem um L entre si ou não for uma
             //  cidade válida o caminho não é válido
             tabuleiro_passeio_set_cost(tabuleiro, 0);
-            tabuleiro_set_valid(tabuleiro, -1);
+            tabuleiro_set_valid(tabuleiro, false);
             return;
         }
 
@@ -97,7 +97,7 @@ void possible_moves(Tabuleiro *tabuleiro){
         //printf("total: %d\n", tabuleiro_passeio_get_cost(passeio));
     }
 
-    tabuleiro_set_valid(tabuleiro, 1);
+    tabuleiro_set_valid(tabuleiro, true);
 }
 
 /**
@@ -113,7 +113,7 @@ void best_choice(Tabuleiro *tabuleiro){
     if(!((inside_board(tabuleiro, tabuleiro_passeio_get_pos_ini(tabuleiro)))  &&
             city_valid(tabuleiro, tabuleiro_passeio_get_pos_ini(tabuleiro)))){
         tabuleiro_passeio_set_cost(tabuleiro, 0);
-        tabuleiro_set_valid(tabuleiro, -1);
+        tabuleiro_set_valid(tabuleiro, false);
         return;
     }
     // vetor de comparação
@@ -132,17 +132,25 @@ void best_choice(Tabuleiro *tabuleiro){
 
     if(best == __INT32_MAX__) {
         tabuleiro_passeio_set_cost(tabuleiro, 0);
-        tabuleiro_set_valid(tabuleiro, -1); //TODO criar passeio set invalid
+        tabuleiro_set_valid(tabuleiro, false); //TODO criar passeio set invalid
         return;
     }
 
     tabuleiro_passeio_set_cost(tabuleiro, best);
-    tabuleiro_set_valid(tabuleiro, 1);
+    tabuleiro_set_valid(tabuleiro, true);
 }
 
 
 Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     Path path;
+    path.length = 0;
+    path.cost = 0;
+    path.points = NULL;
+
+    if(vector2_equals(ini, dest)) {
+        return path;
+    }
+
     //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
     tabuleiro_init_st_wt(tabuleiro);
 
@@ -153,7 +161,7 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     printf("Insere %d,%d\n", ini.x, ini.y);
     #endif
 
-    while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
+    while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) { //TODO se encontrar o destino parar
         Vector2 v = acervo_get_top((Acervo *)tabuleiro_get_fila(tabuleiro));
         #ifdef DEBUG
         printf("\nV <- (%d,%d)\n", v.x, v.y);
@@ -210,7 +218,12 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
     //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
 
-    path.length = 0;
+    if(tabuleiro_get_st_val(tabuleiro, dest) == -1) {
+        //Se não há caminho para o ponto de destino, define o problema como invalido
+        tabuleiro_set_valid(tabuleiro, false);
+        return path;
+    }
+
     //Percorrer o caminho ao contrario para saber o tamanho necessario para o vetor
     Vector2 p = dest;
     int st;
@@ -227,7 +240,6 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     int i = 0;
     path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
 
-    int cost = tabuleiro_passeio_get_cost(tabuleiro);
     p = dest;
     while(true) {
         st = tabuleiro_get_st_val(tabuleiro, p);
@@ -236,13 +248,11 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
             break; //Se chegou ao fim
 
         path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
-        cost += tabuleiro_get_cost(tabuleiro, p);
+        path.cost += tabuleiro_get_cost(tabuleiro, p);
 
         p = vector2_sub(p, knight_L[st]);
         i++;
     }
-
-    tabuleiro_passeio_set_cost(tabuleiro, cost);
 
     return path;
 }

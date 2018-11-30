@@ -9,18 +9,19 @@
 
 struct tabuleiro_t {
     unsigned int width, height;
-    unsigned char* cost_matrix; //Cada custo tem um byte
     char type_passeio;
 
+    unsigned char* cost_matrix; //Cada custo tem um byte
     int* wt;
     char* st;
+
     Acervo *fila;
     Path* paths;
 
     int num_pontos;
     Vector2* pontos;
     int cost;  //parte 1, para guardar o custo do camimho se válido
-    char valid;
+    bool valid;
 };
 
 /**
@@ -152,18 +153,28 @@ void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp) {
     }
 }
 
+//Verifica se alguma cidade do passeio é invalida, se for torna o problema invalido
+void tabuleiro_check_passeio_invalid(Tabuleiro* tabuleiro) {
+    for(int i = 0; i<tabuleiro->num_pontos; i++) {
+        if(tabuleiro_get_cost(tabuleiro, tabuleiro->pontos[i]) == 0) {
+            tabuleiro_set_valid(tabuleiro, false);
+
+            return;
+        }
+    }
+}
+
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
-    if(passeio_get_valid(tabuleiro) != 1)
-        return;
-
+static void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     tabuleiro->paths[0] = movimentos_find_path(tabuleiro,
         tabuleiro_passeio_get_pos_ini(tabuleiro),
         tabuleiro_passeio_get_pontos(tabuleiro)[1]);
+    
+    tabuleiro_passeio_set_cost(tabuleiro, tabuleiro->paths[0].cost);
 }
 
 /**
@@ -171,11 +182,65 @@ void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
  * @param tabuleiro
  * @param fp        ficheiro de sáida
  */
-void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
-    if(passeio_get_valid(tabuleiro) != 1)
-        return;
+static void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
+    int cost = 0;
 
-    //possible_moves(tabuleiro);
+    for(int i = 0; i<tabuleiro->num_pontos-1; i++) {
+        tabuleiro->paths[i] = movimentos_find_path(tabuleiro,
+            tabuleiro_passeio_get_pontos(tabuleiro)[i],
+            tabuleiro_passeio_get_pontos(tabuleiro)[i+1]);
+        cost += tabuleiro->paths[i].cost;
+    }
+
+    tabuleiro_passeio_set_cost(tabuleiro, cost);
+}
+
+/**
+ * Função privada; Faz as operações e escreve no ficheiro fp
+ * @param tabuleiro
+ * @param fp        ficheiro de sáida
+ */
+void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
+    //Se tiver N pontos, o de origem é fixo, por isso vai-se coiserar as permutacoes entre 3 pontos
+    //int num_caminhos = tabuleiro->num_pontos - 1;
+
+    int w = tabuleiro->num_pontos;
+    int h = w - 1;
+
+    Path* matriz_caminhos = (Path*)malloc(sizeof(Path) * w * h);
+
+    for(int i = 0; i<tabuleiro->num_pontos; i++) {
+        for(int j = 1; j<tabuleiro->num_pontos; j++) {
+            //Calcular o caminho do ponto i ao j
+            if(i == j) {
+                //Não calcular caminho entre a mesma cidade
+                continue;
+            }
+
+            //TODO fazer o dijkstra só na trigualrar supieror
+            Path path = movimentos_find_path(tabuleiro,
+                tabuleiro_passeio_get_pontos(tabuleiro)[i],
+                tabuleiro_passeio_get_pontos(tabuleiro)[j]);
+
+            matriz_caminhos[i + (j-1)*w] = path;
+        }
+    }
+
+    
+
+    printf("ola\n");
+    for(int i = 0; i<tabuleiro->num_pontos; i++) {
+        for(int j = 1; j<tabuleiro->num_pontos; j++) {
+            //Calcular o caminho do ponto i ao j
+            if(i == j) {
+                //Não calcular caminho entre a mesma cidade
+                continue;
+            }
+
+            free(matriz_caminhos[i + (j-1)*w].points);
+        }
+    }
+    free(matriz_caminhos);
 }
 
 /**
@@ -184,12 +249,15 @@ void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
  * @param fp        ficheiro de sáida
  */
 void tabuleiro_execute(Tabuleiro *tabuleiro) {
+    if(!passeio_get_valid(tabuleiro))
+        return;
+
     if(tabuleiro->type_passeio == 'A') {
         tabuleiro_execute_tipo_A(tabuleiro);
     } else if(tabuleiro->type_passeio == 'B') {
         tabuleiro_execute_tipo_B(tabuleiro);
     } else if(tabuleiro->type_passeio == 'C') {
-        fprintf(stderr, "we are not ready for C files\n");
+        tabuleiro_execute_tipo_C(tabuleiro);
 
     }
 }
@@ -204,7 +272,7 @@ void tabuleiro_free(Tabuleiro* tabuleiro) {
     acervo_free(&(tabuleiro->fila));
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
-
+    
     for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
         //Liberta cada caminho
         free(tabuleiro->paths[path_i].points);
@@ -239,22 +307,33 @@ static void imprime_caminho(Tabuleiro* tabuleiro, Path path, FILE * fp) {
  */
 void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp) {
     int num_pontos_passagem = 0;
-    for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
-        num_pontos_passagem += tabuleiro->paths[path_i].length;
+    bool valid = tabuleiro->valid;
+
+    if(valid) {
+        for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
+            num_pontos_passagem += tabuleiro->paths[path_i].length;
+        }
     }
 
     //  Escreve no ficehiro
-    fprintf(fp, "%d %d %c %d %d %d\n", tabuleiro->height, tabuleiro->width,
+    fprintf(fp, "%d %d %c %d ", tabuleiro->height, tabuleiro->width,
                                 tabuleiro->type_passeio,
-                                tabuleiro->num_pontos,
-                                tabuleiro->cost,
-                                num_pontos_passagem);
-
-    for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
-        //Imprime cada caminho
-        imprime_caminho(tabuleiro, tabuleiro->paths[path_i], fp);
-        fprintf(fp, "\n");
+                                tabuleiro->num_pontos);
+    
+    if(valid) {
+        fprintf(fp, "%d %d\n", tabuleiro->cost,
+                            num_pontos_passagem);
+    } else {
+        fprintf(fp, "-1 0\n");
     }
+
+    if(valid) {
+        for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
+            //Imprime cada caminho
+            imprime_caminho(tabuleiro, tabuleiro->paths[path_i], fp);
+        }
+    }
+    fprintf(fp, "\n");
 }
 
 /**
@@ -268,9 +347,10 @@ void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE
     tabuleiro->pontos = (Vector2*) checked_malloc(sizeof(Vector2) * num_pontos);
 
     //Vão haver num_pontos-1 caminhos, porque vai haver um caminho entre cada dois pontos
-    tabuleiro->paths = (Path*) checked_malloc((num_pontos-1) * sizeof(Path));
+    //Calloc coloca os apontadores para os vetores de pontos todos a null
+    tabuleiro->paths = (Path*) checked_calloc(sizeof(Path), num_pontos-1);
 
-    tabuleiro->valid = 1;
+    tabuleiro->valid = true;
     tabuleiro->cost = 0;
 
     //escreve no vetor
@@ -281,17 +361,17 @@ void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE
 
         if(!inside_board(tabuleiro, vec)) {
             //Se algum dos pontos estiver fora do tabuleiro marca o passeio como invalido
-            tabuleiro->valid = -1;
+            tabuleiro->valid = false;
         }
 
     }
 }
 
-void tabuleiro_set_valid(Tabuleiro* tabuleiro, char valid) {
+void tabuleiro_set_valid(Tabuleiro* tabuleiro, bool valid) {
     tabuleiro->valid = valid;
 }
 
-char passeio_get_valid(Tabuleiro* tabuleiro) {
+bool passeio_get_valid(Tabuleiro* tabuleiro) {
     return tabuleiro->valid;
 }
 

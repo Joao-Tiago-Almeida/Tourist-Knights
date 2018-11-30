@@ -12,7 +12,7 @@ void print_usage(char* program_name) {
 
 bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
     char modo = tabuleiro_get_tipo_passeio(tab);
-    return ((modo == 'A' && tabuleiro_get_num_pontos(tab) == 2) || (modo == 'B' && tabuleiro_get_num_pontos(tab) >= 2))
+    return ((modo == 'A' && tabuleiro_get_num_pontos(tab) == 2) || (modo == 'B' && tabuleiro_get_num_pontos(tab) >= 2) || (modo == 'C' && tabuleiro_get_num_pontos(tab) >= 2))
         && passeio_get_valid(tab);
 }
 
@@ -30,13 +30,17 @@ Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
     tabuleiro_read_passeio_from_file(tabuleiro, num_pts_turisticos, fp);
 
     if(!tabuleiro_and_passeio_is_valid(tabuleiro)) {
-        //Se for inválido não vale a pena ler a matriz para o tabuleiro
-        tabuleiro_set_valid(tabuleiro, -1);
+        //Se for inválido(tem um ponto fora) não vale a pena ler a matriz para o tabuleiro
+        tabuleiro_set_valid(tabuleiro, false);
         tabuleiro_read_matrix_from_file_invalid(tabuleiro, fp);
     } else {
         //Se for válido lê matriz para o tabuleiro
         tabuleiro_read_matrix_from_file(tabuleiro, fp);
+
+        //Verifica se as cidades do passeio são todas válidas (custo != 0)
+        tabuleiro_check_passeio_invalid(tabuleiro);
     }
+    
 
     return tabuleiro;
 }
@@ -78,12 +82,8 @@ void read_and_write_files(char* filename) {
             break; // Fim do ficheiro (Se não conseguiu ler mais nenhum tabuleiro para a leitura)
         }
 
-        if(modo == 'C' || modo == 'c') {
-            fprintf(stderr, "we are not ready for C files");
-            continue;
-        } else {
-            tabuleiro = read_file(fp, w, h, modo);
-        }
+        
+        tabuleiro = read_file(fp, w, h, modo);
 
 
         //Analisa o tabuleiro como devido
