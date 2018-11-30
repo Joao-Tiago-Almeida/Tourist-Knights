@@ -121,8 +121,7 @@ void best_choice(Tabuleiro *tabuleiro){
 
     for(int i = 0; i < NUM_PONTOS_A; i++) {
         for(int j = 0; j < MOVES; j++) {
-            movement.x = knight_L[j].x + tabuleiro_passeio_get_pos_ini(tabuleiro).x;
-            movement.y = knight_L[j].y + tabuleiro_passeio_get_pos_ini(tabuleiro).y;
+            movement = vector2_add(knight_L[j] , tabuleiro_passeio_get_pos_ini(tabuleiro));
 
             if((inside_board(tabuleiro, movement) && (city_valid(tabuleiro, movement)))){
                 best = (best < tabuleiro_get_cost(tabuleiro, movement) ?
@@ -219,12 +218,12 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
         st = tabuleiro_get_st_val(tabuleiro, p);
         if(st == -1)
             break; //Se chegou ao fim
-        p.x = p.x - knight_L[st].x;
-        p.y = p.y - knight_L[st].y;
+
+        p = vector2_sub(p, knight_L[st]);
 
         path.length++;
     }
-    
+
     int i = 0;
     path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
 
@@ -235,12 +234,11 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
 
         if(st == -1)
             break; //Se chegou ao fim
-        
+
         path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
         cost += tabuleiro_get_cost(tabuleiro, p);
 
-        p.x = p.x - knight_L[st].x;
-        p.y = p.y - knight_L[st].y;
+        p = vector2_sub(p, knight_L[st]);
         i++;
     }
 
