@@ -144,19 +144,22 @@ void best_choice(Tabuleiro *tabuleiro){
 
 Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     Path path;
-    acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
     //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
     tabuleiro_init_st_wt(tabuleiro);
 
     //Init algoritmo
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
     acervo_insert((Acervo *)(Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
+    #ifdef DEBUG
     printf("Insere %d,%d\n", ini.x, ini.y);
+    #endif
 
     while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
         Vector2 v = acervo_get_top((Acervo *)tabuleiro_get_fila(tabuleiro));
+        #ifdef DEBUG
         printf("\nV <- (%d,%d)\n", v.x, v.y);
         acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
+        #endif
         acervo_remove_top((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
 
         int wt_value = tabuleiro_get_wt_val(tabuleiro, v);
@@ -185,7 +188,9 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
                     tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                     //atualiza se já tiver no acervo/insere ordenado
                     acervo_update_or_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, old_wt_val, tabuleiro);
+                    #ifdef DEBUG
                     printf("Insere/Atualiza %d,%d\n", pos_to_try.x, pos_to_try.y);
+                    #endif
 
 
                     //Fica ao contrario (em vez de dizer que subiu 2, tá a dizer que desceu dois)
@@ -196,7 +201,9 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
                 //Se for a primeira vez que a casa é considerada
                 tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                 acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, tabuleiro);
+                #ifdef DEBUG
                 printf("Insere %d,%d\n", pos_to_try.x, pos_to_try.y);
+                #endif
                 tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
             }
         }
@@ -221,6 +228,7 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     int i = 0;
     path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
 
+    int cost = tabuleiro_passeio_get_cost(tabuleiro);
     p = dest;
     while(true) {
         st = tabuleiro_get_st_val(tabuleiro, p);
@@ -229,15 +237,14 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
             break; //Se chegou ao fim
         
         path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
+        cost += tabuleiro_get_cost(tabuleiro, p);
 
         p.x = p.x - knight_L[st].x;
         p.y = p.y - knight_L[st].y;
         i++;
     }
 
-    //path.points[(path.length-1)] = dest;
-
-    tabuleiro_free_st_wt(tabuleiro);
+    tabuleiro_passeio_set_cost(tabuleiro, cost);
 
     return path;
 }

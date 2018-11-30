@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+//#define DEBUG
+
 void *checked_malloc(size_t size);
 void *checked_realloc(void * ptr, size_t size);
 bool string_ends_with(char* str, char* test);

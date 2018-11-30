@@ -237,13 +237,18 @@ static void imprime_caminho(Tabuleiro* tabuleiro, Path path, FILE * fp) {
  * @param tabuleiro
  * @param fp        ficheiro de saída
  */
-void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp){
+void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp) {
+    int num_pontos_passagem = 0;
+    for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
+        num_pontos_passagem += tabuleiro->paths[path_i].length;
+    }
+
     //  Escreve no ficehiro
     fprintf(fp, "%d %d %c %d %d %d\n", tabuleiro->height, tabuleiro->width,
                                 tabuleiro->type_passeio,
                                 tabuleiro->num_pontos,
-                                tabuleiro->valid,
-                                tabuleiro->cost);
+                                tabuleiro->cost,
+                                num_pontos_passagem);
 
     for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
         //Imprime cada caminho
