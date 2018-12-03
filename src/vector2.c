@@ -24,7 +24,7 @@ Vector2 vector2_read_from_file(FILE* fp) {
     Vector2 vec;
 
     //No formato do ficheiro o Y vem primeiro que o X
-    if(fscanf(fp, "%d %d", &vec.y, &vec.x) != 2) {
+    if(fscanf(fp, "%hd %hd", &vec.y, &vec.x) != 2) {
         fprintf(stderr, "Erro de leitura");
         exit(0);
     }

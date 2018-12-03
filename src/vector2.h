@@ -8,7 +8,7 @@
  * Estrutuar auxiliar que guarda dois inteiros como forma de uma coordenada num espaço euclidiano de dimensão
  */
 typedef struct vector2_t {
-    int x, y;
+    short x, y;
 } Vector2;
 
 Vector2 vector2_new(int x, int y);

@@ -58,90 +58,9 @@ bool do_points_make_L(Vector2 point1, Vector2 point2) {
         (abs(point1.x-point2.x) == 1 && abs(point1.y-point2.y) == 2);
 }
 
-/**
- * Analisa um caminho vê se é válido e calcula o custo desse caminho
- * @param tabuleiro
- */
-void possible_moves(Tabuleiro *tabuleiro){
-    // NOTA: a cidade de partida não tem custo
-    tabuleiro_passeio_set_cost(tabuleiro, 0);
-
-    //  Caso da primeira cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(tabuleiro, tabuleiro_passeio_get_pontos(tabuleiro)[0]))  &&
-            city_valid(tabuleiro, tabuleiro_passeio_get_pontos(tabuleiro)[0]))){
-
-        //Passeio invalido
-        tabuleiro_set_valid(tabuleiro, false);
-        return;
-    }
-
-
-    //  Para cada cidade, verifica-se se a cidade segiunte do caminho é válida
-    for(int i = 0; i < tabuleiro_get_num_pontos(tabuleiro) - 1; i++) {
-        //printf("Loop do num pontos %d\n", tabuleiro_get_num_pontos(passeio));
-        //printf("i: %d\n", i);
-
-        Vector2 point1 = tabuleiro_passeio_get_pontos(tabuleiro)[i];
-        Vector2 point2 = tabuleiro_passeio_get_pontos(tabuleiro)[i+1];
-
-        //TODO verificar ordem (inside_board e city_valid)
-        if(!(inside_board(tabuleiro, point2) && do_points_make_L(point1, point2) && city_valid(tabuleiro, point2))) {
-            //Se os dois pontos não fizerem um L entre si ou não for uma
-            //  cidade válida o caminho não é válido
-            tabuleiro_passeio_set_cost(tabuleiro, 0);
-            tabuleiro_set_valid(tabuleiro, false);
-            return;
-        }
-
-        tabuleiro_passeio_set_cost(tabuleiro, tabuleiro_passeio_get_cost(tabuleiro) + (int)tabuleiro_get_cost(tabuleiro, point2));
-        //printf("total: %d\n", tabuleiro_passeio_get_cost(passeio));
-    }
-
-    tabuleiro_set_valid(tabuleiro, true);
-}
-
-/**
- * Identifica o ponto com menor custo à distância de um salto de cavalo
- * @param vec       cidade de partida
- * @param tabuleiro
- */
-void best_choice(Tabuleiro *tabuleiro){
-
-    int best = __INT32_MAX__;
-
-    //  Caso da primeiroa cidade estar fora do mapa ou estievr fecahda
-    if(!((inside_board(tabuleiro, tabuleiro_passeio_get_pos_ini(tabuleiro)))  &&
-            city_valid(tabuleiro, tabuleiro_passeio_get_pos_ini(tabuleiro)))){
-        tabuleiro_passeio_set_cost(tabuleiro, 0);
-        tabuleiro_set_valid(tabuleiro, false);
-        return;
-    }
-    // vetor de comparação
-    Vector2 movement = {0,0};
-
-    for(int i = 0; i < NUM_PONTOS_A; i++) {
-        for(int j = 0; j < MOVES; j++) {
-            movement = vector2_add(knight_L[j] , tabuleiro_passeio_get_pos_ini(tabuleiro));
-
-            if((inside_board(tabuleiro, movement) && (city_valid(tabuleiro, movement)))){
-                best = (best < tabuleiro_get_cost(tabuleiro, movement) ?
-                            best : tabuleiro_get_cost(tabuleiro, movement));
-            }
-        }
-    }
-
-    if(best == __INT32_MAX__) {
-        tabuleiro_passeio_set_cost(tabuleiro, 0);
-        tabuleiro_set_valid(tabuleiro, false); //TODO criar passeio set invalid
-        return;
-    }
-
-    tabuleiro_passeio_set_cost(tabuleiro, best);
-    tabuleiro_set_valid(tabuleiro, true);
-}
-
-
-Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
+//Devolve o caminho mais curto entre dois pontos
+//apenas escreve na estrutura Path o vetor de pontos de passagem alloc_vec_pontos se for true
+static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc_vec_pontos) {
     Path path;
     path.length = 0;
     path.cost = 0;
@@ -238,7 +157,9 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     }
 
     int i = 0;
-    path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
+    
+    if(alloc_vec_pontos)
+        path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
 
     p = dest;
     while(true) {
@@ -247,7 +168,9 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
         if(st == -1)
             break; //Se chegou ao fim
 
-        path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
+        if(alloc_vec_pontos)
+            path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
+
         path.cost += tabuleiro_get_cost(tabuleiro, p);
 
         p = vector2_sub(p, knight_L[st]);
@@ -255,4 +178,17 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     }
 
     return path;
+}
+
+unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
+    int cost = dijkstra(tabuleiro, ini, dest, false).cost;
+    if(cost > 65535) {
+        fprintf(stderr, "Valor maior que unsigned short!!\n");
+        exit(1); //TODO tirar
+    }
+    return cost;
+}
+
+Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
+    return dijkstra(tabuleiro, ini, dest, true);
 }

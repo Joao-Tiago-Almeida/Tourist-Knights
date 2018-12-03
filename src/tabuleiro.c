@@ -1,6 +1,7 @@
 #include "tabuleiro.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "util.h"
 #include "movimentos.h"
@@ -12,7 +13,7 @@ struct tabuleiro_t {
     char type_passeio;
 
     unsigned char* cost_matrix; //Cada custo tem um byte
-    int* wt;
+    unsigned short* wt;
     char* st;
 
     Acervo *fila;
@@ -59,10 +60,14 @@ int tabuleiro_get_cost(Tabuleiro* tabuleiro, Vector2 vec) {
 }
 
 void tabuleiro_set_wt_val(Tabuleiro* tabuleiro, Vector2 vec, int value) {
-    tabuleiro->wt[vec.x + vec.y*tabuleiro->width] = value;
+    if(value > 65535) {
+        fprintf(stderr, "Valor maior que unsigned short!!\n");
+        exit(1); //TODO tirar
+    }
+    tabuleiro->wt[vec.x + vec.y*tabuleiro->width] = (unsigned short)value;
 }
 int tabuleiro_get_wt_val(Tabuleiro* tabuleiro, Vector2 vec) {
-    return tabuleiro->wt[vec.x + vec.y*tabuleiro->width];
+    return (int)tabuleiro->wt[vec.x + vec.y*tabuleiro->width];
 }
 void tabuleiro_set_st_val(Tabuleiro* tabuleiro, Vector2 vec, char value) {
     tabuleiro->st[vec.x + vec.y*tabuleiro->width] = value;
@@ -131,7 +136,7 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     int expression = tabuleiro->width * tabuleiro->height * .25;
     tabuleiro->fila = new_acervo(expression);
 
-    tabuleiro->wt = (int*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(int));
+    tabuleiro->wt = (unsigned short*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(unsigned short));
     tabuleiro->st = (char*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(char));
 }
 
@@ -195,6 +200,93 @@ static void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
     tabuleiro_passeio_set_cost(tabuleiro, cost);
 }
 
+void trocar(unsigned short *vec_cidades_tmp, int a, int b) {
+    int temp = vec_cidades_tmp[b];
+    vec_cidades_tmp[b] = vec_cidades_tmp[a];
+    vec_cidades_tmp[a] = temp;
+}
+
+void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, int inicio, unsigned short* matriz_custo_caminhos,
+    int* min_custo, unsigned short *vec_cidades_min) {
+
+    if (num_cidades == inicio) {
+        //Se chegou ao fim e já não há elementos para permutar, temos o 
+        unsigned short cost = 0;
+        //Calcula o custo de percorrer as cidades na ordem atual do vec_cidades_tmp
+        for(int i = 0; i<num_cidades-1; i++) {
+            int orig_idx = vec_cidades_tmp[i];
+            int dest_idx = vec_cidades_tmp[i+1];
+            
+            //Soma o custo de ir da cidade orig_idx para a cidade dest_idx
+            printf("a %d, %d\n", orig_idx, dest_idx);
+            cost += matriz_custo_caminhos[orig_idx + (dest_idx-1)*num_cidades]; //Num cidades é a largura(w) do tabuleiro
+        }
+    
+        //Encontrou-se um caminho melhor, ou é o primeiro caminho testado (-1 representa infinito)
+            #ifdef DEBUG
+            printf("[");
+            for(int i = 0; i<num_cidades; i++) {
+                printf("%d ", vec_cidades_tmp[i]);
+            }
+            printf("] custo: %d\n", cost);
+            #endif
+        if(*min_custo == -1 || cost < *min_custo) {
+            *min_custo = cost;
+
+
+            memcpy(vec_cidades_min, vec_cidades_tmp, num_cidades*sizeof(unsigned short));
+        }
+        return;
+    }
+  
+    for (int j = inicio; j < num_cidades; j++) {
+        if(inicio == j) {
+            calcula_melhor_caminho(vec_cidades_tmp, num_cidades, inicio+1, matriz_custo_caminhos,
+                min_custo, vec_cidades_min);
+        } else {
+            trocar(vec_cidades_tmp, inicio, j);
+            calcula_melhor_caminho(vec_cidades_tmp, num_cidades, inicio+1, matriz_custo_caminhos,
+                min_custo, vec_cidades_min);
+            trocar(vec_cidades_tmp, inicio, j);
+        }
+    }
+}
+
+static void calcula_matriz_custo_caminhos(Tabuleiro *tabuleiro, unsigned short* matriz_custo_caminhos) {
+    int w = tabuleiro->num_pontos;
+
+    for(int i = 0; i<tabuleiro->num_pontos; i++) {
+        for(int j = 1; j<tabuleiro->num_pontos; j++) { //J numero da cidade, não o numero da linha (é j-1)
+            //Calcular o caminho do ponto i ao j
+            if(i >= j) {
+                //Não calcular a trigular superior da matriz
+                //  Não calcular caminho entre a mesma cidade e caminhos com cidades extremos iguais
+                continue;
+            }
+
+            Vector2 orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
+            Vector2 dest = tabuleiro_passeio_get_pontos(tabuleiro)[j];
+
+            unsigned short cost = movimentos_find_better_path_cost(tabuleiro,
+                orig,
+                dest);
+
+            //Custo de ir de i(orig) para j(dest)
+            matriz_custo_caminhos[i + (j-1)*w] = cost;
+            printf("%d, %d\n", i, j);
+
+            
+            //Cidade de partida é a cidade inicial do caminho, logo não calcula o caminho inverso
+            if(i > 0) {        
+                //Calcula o custo do caminho inverso a partir do calculo anterior
+                //  (custo anterior - destino anteiror(origem do inverso) + origem anterior(destino do inverso))
+                matriz_custo_caminhos[j + (i-1)*w] = (unsigned short)(cost - tabuleiro_get_cost(tabuleiro, dest) + tabuleiro_get_cost(tabuleiro, orig));
+                printf("\t %d, %d\n", i+1, j-1);
+            }
+        }
+    }
+}
+
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
  * @param tabuleiro
@@ -207,40 +299,47 @@ void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
     int w = tabuleiro->num_pontos;
     int h = w - 1;
 
-    Path* matriz_caminhos = (Path*)malloc(sizeof(Path) * w * h);
+    //Matriz que tem o custo de ir de um ponto para o outro (Não tem uma linha nunca se vai para o ponto inicial)
+    //Linha - origem, coluna - destino
+    unsigned short* matriz_custo_caminhos = (unsigned short*)malloc(sizeof(unsigned short) * w * h);
+    calcula_matriz_custo_caminhos(tabuleiro, matriz_custo_caminhos);
 
+    //Com os custos de cada trajeto possivel calculados, calcula-se as permutacoes
+    unsigned short *vec_cidades_tmp = (unsigned short*) checked_malloc(sizeof(unsigned short) * tabuleiro->num_pontos);
+    unsigned short *vec_cidades_final = (unsigned short*) checked_malloc(sizeof(unsigned short) * tabuleiro->num_pontos);
+    int min_cost = -1;
+
+    //Prenche o vetor de indices de cidades com a ordem inicial [x0, x1, x2, ..., xn]
     for(int i = 0; i<tabuleiro->num_pontos; i++) {
-        for(int j = 1; j<tabuleiro->num_pontos; j++) {
-            //Calcular o caminho do ponto i ao j
-            if(i == j) {
-                //Não calcular caminho entre a mesma cidade
-                continue;
-            }
-
-            //TODO fazer o dijkstra só na trigualrar supieror
-            Path path = movimentos_find_path(tabuleiro,
-                tabuleiro_passeio_get_pontos(tabuleiro)[i],
-                tabuleiro_passeio_get_pontos(tabuleiro)[j]);
-
-            matriz_caminhos[i + (j-1)*w] = path;
-        }
+        vec_cidades_tmp[i] = i;
     }
 
+    //Calcula o melhor caminho, fazendo permutacoes a partir do primeiro indice
+    //  (primeira cidade x0 é fixa)
+    calcula_melhor_caminho(vec_cidades_tmp, tabuleiro->num_pontos, 1,
+                                matriz_custo_caminhos, &min_cost, vec_cidades_final);
+    free(vec_cidades_tmp);
+
+    //vec_cidades_final vai ter melhor ordem de cidades para realizar o caminho
     
+    //Calcula os caminhos a realizar, com a ordem do vec_cidades_final e escreve-os no tabuleiro->paths
+    int cost = 0;
 
-    printf("ola\n");
-    for(int i = 0; i<tabuleiro->num_pontos; i++) {
-        for(int j = 1; j<tabuleiro->num_pontos; j++) {
-            //Calcular o caminho do ponto i ao j
-            if(i == j) {
-                //Não calcular caminho entre a mesma cidade
-                continue;
-            }
+    printf("[");
+    for(int i = 0; i<tabuleiro->num_pontos-1; i++) {
+        printf("%d ", vec_cidades_final[i]);
 
-            free(matriz_caminhos[i + (j-1)*w].points);
-        }
+        tabuleiro->paths[i] = movimentos_find_path(tabuleiro,
+            tabuleiro_passeio_get_pontos(tabuleiro)[vec_cidades_final[i]],
+            tabuleiro_passeio_get_pontos(tabuleiro)[vec_cidades_final[i+1]]);
+        cost += tabuleiro->paths[i].cost;
     }
-    free(matriz_caminhos);
+    printf("%d]", vec_cidades_final[tabuleiro->num_pontos-1]);
+    
+    tabuleiro_passeio_set_cost(tabuleiro, cost);
+
+    free(vec_cidades_final);
+    free(matriz_custo_caminhos);
 }
 
 /**
