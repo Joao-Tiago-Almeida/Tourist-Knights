@@ -40,7 +40,7 @@ Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
         //Verifica se as cidades do passeio são todas válidas (custo != 0), e se são todas accesiveis
         tabuleiro_check_passeio_invalid(tabuleiro);
     }
-    
+
 
     return tabuleiro;
 }
@@ -82,17 +82,22 @@ void read_and_write_files(char* filename) {
             break; // Fim do ficheiro (Se não conseguiu ler mais nenhum tabuleiro para a leitura)
         }
 
-        
+
         tabuleiro = read_file(fp, w, h, modo);
 
-
-        //Analisa o tabuleiro como devido
-        tabuleiro_execute(tabuleiro);
+        // se o tabuleiro e o passio forem válidos
+        if(tabuleiro_and_passeio_is_valid(tabuleiro)) {
+            //Analisa o tabuleiro como devido
+            tabuleiro_execute(tabuleiro);
+        }
         //Escreve o resultado
         tabuleiro_write_valid_file(tabuleiro, file_out);
 
-        tabuleiro_free(tabuleiro);
-        free(tabuleiro);
+        // se o tabuleiro e o passio forem válidos
+        if(tabuleiro_and_passeio_is_valid(tabuleiro)) {
+            tabuleiro_free(tabuleiro);
+            free(tabuleiro);
+        }
         tabuleiro = NULL;
     }
     fclose(file_out);
