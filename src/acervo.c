@@ -23,8 +23,6 @@ int acervo_get_priority(Acervo* acervo, int position, Tabuleiro* tabuleiro) {
     return tabuleiro_get_wt_val(tabuleiro, acervo->vetor[position]);
 }
 
-/**size = CONSTANTE * tabuleiro_get_width(tabuleiro) * tabuleiro_get_height(tabuleiro)
-TODO passar para o main.c*/
 /**
  * Cria um acervo prioritária
  * @param  size tamanho da acervo
@@ -202,10 +200,8 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
             break;
         }
 
-        //  TODO já tinha uma função de troca, exchange_cities_acervo
         //Troca o pai com filho mais prioritario (mais leve)
-
-         exchange_cities_acervo(acervo, child);
+        exchange_cities_acervo(acervo, child);
         p = child;
     }
 }
@@ -221,7 +217,6 @@ void exchange_cities_acervo(Acervo *acervo, int p) {
     acervo->vetor[p] = vec;
 }
 
-//TODO falta fazer o free do acervo
 void acervo_free(Acervo** acervo) {
     free((*acervo)->vetor);
     free(*acervo);

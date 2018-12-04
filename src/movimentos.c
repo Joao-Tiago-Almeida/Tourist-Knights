@@ -50,6 +50,16 @@ bool city_valid(Tabuleiro* tabuleiro, Vector2 vec) {
     return tabuleiro_get_cost(tabuleiro, vec) != 0;
 }
 
+bool check_if_city_accessible(Tabuleiro* tabuleiro, Vector2 c) {
+    for(int mov_rel = 0; mov_rel<8; mov_rel++) {
+        //Vizinhos de c
+        Vector2 pos_to_try = vector2_add(c, knight_L[mov_rel]);
+        if(inside_board(tabuleiro, pos_to_try) && tabuleiro_get_cost(tabuleiro, pos_to_try) != 0)
+            return true;
+    }
+
+    return false;
+}
 /*
  * Devolve true se dois pontos fizerem um L entre si
  */
@@ -65,8 +75,18 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     path.length = 0;
     path.cost = 0;
     path.points = NULL;
+    path.orig = ini;
+    path.dest = dest;
 
     if(vector2_equals(ini, dest)) {
+        return path;
+    }
+
+    if(do_points_make_L(ini, dest)) {
+        path.length = 1;
+        path.cost = tabuleiro_get_cost(tabuleiro, dest);
+        path.points = (Vector2*)checked_malloc(sizeof(Vector2) * 1);
+        path.points[0] = dest;
         return path;
     }
 
@@ -80,8 +100,13 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     printf("Insere %d,%d\n", ini.x, ini.y);
     #endif
 
-    while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) { //TODO se encontrar o destino parar
+    while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
         Vector2 v = acervo_get_top((Acervo *)tabuleiro_get_fila(tabuleiro));
+
+        if(vector2_equals(v, dest)) {
+            //Para de procurar quando se encontra o caminho para o destino
+            break;
+        }
         #ifdef DEBUG
         printf("\nV <- (%d,%d)\n", v.x, v.y);
         acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
@@ -136,7 +161,6 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     }
 
     //TODO parar quando todos na fila tiverem maior wt que o destino (nao há caminho melhor possivel)
-
     if(tabuleiro_get_st_val(tabuleiro, dest) == -1) {
         //Se não há caminho para o ponto de destino, define o problema como invalido
         tabuleiro_set_valid(tabuleiro, false);

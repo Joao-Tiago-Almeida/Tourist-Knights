@@ -7,6 +7,7 @@ typedef struct path_t {
     int length;
     int cost;
     Vector2* points;
+    Vector2 orig, dest;
 } Path;
 
 #endif

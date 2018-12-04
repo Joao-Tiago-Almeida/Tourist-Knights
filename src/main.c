@@ -37,7 +37,7 @@ Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
         //Se for válido lê matriz para o tabuleiro
         tabuleiro_read_matrix_from_file(tabuleiro, fp);
 
-        //Verifica se as cidades do passeio são todas válidas (custo != 0)
+        //Verifica se as cidades do passeio são todas válidas (custo != 0), e se são todas accesiveis
         tabuleiro_check_passeio_invalid(tabuleiro);
     }
     

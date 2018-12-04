@@ -85,6 +85,11 @@ void tabuleiro_init_st_wt(Tabuleiro* tabuleiro) {
     w = tabuleiro_get_width(tabuleiro);
     h = tabuleiro_get_height(tabuleiro);
 
+    if(tabuleiro->wt == NULL) {
+        tabuleiro->wt = (unsigned short*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(unsigned short));
+        tabuleiro->st = (char*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(char));
+    }
+
     for(int j = 0; j<h; j++) {
         for(int i = 0; i<w; i++) {
             tabuleiro->wt[i + j*w] = -1;
@@ -135,9 +140,6 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     // Expressão inicial de alocação de memómira
     int expression = tabuleiro->width * tabuleiro->height * .25;
     tabuleiro->fila = new_acervo(expression);
-
-    tabuleiro->wt = (unsigned short*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(unsigned short));
-    tabuleiro->st = (char*)checked_malloc(tabuleiro->width * tabuleiro->height * sizeof(char));
 }
 
 /**
@@ -161,9 +163,9 @@ void tabuleiro_read_matrix_from_file_invalid(Tabuleiro* tabuleiro, FILE* fp) {
 //Verifica se alguma cidade do passeio é invalida, se for torna o problema invalido
 void tabuleiro_check_passeio_invalid(Tabuleiro* tabuleiro) {
     for(int i = 0; i<tabuleiro->num_pontos; i++) {
-        if(tabuleiro_get_cost(tabuleiro, tabuleiro->pontos[i]) == 0) {
+        if(!(tabuleiro_get_cost(tabuleiro, tabuleiro->pontos[i]) != 0 &&
+                check_if_city_accessible(tabuleiro, tabuleiro->pontos[i]))) {
             tabuleiro_set_valid(tabuleiro, false);
-
             return;
         }
     }
@@ -191,9 +193,20 @@ static void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
     int cost = 0;
 
     for(int i = 0; i<tabuleiro->num_pontos-1; i++) {
-        tabuleiro->paths[i] = movimentos_find_path(tabuleiro,
-            tabuleiro_passeio_get_pontos(tabuleiro)[i],
-            tabuleiro_passeio_get_pontos(tabuleiro)[i+1]);
+        bool do_dijkstra = true;
+        Vector2 orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
+        Vector2 dest = tabuleiro_passeio_get_pontos(tabuleiro)[i+1];
+
+        for(int j = 0; j<i; j++) {
+            if(tabuleiro->paths[j].orig == orig && tabuleiro->paths[j].dest == dest) {
+                do_dijkstra = false;
+                tabuleiro->paths[i] = tabuleiro->paths[j];
+            }
+        }
+
+        if(do_dijkstra)
+            tabuleiro->paths[i] = movimentos_find_path(tabuleiro, orig, dest);
+
         cost += tabuleiro->paths[i].cost;
     }
 
