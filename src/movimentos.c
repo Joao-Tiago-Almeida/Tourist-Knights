@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "util.h"
 #include "acervo.h"
@@ -213,6 +214,58 @@ unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 in
     return cost;
 }
 
+static Path inverte_caminho(Tabuleiro* tabuleiro, Path path) {
+    Path new_path;
+
+    new_path.length = path.length;
+    new_path.dest = path.orig;
+    new_path.orig = path.dest;
+    new_path.cost = path.cost - tabuleiro_get_cost(tabuleiro, path.dest) + tabuleiro_get_cost(tabuleiro, new_path.dest);
+    new_path.points = (Vector2*) checked_malloc(sizeof(Vector2) * new_path.length);
+    for(int i = 0; i<new_path.length; i++) {
+        new_path.points[new_path.length-1 - i] = path.points[i];
+    }
+
+    return new_path;
+}
+
+//Devolve true se um caminho igual ainda não foi calculado, nem um inverso
+// Escreve no path o caminho a ser usado caso não seja necessário fazer o dijkstra
+// O i indica o numero de caminhos já calculados
+static bool path_has_to_be_calculated(Tabuleiro* tabuleiro, Vector2 orig, Vector2 dest, Path* path) {
+    for(int j = 0; j<tabuleiro_get_num_path_calculated(tabuleiro); j++) {
+        Path path_j = tabuleiro_get_path(tabuleiro, j);
+        if(vector2_equals(path_j.orig, orig) && vector2_equals(path_j.dest, dest)) {
+            //Se o caminho já foi calculado basta copia-lo
+            // (A para B já foi calculado, e é para fazer de novo de A para B)
+            *path = path_j;
+            (*path).points = (Vector2*) checked_malloc(sizeof(Vector2) * (*path).length);
+            memcpy((*path).points, path_j.points, sizeof(Vector2) * (*path).length);
+            #ifdef DEBUG
+            printf("copia\n");
+            #endif
+            return false;
+        } else if(vector2_equals(path_j.orig, dest) && vector2_equals(path_j.dest, orig)) {
+            //Se o caminho já foi calculado ao contrario basta inverte-lo
+            // (A para B já foi calculado, e é para fazer B para A)
+            *path = inverte_caminho(tabuleiro, path_j);
+            #ifdef DEBUG
+            printf("inverte\n");
+            #endif
+            return false;
+        }
+    }
+    return true;
+}
+
 Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
-    return dijkstra(tabuleiro, ini, dest, true);
+    Path path;
+    //Escreve o path caso não seja preciso fazer o dijkstra
+    bool do_dijkstra = path_has_to_be_calculated(tabuleiro, ini, dest, &path);
+
+    //printf("do dijkstra: %d\n", do_dijkstra);
+    if(do_dijkstra)
+        path = dijkstra(tabuleiro, ini, dest, true);
+    
+    return path;
 }

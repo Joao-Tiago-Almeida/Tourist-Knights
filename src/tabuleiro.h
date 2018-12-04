@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "vector2.h"
+#include "path.h"
 
 typedef struct tabuleiro_t Tabuleiro;
 
@@ -24,6 +25,9 @@ void tabuleiro_set_wt_val(Tabuleiro* tabuleiro, Vector2 vec, int value);
 int tabuleiro_get_wt_val(Tabuleiro* tabuleiro, Vector2 vec);
 void tabuleiro_set_st_val(Tabuleiro* tabuleiro, Vector2 vec, char value);
 char tabuleiro_get_st_val(Tabuleiro* tabuleiro, Vector2 vec);
+
+Path tabuleiro_get_path(Tabuleiro* tabuleiro, int i);
+int tabuleiro_get_num_path_calculated(Tabuleiro* tabuleiro);
 
 //  TODO perguntar ao prof
 void *tabuleiro_get_fila(Tabuleiro* tabuleiro);

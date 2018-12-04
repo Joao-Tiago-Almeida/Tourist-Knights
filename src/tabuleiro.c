@@ -17,7 +17,9 @@ struct tabuleiro_t {
     char* st;
 
     Acervo *fila;
+
     Path* paths;
+    int num_paths_calculated; //Numero de caminhos que já estão no vetor paths
 
     int num_pontos;
     Vector2* pontos;
@@ -39,6 +41,11 @@ Tabuleiro* tabuleiro_new(unsigned int w, unsigned int h, char type_passeio) {
     tab->type_passeio = type_passeio;
 
     tab->cost_matrix = NULL; // Nao aloca ainda a matriz porque pode ser que o passeio seja invalido
+
+    tab->wt = NULL;
+    tab->st = NULL;
+
+    tab->num_paths_calculated = 0;
 
     return tab;
 }
@@ -74,6 +81,13 @@ void tabuleiro_set_st_val(Tabuleiro* tabuleiro, Vector2 vec, char value) {
 }
 char tabuleiro_get_st_val(Tabuleiro* tabuleiro, Vector2 vec) {
     return tabuleiro->st[vec.x + vec.y*tabuleiro->width];
+}
+
+Path tabuleiro_get_path(Tabuleiro* tabuleiro, int i) {
+    return tabuleiro->paths[i];
+}
+int tabuleiro_get_num_path_calculated(Tabuleiro* tabuleiro) {
+    return tabuleiro->num_paths_calculated;
 }
 
 void *tabuleiro_get_fila(Tabuleiro* tabuleiro) {
@@ -184,6 +198,7 @@ static void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     tabuleiro_passeio_set_cost(tabuleiro, tabuleiro->paths[0].cost);
 }
 
+
 /**
  * Função privada; Faz as operações e escreve no ficheiro fp
  * @param tabuleiro
@@ -193,25 +208,18 @@ static void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
     int cost = 0;
 
     for(int i = 0; i<tabuleiro->num_pontos-1; i++) {
-        bool do_dijkstra = true;
         Vector2 orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
         Vector2 dest = tabuleiro_passeio_get_pontos(tabuleiro)[i+1];
 
-        for(int j = 0; j<i; j++) {
-            if(tabuleiro->paths[j].orig == orig && tabuleiro->paths[j].dest == dest) {
-                do_dijkstra = false;
-                tabuleiro->paths[i] = tabuleiro->paths[j];
-            }
-        }
-
-        if(do_dijkstra)
-            tabuleiro->paths[i] = movimentos_find_path(tabuleiro, orig, dest);
+        tabuleiro->paths[i] = movimentos_find_path(tabuleiro, orig, dest);
 
         cost += tabuleiro->paths[i].cost;
+        tabuleiro->num_paths_calculated++;
     }
 
     tabuleiro_passeio_set_cost(tabuleiro, cost);
 }
+
 
 void trocar(unsigned short *vec_cidades_tmp, int a, int b) {
     int temp = vec_cidades_tmp[b];
@@ -381,7 +389,10 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
     tabuleiro_free_st_wt(tabuleiro);
-    acervo_free(&(tabuleiro->fila));
+    
+    if(tabuleiro->fila != NULL)
+        acervo_free(&(tabuleiro->fila));
+
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
     
