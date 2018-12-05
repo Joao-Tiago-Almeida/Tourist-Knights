@@ -98,7 +98,7 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
     acervo_insert((Acervo *)(Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
     #ifdef DEBUG
-    printf("Insere %d,%d\n", ini.x, ini.y);
+    fprintf(stderr, "Insere %d,%d\n", ini.x, ini.y);
     #endif
 
     while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
@@ -109,7 +109,7 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
             break;
         }
         #ifdef DEBUG
-        printf("\nV <- (%d,%d)\n", v.x, v.y);
+        fprintf(stderr, "\nV <- (%d,%d)\n", v.x, v.y);
         acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
         #endif
         acervo_remove_top((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
@@ -182,7 +182,7 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     }
 
     int i = 0;
-    
+
     if(alloc_vec_pontos)
         path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
 
@@ -266,6 +266,6 @@ Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     //printf("do dijkstra: %d\n", do_dijkstra);
     if(do_dijkstra)
         path = dijkstra(tabuleiro, ini, dest, true);
-    
+
     return path;
 }

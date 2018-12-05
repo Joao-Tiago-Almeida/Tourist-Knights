@@ -57,7 +57,8 @@ dkms.conf
 
 .DS_Store
 
-*.valid
-testfiles/t8013.cities
-*.walks
-*.cities
+testfiles/*.cities
+testfiles/*.walks
+testfiles_walks/*.cities
+testfiles_walks/*.walks
+testfiles_walks/*.check

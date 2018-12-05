@@ -39,14 +39,14 @@ Acervo *new_acervo(int size) {
 }
 
 void acervo_print(Acervo *acervo) {
-    printf("Acervo: %d elementos %d de capacidade\n", acervo->num_elems, acervo->size);
+    fprintf(stderr, "Acervo: %d elementos %d de capacidade\n", acervo->num_elems, acervo->size);
     if(acervo->num_elems > 0)
     {
-        printf("Primeiro: %d,%d\n", acervo->vetor[0].x, acervo->vetor[0].y);
+        fprintf(stderr, "Primeiro: %d,%d\n", acervo->vetor[0].x, acervo->vetor[0].y);
             if(acervo->num_elems > 1)
-        printf("Filho 1: %d,%d\n", acervo->vetor[1].x, acervo->vetor[1].y);
+        fprintf(stderr, "Filho 1: %d,%d\n", acervo->vetor[1].x, acervo->vetor[1].y);
         if(acervo->num_elems > 2)
-            printf("Filho 2: %d,%d\n", acervo->vetor[2].x, acervo->vetor[2].y);
+            fprintf(stderr, "Filho 2: %d,%d\n", acervo->vetor[2].x, acervo->vetor[2].y);
     }
 }
 
@@ -100,7 +100,9 @@ void acervo_update_or_insert(Acervo* acervo, Vector2 vec, int old_value, Tabulei
         int new_value = acervo_get_priority(acervo, index, tabuleiro);
         if(old_value == new_value) {
             //Não mudou de posição
-            printf("Não mudou de posicao");
+            #if DEBUG
+            fprintf(stderr, "Não mudou de posicao");
+            #endif
         } else if(old_value > new_value) {
             //Se ficou mais prioritario (menor custo)
             acervo_fix_up(acervo, index, tabuleiro);

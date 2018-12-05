@@ -194,7 +194,7 @@ static void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
     tabuleiro->paths[0] = movimentos_find_path(tabuleiro,
         tabuleiro_passeio_get_pos_ini(tabuleiro),
         tabuleiro_passeio_get_pontos(tabuleiro)[1]);
-    
+
     tabuleiro_passeio_set_cost(tabuleiro, tabuleiro->paths[0].cost);
 }
 
@@ -231,18 +231,18 @@ void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, in
     int* min_custo, unsigned short *vec_cidades_min) {
 
     if (num_cidades == inicio) {
-        //Se chegou ao fim e já não há elementos para permutar, temos o 
+        //Se chegou ao fim e já não há elementos para permutar, temos o
         unsigned short cost = 0;
         //Calcula o custo de percorrer as cidades na ordem atual do vec_cidades_tmp
         for(int i = 0; i<num_cidades-1; i++) {
             int orig_idx = vec_cidades_tmp[i];
             int dest_idx = vec_cidades_tmp[i+1];
-            
+
             //Soma o custo de ir da cidade orig_idx para a cidade dest_idx
-            printf("a %d, %d\n", orig_idx, dest_idx);
+            //printf("a %d, %d\n", orig_idx, dest_idx);
             cost += matriz_custo_caminhos[orig_idx + (dest_idx-1)*num_cidades]; //Num cidades é a largura(w) do tabuleiro
         }
-    
+
         //Encontrou-se um caminho melhor, ou é o primeiro caminho testado (-1 representa infinito)
             #ifdef DEBUG
             printf("[");
@@ -259,7 +259,7 @@ void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, in
         }
         return;
     }
-  
+
     for (int j = inicio; j < num_cidades; j++) {
         if(inicio == j) {
             calcula_melhor_caminho(vec_cidades_tmp, num_cidades, inicio+1, matriz_custo_caminhos,
@@ -294,15 +294,15 @@ static void calcula_matriz_custo_caminhos(Tabuleiro *tabuleiro, unsigned short* 
 
             //Custo de ir de i(orig) para j(dest)
             matriz_custo_caminhos[i + (j-1)*w] = cost;
-            printf("%d, %d\n", i, j);
+            //printf("%d, %d\n", i, j);
 
-            
+
             //Cidade de partida é a cidade inicial do caminho, logo não calcula o caminho inverso
-            if(i > 0) {        
+            if(i > 0) {
                 //Calcula o custo do caminho inverso a partir do calculo anterior
                 //  (custo anterior - destino anteiror(origem do inverso) + origem anterior(destino do inverso))
                 matriz_custo_caminhos[j + (i-1)*w] = (unsigned short)(cost - tabuleiro_get_cost(tabuleiro, dest) + tabuleiro_get_cost(tabuleiro, orig));
-                printf("\t %d, %d\n", i+1, j-1);
+                //printf("\t %d, %d\n", i+1, j-1);
             }
         }
     }
@@ -342,21 +342,21 @@ void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
     free(vec_cidades_tmp);
 
     //vec_cidades_final vai ter melhor ordem de cidades para realizar o caminho
-    
+
     //Calcula os caminhos a realizar, com a ordem do vec_cidades_final e escreve-os no tabuleiro->paths
     int cost = 0;
 
-    printf("[");
+    //printf("[");
     for(int i = 0; i<tabuleiro->num_pontos-1; i++) {
-        printf("%d ", vec_cidades_final[i]);
+        //printf("%d ", vec_cidades_final[i]);
 
         tabuleiro->paths[i] = movimentos_find_path(tabuleiro,
             tabuleiro_passeio_get_pontos(tabuleiro)[vec_cidades_final[i]],
             tabuleiro_passeio_get_pontos(tabuleiro)[vec_cidades_final[i+1]]);
         cost += tabuleiro->paths[i].cost;
     }
-    printf("%d]", vec_cidades_final[tabuleiro->num_pontos-1]);
-    
+    //printf("%d]", vec_cidades_final[tabuleiro->num_pontos-1]);
+
     tabuleiro_passeio_set_cost(tabuleiro, cost);
 
     free(vec_cidades_final);
@@ -389,13 +389,13 @@ void tabuleiro_execute(Tabuleiro *tabuleiro) {
 void tabuleiro_free(Tabuleiro* tabuleiro) {
     free(tabuleiro_passeio_get_pontos(tabuleiro/*(Passeio*)tabuleiro_get_passeio(tabuleiro)*/));
     tabuleiro_free_st_wt(tabuleiro);
-    
+
     if(tabuleiro->fila != NULL)
         acervo_free(&(tabuleiro->fila));
 
     if(tabuleiro->type_passeio == 'A' || tabuleiro->type_passeio == 'B' || tabuleiro->type_passeio == 'C')
         free(tabuleiro->cost_matrix);
-    
+
     for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
         //Liberta cada caminho
         free(tabuleiro->paths[path_i].points);
@@ -442,7 +442,7 @@ void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp) {
     fprintf(fp, "%d %d %c %d ", tabuleiro->height, tabuleiro->width,
                                 tabuleiro->type_passeio,
                                 tabuleiro->num_pontos);
-    
+
     if(valid) {
         fprintf(fp, "%d %d\n", tabuleiro->cost,
                             num_pontos_passagem);
