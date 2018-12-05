@@ -9,7 +9,7 @@ static int acervo_get_priority(Acervo* acervo, int position, Tabuleiro* tabuleir
 static unsigned int acervo_get_upper(int v);
 static void acervo_fix_up(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 static void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro);
-static void exchange_cities_acervo(Acervo *acervo, int p);
+static void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 
 struct acervo_t{
     Vector2* vetor;
@@ -181,7 +181,7 @@ void acervo_fix_up(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
 
     // se o a cidade "filha" tiver um custo menor que a cidade "mãe"
     if(acervo_feather_city(acervo, acervo_get_upper(p), p, tabuleiro) == 2) {
-        exchange_cities_acervo(acervo, p);
+        exchange_cities_acervo(acervo, p, tabuleiro);
 
         if(p == 0)
             return; //Chegou ao topo
@@ -217,7 +217,7 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
         }
 
         //Troca o pai com filho mais prioritario (mais leve)
-        exchange_cities_acervo(acervo, child);
+        exchange_cities_acervo(acervo, child, tabuleiro);
         p = child;
     }
 }
@@ -227,7 +227,13 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
  * @param acervo [description]
  * @param p    [description]
  */
-void exchange_cities_acervo(Acervo *acervo, int p) {
+void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
+    // troco o indice das cidades
+    int idx_aux_pai = acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)];
+    int idx_aux_filho = acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)];
+    acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)] = idx_aux_filho;
+    acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)] = idx_aux_pai;
+
     Vector2 vec = acervo->vetor[acervo_get_upper(p)];
     acervo->vetor[acervo_get_upper(p)] = acervo->vetor[p];
     acervo->vetor[p] = vec;
