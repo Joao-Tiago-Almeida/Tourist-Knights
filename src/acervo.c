@@ -229,9 +229,12 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
  */
 void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
     // troco o indice das cidades
+    // int idx_aux_pai = acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)];
+    // int idx_aux_filho = acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)];
+    // acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)] = idx_aux_filho;
+    // acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)] = idx_aux_pai;
     int idx_aux_pai = acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)];
-    int idx_aux_filho = acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)];
-    acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)] = idx_aux_filho;
+    acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)] = acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)];
     acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)] = idx_aux_pai;
 
     Vector2 vec = acervo->vetor[acervo_get_upper(p)];
