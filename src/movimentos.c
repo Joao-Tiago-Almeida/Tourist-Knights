@@ -139,7 +139,7 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
 
                     tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                     //atualiza se já tiver no acervo/insere ordenado
-                    acervo_update_or_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, old_wt_val, tabuleiro);
+                    acervo_update((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, old_wt_val, tabuleiro);
                     #ifdef DEBUG
                     printf("Insere/Atualiza %d,%d\n", pos_to_try.x, pos_to_try.y);
                     #endif

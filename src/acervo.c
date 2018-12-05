@@ -16,6 +16,7 @@ struct acervo_t{
     int size;   // tamanho do nível, posso retirar dps
     //int free;   // aponta sempre para o próximo sítio do nível onde escrever
     int num_elems;
+    int* index_table;  //   matrix com o índice do acervo de cada ponto
 };
 
 //Devolve o valor da prioridade (neste caso menor é mais prioritario)
@@ -28,13 +29,18 @@ int acervo_get_priority(Acervo* acervo, int position, Tabuleiro* tabuleiro) {
  * @param  size tamanho da acervo
  * @return      acervo
  */
-Acervo *new_acervo(int size) {
+Acervo *new_acervo(int size_acervo, int size_idx_matrix) {
     // size =  NUMERO_DE_ESPACO_INICIALMENTE_ALOCADO;
     Acervo *new = (Acervo*) checked_malloc(sizeof(Acervo));
-    new->vetor = (Vector2*) checked_malloc(size * sizeof(Vector2));
-    new->size = size;
+    new->vetor = (Vector2*) checked_malloc(size_acervo * sizeof(Vector2));
+    new->index_table = (int*) checked_malloc(size_idx_matrix * sizeof(int));
+    new->size = size_acervo;
     //new->free = 0;
     new->num_elems = 0;
+
+    for(int i =0 ; i < size_idx_matrix; i++)
+        new->index_table[i] = -1;
+
     return new;
 }
 
@@ -67,6 +73,8 @@ void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
 
     // inserir a casa na acervo
     acervo->vetor[acervo->num_elems] = vec;
+    // coloca na matriz dos índices, o incide desse ponto no acervo
+    acervo->index_table[vec.x + vec.y*(tabuleiro_get_width(tabuleiro))] = acervo->num_elems;
     acervo->num_elems++;
     acervo_fix_up(acervo, acervo->num_elems-1, tabuleiro);
 
@@ -80,20 +88,23 @@ void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
  * @param old_value [description]
  * @param tabuleiro [description]
  */
-void acervo_update_or_insert(Acervo* acervo, Vector2 vec, int old_value, Tabuleiro* tabuleiro) {
-    int index = -1; //Indice onde está o vec (-1 se não estiver na tabela)
-    for(int i = 0; i<acervo->num_elems; i++) {
-        if(vector2_equals(vec, acervo->vetor[i])) {
-            //Se o vec foi encontrado no acervo
-            index = i;
-            break;
-        }
-    }
+void acervo_update(Acervo* acervo, Vector2 vec, int old_value, Tabuleiro* tabuleiro) {
+    // int index = -1; //Indice onde está o vec (-1 se não estiver na tabela)
+    // for(int i = 0; i<acervo->num_elems; i++) {
+    //     if(vector2_equals(vec, acervo->vetor[i])) {
+    //         //Se o vec foi encontrado no acervo
+    //         index = i;
+    //         break;
+    //     }
+    // }
 
-
+    int index = acervo->index_table[vec.x + vec.y*(tabuleiro_get_width(tabuleiro))];
 
     if(index == -1) {
         //Inserir no acervo
+        #ifdef DEGUB
+            fprintf(stderr, "acervo_insert, na função acervo_update\n");
+        #endif
         acervo_insert(acervo, vec, tabuleiro);
     } else {
         //Atualizar a sua posicao
@@ -123,6 +134,9 @@ Vector2 acervo_get_top(Acervo *acervo) {
 }
 
 void acervo_remove_top(Acervo *acervo, Tabuleiro* tabuleiro) {
+    //  escreve na mtriz dos índice '-1', como símbolo de remoção
+    Vector2 vec = acervo->vetor[0];
+    acervo->index_table[vec.x + vec.y * (tabuleiro_get_width(tabuleiro))] = -1;
     acervo->vetor[0] = acervo->vetor[--acervo->num_elems];
     acervo_fix_down(acervo, 0, tabuleiro);
 }
@@ -220,6 +234,7 @@ void exchange_cities_acervo(Acervo *acervo, int p) {
 }
 
 void acervo_free(Acervo** acervo) {
+    free((*acervo)->index_table);
     free((*acervo)->vetor);
     free(*acervo);
     *acervo = NULL;

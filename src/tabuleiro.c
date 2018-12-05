@@ -8,6 +8,8 @@
 #include "acervo.h"
 #include "path.h"
 
+#define PERCENTAGEM_PRE_ALOCADA_DO_ACERVO 0.5
+
 struct tabuleiro_t {
     unsigned int width, height;
     char type_passeio;
@@ -15,6 +17,7 @@ struct tabuleiro_t {
     unsigned char* cost_matrix; //Cada custo tem um byte
     unsigned short* wt;
     char* st;
+    //TODO criar matriz com o indice
 
     Acervo *fila;
 
@@ -152,8 +155,8 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
     }
 
     // Expressão inicial de alocação de memómira
-    int expression = tabuleiro->width * tabuleiro->height * .25;
-    tabuleiro->fila = new_acervo(expression);
+    int index_matrix_size = tabuleiro->width * tabuleiro->height;
+    tabuleiro->fila = new_acervo(index_matrix_size * PERCENTAGEM_PRE_ALOCADA_DO_ACERVO, index_matrix_size);
 }
 
 /**
@@ -322,7 +325,7 @@ void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
 
     //Matriz que tem o custo de ir de um ponto para o outro (Não tem uma linha nunca se vai para o ponto inicial)
     //Linha - origem, coluna - destino
-    unsigned short* matriz_custo_caminhos = (unsigned short*)malloc(sizeof(unsigned short) * w * h);
+    unsigned short* matriz_custo_caminhos = (unsigned short*)checked_malloc(sizeof(unsigned short) * w * h);
     calcula_matriz_custo_caminhos(tabuleiro, matriz_custo_caminhos);
 
     //Com os custos de cada trajeto possivel calculados, calcula-se as permutacoes
