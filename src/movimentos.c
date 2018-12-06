@@ -214,7 +214,7 @@ unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 in
     return cost;
 }
 
-static Path inverte_caminho(Tabuleiro* tabuleiro, Path path) {
+Path inverte_caminho(Tabuleiro* tabuleiro, Path path) {
     Path new_path;
 
     new_path.length = path.length;

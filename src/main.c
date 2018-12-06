@@ -94,10 +94,9 @@ void read_and_write_files(char* filename) {
         tabuleiro_write_valid_file(tabuleiro, file_out);
 
         // se o tabuleiro e o passio forem válidos
-        if(tabuleiro_and_passeio_is_valid(tabuleiro)) {
-            tabuleiro_free(tabuleiro);
-            free(tabuleiro);
-        }
+        tabuleiro_free(tabuleiro);
+        free(tabuleiro);
+        
         tabuleiro = NULL;
     }
     fclose(file_out);
