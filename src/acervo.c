@@ -248,3 +248,18 @@ void acervo_free(Acervo** acervo) {
     free(*acervo);
     *acervo = NULL;
 }
+
+void acervo_init(Acervo *acervo, Tabuleiro* tabuleiro) {
+    for(int i = 0; i<acervo->num_elems; i++) {
+        Vector2 vec = acervo->vetor[i];
+        acervo->index_table[vec.x + vec.y*(tabuleiro_get_width(tabuleiro))] = -1;
+    }
+    for(unsigned int i = 0; i<tabuleiro_get_width(tabuleiro); i++) {
+        for(unsigned int j = 0; j<tabuleiro_get_height(tabuleiro); j++) {
+            if(acervo->index_table[i + j*(tabuleiro_get_width(tabuleiro))] != -1) {
+                printf("Acervo idnex table não totalmente limpo bro\n");
+            }
+        }
+    }
+    acervo->num_elems = 0;
+}

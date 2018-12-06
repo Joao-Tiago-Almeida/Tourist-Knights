@@ -16,6 +16,7 @@ bool acervo_is_empty(Acervo* acervo);
 void acervo_remove_top(Acervo *acervo, Tabuleiro* tabuleiro);
 void acervo_print(Acervo *acervo);
 void acervo_free(Acervo** acervo);
+void acervo_init(Acervo *acervo, Tabuleiro* tabuleiro);
 
 //nao sei se é para tar aqui
 int acervo_feather_city(Acervo* acervo, int a, int b, Tabuleiro *tabuleiro);

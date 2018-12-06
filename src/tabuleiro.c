@@ -377,7 +377,6 @@ void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
     for(int i = 0; i<w; i++) {
         for(int j = 0; j<h; j++) {
             free(matriz_custo_caminhos[i + j*w].points);
-            printf("Rissol de banana\n");
         }
     }
     //printf("%d]", vec_cidades_final[tabuleiro->num_pontos-1]);

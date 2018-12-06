@@ -93,6 +93,7 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
 
     //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
     tabuleiro_init_st_wt(tabuleiro);
+    acervo_init((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
 
     //Init algoritmo
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
