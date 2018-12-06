@@ -98,9 +98,6 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     //Init algoritmo
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
     acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
-    #ifdef DEBUG
-    fprintf(stderr, "Insere %d,%d\n", ini.x, ini.y);
-    #endif
 
     while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
         Vector2 v = acervo_get_top((Acervo *)tabuleiro_get_fila(tabuleiro));
@@ -109,10 +106,6 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
             //Para de procurar quando se encontra o caminho para o destino
             break;
         }
-        #ifdef DEBUG
-        fprintf(stderr, "\nV <- (%d,%d)\n", v.x, v.y);
-        acervo_print((Acervo *)tabuleiro_get_fila(tabuleiro));
-        #endif
         acervo_remove_top((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
 
         int wt_value = tabuleiro_get_wt_val(tabuleiro, v);
@@ -141,10 +134,6 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
                     tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                     //atualiza se já tiver no acervo/insere ordenado
                     acervo_update((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, old_wt_val, tabuleiro);
-                    #ifdef DEBUG
-                    printf("Insere/Atualiza %d,%d\n", pos_to_try.x, pos_to_try.y);
-                    #endif
-
 
                     //Fica ao contrario (em vez de dizer que subiu 2, tá a dizer que desceu dois)
                     //Pq o st é suposto dizer a direção para ir do pos_to_try ao v, e não o contrario
@@ -154,9 +143,6 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
                 //Se for a primeira vez que a casa é considerada
                 tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
                 acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, tabuleiro);
-                #ifdef DEBUG
-                printf("Insere %d,%d\n", pos_to_try.x, pos_to_try.y);
-                #endif
                 tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
             }
         }

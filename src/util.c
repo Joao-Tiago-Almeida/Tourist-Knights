@@ -28,7 +28,9 @@ void *checked_malloc(size_t size) {
  * @return      ponteiro para o espaço de memória alocado
  */
 void *checked_realloc(void * ptr, size_t size) {
-
+    #ifdef DEBUG
+    printf("Realloc!!\n");
+    #endif
     ptr = realloc(ptr, size);
 
     if(ptr == NULL) {

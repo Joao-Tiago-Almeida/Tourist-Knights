@@ -89,31 +89,16 @@ void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
  * @param tabuleiro [description]
  */
 void acervo_update(Acervo* acervo, Vector2 vec, int old_value, Tabuleiro* tabuleiro) {
-    // int index = -1; //Indice onde está o vec (-1 se não estiver na tabela)
-    // for(int i = 0; i<acervo->num_elems; i++) {
-    //     if(vector2_equals(vec, acervo->vetor[i])) {
-    //         //Se o vec foi encontrado no acervo
-    //         index = i;
-    //         break;
-    //     }
-    // }
-
     int index = acervo->index_table[vec.x + vec.y*(tabuleiro_get_width(tabuleiro))];
 
     if(index == -1) {
         //Inserir no acervo
-        #ifdef DEGUB
-            fprintf(stderr, "acervo_insert, na função acervo_update\n");
-        #endif
         acervo_insert(acervo, vec, tabuleiro);
     } else {
         //Atualizar a sua posicao
         int new_value = acervo_get_priority(acervo, index, tabuleiro);
         if(old_value == new_value) {
             //Não mudou de posição
-            #if DEBUG
-            fprintf(stderr, "Não mudou de posicao");
-            #endif
         } else if(old_value > new_value) {
             //Se ficou mais prioritario (menor custo)
             acervo_fix_up(acervo, index, tabuleiro);
@@ -229,17 +214,21 @@ void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
  */
 void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
     // troco o indice das cidades
-    // int idx_aux_pai = acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)];
-    // int idx_aux_filho = acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)];
-    // acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)] = idx_aux_filho;
-    // acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)] = idx_aux_pai;
-    int idx_aux_pai = acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)];
-    acervo->index_table[acervo->vetor[acervo_get_upper(p)].x + acervo->vetor[acervo_get_upper(p)].y * tabuleiro_get_width(tabuleiro)] = acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)];
-    acervo->index_table[acervo->vetor[p].x + acervo->vetor[p].y * tabuleiro_get_width(tabuleiro)] = idx_aux_pai;
+    int width = tabuleiro_get_width(tabuleiro);
+    unsigned int parent = acervo_get_upper(p);
+    
+    Vector2 parent_vec = acervo->vetor[parent];
+    Vector2 vec = acervo->vetor[p];
 
-    Vector2 vec = acervo->vetor[acervo_get_upper(p)];
-    acervo->vetor[acervo_get_upper(p)] = acervo->vetor[p];
-    acervo->vetor[p] = vec;
+    int a = vec.x + vec.y * width;
+    int a2 = parent_vec.x + parent_vec.y * width;
+
+    int idx_aux_pai = acervo->index_table[a2];
+    acervo->index_table[a2] = acervo->index_table[a];
+    acervo->index_table[a] = idx_aux_pai;
+
+    acervo->vetor[parent] = vec;
+    acervo->vetor[p] = parent_vec;
 }
 
 void acervo_free(Acervo** acervo) {
