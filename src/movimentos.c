@@ -223,9 +223,11 @@ Path inverte_caminho(Tabuleiro* tabuleiro, Path path) {
     new_path.orig = path.dest;
     new_path.cost = path.cost - tabuleiro_get_cost(tabuleiro, path.dest) + tabuleiro_get_cost(tabuleiro, new_path.dest);
     new_path.points = (Vector2*) checked_malloc(sizeof(Vector2) * new_path.length);
-    for(int i = 0; i<new_path.length; i++) {
-        new_path.points[new_path.length-1 - i] = path.points[i];
+    for(int i = 0; i<new_path.length-1; i++) {
+        new_path.points[new_path.length-1 - i -1] = path.points[i];
     }
+    new_path.points[new_path.length-1] = new_path.dest;
+
 
     return new_path;
 }
