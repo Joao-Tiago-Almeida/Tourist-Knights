@@ -96,7 +96,7 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
 
     //Init algoritmo
     tabuleiro_set_wt_val(tabuleiro, ini, 0);
-    acervo_insert((Acervo *)(Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
+    acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
     #ifdef DEBUG
     fprintf(stderr, "Insere %d,%d\n", ini.x, ini.y);
     #endif
