@@ -244,15 +244,17 @@ void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, in
             //Soma o custo de ir da cidade orig_idx para a cidade dest_idx
             //printf("a %d, %d\n", orig_idx, dest_idx);
             cost += matriz_custo_caminhos[orig_idx + (dest_idx-1)*num_cidades].cost; //Num cidades é a largura(w) do tabuleiro
+            if(cost >= *min_custo && *min_custo != -1)
+                return;
         }
 
         //Encontrou-se um caminho melhor, ou é o primeiro caminho testado (-1 representa infinito)
             #ifdef DEBUG
-            printf("[");
-            for(int i = 0; i<num_cidades; i++) {
-                printf("%d ", vec_cidades_tmp[i]);
-            }
-            printf("] custo: %d\n", cost);
+                printf("[");
+                for(int i = 0; i<num_cidades; i++) {
+                    printf("%d ", vec_cidades_tmp[i]);
+                }
+                printf("] custo: %d\n", cost);
             #endif
         if(*min_custo == -1 || cost < *min_custo) {
             *min_custo = cost;
@@ -288,7 +290,7 @@ static void calcula_matriz_custo_caminhos(Tabuleiro *tabuleiro, Path* matriz_cus
 
     for(int i = 0; i<tabuleiro->num_pontos; i++) {
         for(int j = 1; j<tabuleiro->num_pontos; j++) { //J numero da cidade, não o numero da linha (é j-1)
-            
+
             //Calcular o caminho do ponto i ao j
             if(i >= j) {
                 //Não calcular a trigular superior da matriz
