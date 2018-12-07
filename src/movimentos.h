@@ -14,7 +14,8 @@ bool check_if_city_accessible(Tabuleiro* tabuleiro, Vector2 c);
 
 Path inverte_caminho(Tabuleiro* tabuleiro, Path path);
 
-unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest);
+Path* dijkstra2(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_destinos);
+unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest); //TODO tirar
 Path movimentos_find_path(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest);
 
 #endif

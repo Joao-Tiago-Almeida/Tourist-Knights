@@ -13,8 +13,8 @@
 #define MOVES 8
 
 //  vetor que guarda as coordenadas dos oito movimentos possiveis
-const Vector2 knight_L[MOVES] = { {1,2}, {2,1}, {2,-1}, {1,-2},
-                        {-1,-2}, {-2,-1}, {-2,1}, {-1,2} };
+const Vector2 knight_L[MOVES] = { {-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2},
+                        {-1,-2}, {-2,-1}, {-2,1} };
 
 //TODO definir qual a descrição de tabuleiro a usar
 /**
@@ -190,6 +190,155 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     }
 
     return path;
+}
+
+//TODO comentar//Devolve o caminho mais curto entre dois pontos
+Path* dijkstra2(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_destinos) {
+    Path *paths = checked_calloc(sizeof(Path), num_destinos);
+    bool *path_found = checked_calloc(sizeof(bool), num_destinos);
+    //Numero de caminhos ainda por determinar
+    int num_paths_left = num_destinos;
+
+    //Inicializa os caminhos para cada ponto
+    for(int i = 0; i<num_destinos; i++) {
+        paths[i].points = NULL;
+        paths[i].orig = ini;
+        paths[i].dest = destinos[i];
+        paths[i].length = 0;
+        paths[i].cost = 0;
+
+        //Se não precisar de calcular o caminho
+        if(vector2_equals(ini, destinos[i])) {
+            path_found[i] = true;
+        }
+        if(do_points_make_L(ini, destinos[i])) {
+            paths[i].length = 1;
+            paths[i].cost = tabuleiro_get_cost(tabuleiro, destinos[i]);
+            paths[i].points = (Vector2*)checked_malloc(sizeof(Vector2) * 1);
+            paths[i].points[0] = destinos[i];
+            path_found[i] = true;
+        }
+    }
+    
+
+    //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
+    tabuleiro_init_st_wt(tabuleiro);
+    acervo_init((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
+
+    //Init algoritmo
+    tabuleiro_set_wt_val(tabuleiro, ini, 0);
+    acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), ini, tabuleiro);
+
+    while(!acervo_is_empty((Acervo *)tabuleiro_get_fila(tabuleiro))) {
+        Vector2 v = acervo_get_top((Acervo *)tabuleiro_get_fila(tabuleiro));
+
+        for(int i = 0; i<num_destinos; i++) {
+            if(!path_found[i] && vector2_equals(v, destinos[i])) {
+                //Encontrou um caminho para o destino i
+                path_found[i] = true;
+                num_paths_left--;
+
+            }
+        }
+        if(num_destinos == 0) {
+            //Todos os caminhos foram encontrados
+            break;
+        }
+
+        acervo_remove_top((Acervo *)tabuleiro_get_fila(tabuleiro), tabuleiro);
+
+        int wt_value = tabuleiro_get_wt_val(tabuleiro, v);
+
+        for(int mov_rel = 0; mov_rel<8; mov_rel++) {
+            //Vizinhos de v
+            Vector2 pos_to_try = vector2_add(v, knight_L[mov_rel]);
+
+            if(!(inside_board(tabuleiro, pos_to_try) && tabuleiro_get_cost(tabuleiro, pos_to_try) != 0)) {
+                //Se for uma posicao invalida, passa à frente
+                continue;
+            }
+
+            int old_wt_val = tabuleiro_get_wt_val(tabuleiro, pos_to_try);
+            int new_wt_val = wt_value + tabuleiro_get_cost(tabuleiro, pos_to_try);
+
+            if(old_wt_val != -1) {
+                //Se o custo não for infinito
+
+                if(old_wt_val > new_wt_val) {
+                    //Se agora o custo for menor até lá, mudar a sua posicao na fila
+
+                    tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
+                    //atualiza se já tiver no acervo/insere ordenado
+                    acervo_update((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, old_wt_val, tabuleiro);
+
+                    //Fica ao contrario (em vez de dizer que subiu 2, tá a dizer que desceu dois)
+                    //Pq o st é suposto dizer a direção para ir do pos_to_try ao v, e não o contrario
+                    tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
+                }
+            } else {
+                //Se for a primeira vez que a casa é considerada
+                tabuleiro_set_wt_val(tabuleiro, pos_to_try, new_wt_val);
+                acervo_insert((Acervo *)tabuleiro_get_fila(tabuleiro), pos_to_try, tabuleiro);
+                tabuleiro_set_st_val(tabuleiro, pos_to_try, mov_rel);
+            }
+        }
+    }
+
+    //Virifica se não há caminho para um dos pontos de destino, define o problema como invalido
+    for(int i = 0; i<num_destinos; i++) {
+        if(tabuleiro_get_st_val(tabuleiro, destinos[i]) == -1) {
+            tabuleiro_set_valid(tabuleiro, false);
+            free(paths);
+            free(path_found);
+            return NULL;
+        }
+    }
+    for(int path_i = 0; path_i<num_destinos; path_i++) {
+        //Percorrer o caminho ao contrario para saber o tamanho necessario para o vetor
+        Path path = paths[path_i];
+        Vector2 p = destinos[path_i];
+        int st;
+        while(true) {
+            st = tabuleiro_get_st_val(tabuleiro, p);
+            if(st == -1)
+                break; //Se chegou ao fim
+
+            p = vector2_sub(p, knight_L[st]);
+
+            path.length++;
+        }
+
+
+        path.points = (Vector2*)checked_malloc(sizeof(Vector2) * path.length);
+
+        p = destinos[path_i];
+        int i = 0;
+        while(true) {
+            st = tabuleiro_get_st_val(tabuleiro, p);
+
+            if(st == -1)
+                break; //Se chegou ao fim
+
+            path.points[(path.length-1) - i] = p; //Esreve no vetor do inicio para o fim
+
+            path.cost += tabuleiro_get_cost(tabuleiro, p);
+
+            p = vector2_sub(p, knight_L[st]);
+            i++;
+        }
+        paths[path_i] = path;
+    }
+    #ifdef DEBUG
+    for(int path_i = 0; path_i<num_destinos; path_i++) {
+        Path path2 = movimentos_find_path(tabuleiro, ini, destinos[path_i]);
+        if(path2.cost != paths[path_i].cost) {
+            printf("wtf bro\n");
+        }
+    }
+    #endif
+
+    free(path_found);
+    return paths;
 }
 
 unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {

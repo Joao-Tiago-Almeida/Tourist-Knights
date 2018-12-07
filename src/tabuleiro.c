@@ -284,37 +284,37 @@ static void calcula_matriz_custo_caminhos(Tabuleiro *tabuleiro, Path* matriz_cus
     }
 
     for(int i = 0; i<tabuleiro->num_pontos; i++) {
-        for(int j = 1; j<tabuleiro->num_pontos; j++) { //J numero da cidade, não o numero da linha (é j-1)
+        Path *paths;
+        Vector2 orig;
 
-            //Calcular o caminho do ponto i ao j
-            if(i >= j) {
-                //Não calcular a trigular superior da matriz
-                //  Não calcular caminho entre a mesma cidade e caminhos com cidades extremos iguais
-                continue;
-            }
+        //Numero de pontos menos o atual e o inicial(exceto quando i==0)
+        int num_destinos = tabuleiro->num_pontos-1 - i;
+        Vector2* destinos = (Vector2*)malloc(sizeof(Vector2) * (num_destinos));
 
-            Vector2 orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
-            Vector2 dest = tabuleiro_passeio_get_pontos(tabuleiro)[j];
-
-            /*unsigned short cost = movimentos_find_better_path_cost(tabuleiro,
-                orig,
-                dest);*/
-            Path path = movimentos_find_path(tabuleiro, orig, dest);
-
-            //Custo de ir de i(orig) para j(dest)
-            matriz_custo_caminhos[i + (j-1)*w] = path;
-            //printf("%d, %d\n", i, j);
-
-
-            //Cidade de partida é a cidade inicial do caminho, logo não calcula o caminho inverso
-            if(i > 0) {
-                //Calcula o custo do caminho inverso a partir do calculo anterior
-                //  (custo anterior - destino anteiror(origem do inverso) + origem anterior(destino do inverso))
-                //matriz_custo_caminhos[j + (i-1)*w] = (unsigned short)(cost - tabuleiro_get_cost(tabuleiro, dest) + tabuleiro_get_cost(tabuleiro, orig));
-                matriz_custo_caminhos[j + (i-1)*w] = inverte_caminho(tabuleiro, path);
-                //printf("\t %d, %d\n", i+1, j-1);
-            }
+        //Inicializa o vetor de pontos de destino
+        int j2 = 0; // posicao onde preenche no vetor de destinos
+        for(int j = i+1; j<tabuleiro->num_pontos; j++) {
+            destinos[j2] = tabuleiro_passeio_get_pontos(tabuleiro)[j];
+            j2++;
         }
+
+        orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
+        paths = dijkstra2(tabuleiro, orig, destinos, num_destinos);
+        if(paths == NULL) {
+            free(destinos);
+            return;
+            //TODO
+        }
+
+        j2 = 0; // posicao onde lê no vetor de caminhos
+        for(int j = i+1; j<tabuleiro->num_pontos; j++) {
+            matriz_custo_caminhos[i + (j-1)*w] = paths[j2];
+            if(i != 0) {
+                matriz_custo_caminhos[j + (i-1)*w] = inverte_caminho(tabuleiro, paths[j2]);
+            }
+            j2++;
+        }
+        free(destinos);
     }
 }
 
@@ -350,7 +350,9 @@ void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
     calcula_melhor_caminho(vec_cidades_tmp, tabuleiro->num_pontos, 1,
                                 matriz_custo_caminhos, &min_cost, vec_cidades_final, 0);
     free(vec_cidades_tmp);
-
+    if(!passeio_get_valid(tabuleiro)) {
+        return;
+    }
     //vec_cidades_final vai ter melhor ordem de cidades para realizar o caminho
 
     //Calcula os caminhos a realizar, com a ordem do vec_cidades_final e escreve-os no tabuleiro->paths
