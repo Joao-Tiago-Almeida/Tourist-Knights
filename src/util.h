@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define DEBUG
+//#define DEBUG
 
 void *checked_malloc(size_t size);
 void *checked_calloc(size_t size, size_t n);

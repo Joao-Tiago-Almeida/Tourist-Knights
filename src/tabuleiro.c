@@ -231,33 +231,27 @@ void trocar(unsigned short *vec_cidades_tmp, int a, int b) {
 }
 
 void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, int inicio, Path* matriz_custo_caminhos,
-    int* min_custo, unsigned short *vec_cidades_min) {
+    int* min_custo, unsigned short *vec_cidades_min, int cost_sum) {
+    
+    //Soma os custos do caminho entre os pontos anteriores
+    if(inicio > 1)
+        cost_sum += inicio == 0 ? 0 : (matriz_custo_caminhos[vec_cidades_tmp[inicio-2] + (vec_cidades_tmp[inicio-1]-1)*num_cidades].cost);
+
+    if(*min_custo != -1 && cost_sum >= *min_custo)
+        return;
 
     if (num_cidades == inicio) {
-        //Se chegou ao fim e já não há elementos para permutar, temos o
-        unsigned short cost = 0;
-        //Calcula o custo de percorrer as cidades na ordem atual do vec_cidades_tmp
-        for(int i = 0; i<num_cidades-1; i++) {
-            int orig_idx = vec_cidades_tmp[i];
-            int dest_idx = vec_cidades_tmp[i+1];
-
-            //Soma o custo de ir da cidade orig_idx para a cidade dest_idx
-            //printf("a %d, %d\n", orig_idx, dest_idx);
-            cost += matriz_custo_caminhos[orig_idx + (dest_idx-1)*num_cidades].cost; //Num cidades é a largura(w) do tabuleiro
-            if(cost >= *min_custo && *min_custo != -1)
-                return;
-        }
-
-        //Encontrou-se um caminho melhor, ou é o primeiro caminho testado (-1 representa infinito)
-            #ifdef DEBUG
-                printf("[");
-                for(int i = 0; i<num_cidades; i++) {
-                    printf("%d ", vec_cidades_tmp[i]);
-                }
-                printf("] custo: %d\n", cost);
-            #endif
-        if(*min_custo == -1 || cost < *min_custo) {
-            *min_custo = cost;
+        //Se chegou ao fim e já não há elementos para permutar, temos o custo calculado e 
+        //  encontrou-se um caminho melhor, ou é o primeiro caminho testado (-1 representa infinito)
+        #ifdef DEBUG
+            printf("[");
+            for(int i = 0; i<num_cidades; i++) {
+                printf("%d ", vec_cidades_tmp[i]);
+            }
+            printf("] custo: %d\n", cost_sum);
+        #endif
+        if(*min_custo == -1 || cost_sum < *min_custo) {
+            *min_custo = cost_sum;
 
 
             memcpy(vec_cidades_min, vec_cidades_tmp, num_cidades*sizeof(unsigned short));
@@ -265,14 +259,15 @@ void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, in
         return;
     }
 
+
     for (int j = inicio; j < num_cidades; j++) {
         if(inicio == j) {
             calcula_melhor_caminho(vec_cidades_tmp, num_cidades, inicio+1, matriz_custo_caminhos,
-                min_custo, vec_cidades_min);
+                min_custo, vec_cidades_min, cost_sum);
         } else {
             trocar(vec_cidades_tmp, inicio, j);
             calcula_melhor_caminho(vec_cidades_tmp, num_cidades, inicio+1, matriz_custo_caminhos,
-                min_custo, vec_cidades_min);
+                min_custo, vec_cidades_min, cost_sum);
             trocar(vec_cidades_tmp, inicio, j);
         }
     }
@@ -353,7 +348,7 @@ void tabuleiro_execute_tipo_C(Tabuleiro *tabuleiro) {
     //Calcula o melhor caminho, fazendo permutacoes a partir do primeiro indice
     //  (primeira cidade x0 é fixa)
     calcula_melhor_caminho(vec_cidades_tmp, tabuleiro->num_pontos, 1,
-                                matriz_custo_caminhos, &min_cost, vec_cidades_final);
+                                matriz_custo_caminhos, &min_cost, vec_cidades_final, 0);
     free(vec_cidades_tmp);
 
     //vec_cidades_final vai ter melhor ordem de cidades para realizar o caminho
