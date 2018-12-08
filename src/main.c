@@ -84,7 +84,7 @@ void read_and_write_files(char* filename) {
         tabuleiro = read_file(fp, w, h, modo);
 
         // se o tabuleiro e o passio forem válidos
-        if(tabuleiro_and_passeio_is_valid(tabuleiro)) {
+        if(passeio_get_valid(tabuleiro)) {
             //Analisa o tabuleiro como devido
             tabuleiro_execute(tabuleiro);
         }

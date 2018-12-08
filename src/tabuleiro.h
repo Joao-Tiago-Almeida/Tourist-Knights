@@ -47,6 +47,7 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h);
 
 
 void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE* fp);
+bool tabuleiro_is_mode_valid(Tabuleiro* tabuleiro);
 
 void tabuleiro_set_valid(Tabuleiro* tabuleiro, bool valid);
 bool passeio_get_valid(Tabuleiro* tabuleiro);
