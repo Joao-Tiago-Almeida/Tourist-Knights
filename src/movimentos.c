@@ -65,7 +65,7 @@ bool do_points_make_L(Vector2 point1, Vector2 point2) {
 }
 
 //Testa se há caminhos em que para encontrar não é preciso o dijsktra
-// 
+//
 static void dijkstra_test_easy_paths(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_destinos,
                                         bool *path_found, int *num_paths_left) {
     for(int i = 0; i<num_destinos; i++) {
@@ -81,7 +81,7 @@ static void dijkstra_test_easy_paths(Tabuleiro* tabuleiro, Vector2 ini, Vector2*
                     tabuleiro_set_wt_val(tabuleiro, destinos[i], tabuleiro_get_cost(tabuleiro, destinos[i]));
                     tabuleiro_set_st_val(tabuleiro, destinos[i], mov_rel);
                 }
-            }       
+            }
         }
     }
 }
@@ -186,12 +186,12 @@ static void get_path_from_dijkstra(Tabuleiro* tabuleiro, Path* path) {
     int st;
     (*path).cost = 0;
 
-    
+
     if(vector2_equals((*path).orig, (*path).dest)) {
         //Não aloca memória para um caminho que é de um ponto para sí próprio
         return;
     }
-    
+
     //Percorre o st até à origem para saber o numero de pontos a alocar
     while(true) {
         st = tabuleiro_get_st_val(tabuleiro, p);
@@ -311,8 +311,8 @@ Path movimentos_find_path_to_city(Tabuleiro* tabuleiro, Vector2 ini, Vector2 des
  * @param  ini          Ponto de inicio
  * @param  destinos     Vetor com as coordenadas de cada destino
  * @param  num_destinos Tamanho do vetor destinos
- * @return              Vetor com os caminhos correspondentes ao destinos        
- *                        NULL se não conseguiu encontrar caminhos 
+ * @return              Vetor com os caminhos correspondentes ao destinos
+ *                        NULL se não conseguiu encontrar caminhos
  * Efeitos: Se não conseguiu encontrar um dos caminhos torna tabuleiro invalido(valid = false)
  */
 Path* movimentos_find_path_to_multiple_cities(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_destinos) {
