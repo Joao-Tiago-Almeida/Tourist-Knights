@@ -11,7 +11,7 @@
 #define PERCENTAGEM_PRE_ALOCADA_DO_ACERVO 0.5
 
 struct tabuleiro_t {
-    unsigned int width, height;
+    unsigned short width, height;
     char type_passeio;
 
     unsigned char* cost_matrix; //Cada custo tem um byte
@@ -22,11 +22,11 @@ struct tabuleiro_t {
     Acervo *fila;
 
     Path* paths;
-    int num_paths_calculated; //Numero de caminhos que já estão no vetor paths
+    short num_paths_calculated; //Numero de caminhos que já estão no vetor paths
 
-    int num_pontos;
+    unsigned short num_pontos;
     Vector2* pontos;
-    int cost;  //parte 1, para guardar o custo do camimho se válido
+    short cost;  //parte 1, para guardar o custo do camimho se válido
     bool valid;
 };
 
@@ -70,10 +70,12 @@ int tabuleiro_get_cost(Tabuleiro* tabuleiro, Vector2 vec) {
 }
 
 void tabuleiro_set_wt_val(Tabuleiro* tabuleiro, Vector2 vec, int value) {
-    if(value > 65535) {
-        fprintf(stderr, "Valor maior que unsigned short!!\n");
-        exit(1); //TODO tirar
-    }
+    #ifdef  DEBUG
+        if(value > 65535) {
+            fprintf(stderr, "Valor maior que unsigned short!!\n");
+            exit(1);
+        }
+    #endif
     tabuleiro->wt[vec.x + vec.y*tabuleiro->width] = (unsigned short)value;
 }
 int tabuleiro_get_wt_val(Tabuleiro* tabuleiro, Vector2 vec) {
@@ -143,11 +145,12 @@ void tabuleiro_read_matrix_from_file(Tabuleiro* tabuleiro, FILE* fp) {
                 fprintf(stderr, "Erro de leitura");
                 exit(0);
             }
-
+            #ifdef  DEBUG
             if(cost > 255 || cost < 0) {
-                fprintf(stderr, "Custo não cabe num byte %d\n", cost);//TODO retirar na versão a entregar para melhor performance
+                fprintf(stderr, "Custo não cabe num byte %d\n", cost);
                 exit(0);
             }
+            #endif
             //  Escrita no vetor
             vec = vector2_new(i,j);
             tabuleiro_set_cost(tabuleiro, vec, (unsigned char) cost);
@@ -232,7 +235,7 @@ void trocar(unsigned short *vec_cidades_tmp, int a, int b) {
 
 void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, int inicio, Path* matriz_custo_caminhos,
     int* min_custo, unsigned short *vec_cidades_min, int cost_sum) {
-    
+
     //Soma os custos do caminho entre os pontos anteriores
     if(inicio > 1)
         cost_sum += inicio == 0 ? 0 : (matriz_custo_caminhos[vec_cidades_tmp[inicio-2] + (vec_cidades_tmp[inicio-1]-1)*num_cidades].cost);
@@ -241,7 +244,7 @@ void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, in
         return;
 
     if (num_cidades == inicio) {
-        //Se chegou ao fim e já não há elementos para permutar, temos o custo calculado e 
+        //Se chegou ao fim e já não há elementos para permutar, temos o custo calculado e
         //  encontrou-se um caminho melhor, ou é o primeiro caminho testado (-1 representa infinito)
         #ifdef DEBUG
             printf("[");

@@ -4,8 +4,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-/*
+/**
  * Estrutuar auxiliar que guarda dois inteiros como forma de uma coordenada num espaço euclidiano de dimensão
+ * @param  coord relativa ao eixo dos xx
+ * @param  coord relativa ao eixo dos yy
+ * @return   ponto de coordenadas
  */
 typedef struct vector2_t {
     short x, y;
