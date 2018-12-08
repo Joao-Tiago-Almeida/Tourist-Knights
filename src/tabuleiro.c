@@ -533,6 +533,19 @@ void tabuleiro_read_passeio_from_file(Tabuleiro* tabuleiro, int num_pontos, FILE
     }
 }
 
+//Testa se o modo é válido e há o numero de pontos necessários
+// Efeitos: coloca o tabuleiro inválido se não for um modo válido ou com numero de pontos insuficientes
+// Devolve se é válido ou não
+bool tabuleiro_is_mode_valid(Tabuleiro* tabuleiro) {
+    if(!((tabuleiro->type_passeio == 'A' && tabuleiro->num_pontos == 2) ||
+            (tabuleiro->type_passeio == 'B' && tabuleiro->num_pontos >= 2) ||
+            (tabuleiro->type_passeio == 'C' && tabuleiro->num_pontos >= 2))) {
+        tabuleiro_set_valid(tabuleiro, false);
+        return false;
+    }
+    return true;
+}
+
 void tabuleiro_set_valid(Tabuleiro* tabuleiro, bool valid) {
     tabuleiro->valid = valid;
 }
