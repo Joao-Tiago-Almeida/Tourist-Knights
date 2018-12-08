@@ -12,10 +12,9 @@ static void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 static void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 
 struct acervo_t{
-    Vector2* vetor;
-    unsigned short size;   // tamanho do nível, posso retirar dps
-    //int free;   // aponta sempre para o próximo sítio do nível onde escrever
-    unsigned short num_elems;
+    Vector2* vetor; //  vetor de pontos
+    unsigned short size;   // tamanho do vetor alocado
+    unsigned short num_elems;   //  número de pontos no Vector
     short* index_table;  //   matrix com o índice do acervo de cada ponto
 };
 
@@ -30,12 +29,11 @@ int acervo_get_priority(Acervo* acervo, int position, Tabuleiro* tabuleiro) {
  * @return      acervo
  */
 Acervo *new_acervo(int size_acervo, int size_idx_matrix) {
-    // size =  NUMERO_DE_ESPACO_INICIALMENTE_ALOCADO;
+
     Acervo *new = (Acervo*) checked_malloc(sizeof(Acervo));
     new->vetor = (Vector2*) checked_malloc(size_acervo * sizeof(Vector2));
     new->index_table = (short*) checked_malloc(size_idx_matrix * sizeof(short));
     new->size = size_acervo;
-    //new->free = 0;
     new->num_elems = 0;
 
     for(int i =0 ; i < size_idx_matrix; i++)
