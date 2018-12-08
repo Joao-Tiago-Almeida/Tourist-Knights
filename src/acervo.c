@@ -76,7 +76,6 @@ void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
     acervo->num_elems++;
     acervo_fix_up(acervo, acervo->num_elems-1, tabuleiro);
 
-    //(acervo->free)++;
 }
 
 /**
