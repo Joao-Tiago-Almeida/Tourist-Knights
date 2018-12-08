@@ -16,7 +16,6 @@
 const Vector2 knight_L[MOVES] = { {-1,2}, {1,2}, {2,1}, {2,-1}, {1,-2},
                         {-1,-2}, {-2,-1}, {-2,1} };
 
-//TODO definir qual a descrição de tabuleiro a usar
 /**
  * Verifica quando um ponto está dentro dos limites do tabuleiro
  * @param  vec       vetor de pontos a analisar
@@ -28,14 +27,16 @@ bool inside_board(Tabuleiro* tabuleiro, Vector2 vec){
 
     //  Ver se o ponto está entre os eixos verticais do tabuleiro
     if(vec.x < 0 || vec.x > (int)tabuleiro_get_width(tabuleiro)-1){
-
-        //fprintf(stderr, "\npoint out of the board\n");
+        #ifdef  DEBUG
+            fprintf(stderr, "\npoint out of the board\n");
+        #endif
         return false;
     }
     //  Ver se o ponto está entre os eixos horizointais do tabuleiro
     else if(vec.y < 0 || vec.y > (int)tabuleiro_get_height(tabuleiro)-1){
-
-        //fprintf(stderr, "\npoint out of the board\n");
+        #ifdef  DEBUG
+            fprintf(stderr, "\npoint out of the board\n");
+        #endif
         return false;
     }
     return true;
@@ -69,8 +70,15 @@ bool do_points_make_L(Vector2 point1, Vector2 point2) {
         (abs(point1.x-point2.x) == 1 && abs(point1.y-point2.y) == 2);
 }
 
-//Devolve o caminho mais curto entre dois pontos
-//apenas escreve na estrutura Path o vetor de pontos de passagem alloc_vec_pontos se for true
+/**
+ * Devolve o caminho mais curto entre dois pontos
+ * apenas escreve na estrutura Path o vetor de pontos de passagem alloc_vec_pontos se for true
+ * @param  tabuleiro
+ * @param  ini              [description]
+ * @param  dest             [description]
+ * @param  alloc_vec_pontos [description]
+ * @return                  [description]
+ */
 static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc_vec_pontos) {
     Path path;
     path.length = 0;
@@ -192,7 +200,15 @@ static Path dijkstra(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest, bool alloc
     return path;
 }
 
-//TODO comentar//Devolve o caminho mais curto entre dois pontos
+//TODO comentar//
+/**
+ * Devolve o caminho mais curto entre dois pontos
+ * @param  tabuleiro
+ * @param  ini          [description]
+ * @param  destinos     [description]
+ * @param  num_destinos [description]
+ * @return              [description]
+ */
 Path* dijkstra2(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_destinos) {
     Path *paths = checked_calloc(sizeof(Path), num_destinos);
     bool *path_found = checked_calloc(sizeof(bool), num_destinos);
@@ -219,7 +235,7 @@ Path* dijkstra2(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_de
             path_found[i] = true;
         }
     }
-    
+
 
     //Init matrizes (inicializa-se tudo a -1, (wt -- representa infinito; st -- representa que não tem ajdência))
     tabuleiro_init_st_wt(tabuleiro);
@@ -343,10 +359,12 @@ Path* dijkstra2(Tabuleiro* tabuleiro, Vector2 ini, Vector2* destinos, int num_de
 
 unsigned short movimentos_find_better_path_cost(Tabuleiro* tabuleiro, Vector2 ini, Vector2 dest) {
     int cost = dijkstra(tabuleiro, ini, dest, false).cost;
-    if(cost > 65535) {
-        fprintf(stderr, "Valor maior que unsigned short!!\n");
-        exit(1); //TODO tirar
-    }
+    #ifdef  DEBUG
+        if(cost > 65535) {
+            fprintf(stderr, "Valor maior que unsigned short!!\n");
+            exit(1);
+        }
+    #endif
     return cost;
 }
 

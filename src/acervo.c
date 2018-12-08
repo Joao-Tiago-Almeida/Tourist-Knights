@@ -13,10 +13,10 @@ static void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 
 struct acervo_t{
     Vector2* vetor;
-    int size;   // tamanho do nível, posso retirar dps
+    unsigned short size;   // tamanho do nível, posso retirar dps
     //int free;   // aponta sempre para o próximo sítio do nível onde escrever
-    int num_elems;
-    int* index_table;  //   matrix com o índice do acervo de cada ponto
+    unsigned short num_elems;
+    short* index_table;  //   matrix com o índice do acervo de cada ponto
 };
 
 //Devolve o valor da prioridade (neste caso menor é mais prioritario)
@@ -33,7 +33,7 @@ Acervo *new_acervo(int size_acervo, int size_idx_matrix) {
     // size =  NUMERO_DE_ESPACO_INICIALMENTE_ALOCADO;
     Acervo *new = (Acervo*) checked_malloc(sizeof(Acervo));
     new->vetor = (Vector2*) checked_malloc(size_acervo * sizeof(Vector2));
-    new->index_table = (int*) checked_malloc(size_idx_matrix * sizeof(int));
+    new->index_table = (short*) checked_malloc(size_idx_matrix * sizeof(short));
     new->size = size_acervo;
     //new->free = 0;
     new->num_elems = 0;
@@ -65,7 +65,7 @@ void acervo_print(Acervo *acervo) {
 void acervo_insert(Acervo *acervo, Vector2 vec, Tabuleiro *tabuleiro) {
     // realocar vetor quando está totalmente preenchido
     if(acervo->num_elems+1 > acervo->size) {
-        //  aloca espaço para o todo nível seguinte
+        //  aloca espaço para todo nível seguinte
         acervo->size = 2 * acervo->size + 1;
         acervo->vetor = (Vector2*) checked_realloc(acervo->vetor, acervo->size * sizeof(Vector2));
     }
@@ -216,7 +216,7 @@ void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro) {
     // troco o indice das cidades
     int width = tabuleiro_get_width(tabuleiro);
     unsigned int parent = acervo_get_upper(p);
-    
+
     Vector2 parent_vec = acervo->vetor[parent];
     Vector2 vec = acervo->vetor[p];
 

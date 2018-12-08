@@ -4,8 +4,8 @@
 #include "vector2.h"
 
 typedef struct path_t {
-    int length;
-    int cost;
+    unsigned short length;
+    unsigned short cost;
     Vector2* points;
     Vector2 orig, dest;
 } Path;

@@ -32,10 +32,22 @@ Vector2 vector2_read_from_file(FILE* fp) {
     return vec;
 }
 
+/**
+ * compara se dois vetores são iguais
+ * @param  vetor a
+ * @param  vetor b
+ * @return   vericidade da comparação
+ */
 bool vector2_equals(Vector2 a, Vector2 b) {
     return a.x == b.x && a.y == b.y;
 }
 
+/**
+ * adiciona dois vetores
+ * @param  vetor a
+ * @param  vetor b
+ * @return   resultado da operação
+ */
 Vector2 vector2_add(Vector2 a, Vector2 b) {
     Vector2 res;
     res.x = a.x + b.x;
@@ -43,6 +55,12 @@ Vector2 vector2_add(Vector2 a, Vector2 b) {
     return res;
 }
 
+/**
+ * subtrai dois vetores
+ * @param  vetor a
+ * @param  vetor b
+ * @return   resultado da operação
+ */
 Vector2 vector2_sub(Vector2 a, Vector2 b) {
     Vector2 res;
     res.x = a.x - b.x;
