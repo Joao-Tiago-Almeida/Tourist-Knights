@@ -197,7 +197,7 @@ void tabuleiro_check_passeio_invalid(Tabuleiro* tabuleiro) {
  * @param fp        ficheiro de saída
  */
 static void tabuleiro_execute_tipo_A(Tabuleiro *tabuleiro) {
-    tabuleiro->paths[0] = movimentos_find_path(tabuleiro,
+    tabuleiro->paths[0] = movimentos_find_path_to_city(tabuleiro,
         tabuleiro_passeio_get_pos_ini(tabuleiro),
         tabuleiro_passeio_get_pontos(tabuleiro)[1]);
 
@@ -217,7 +217,7 @@ static void tabuleiro_execute_tipo_B(Tabuleiro *tabuleiro) {
         Vector2 orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
         Vector2 dest = tabuleiro_passeio_get_pontos(tabuleiro)[i+1];
 
-        tabuleiro->paths[i] = movimentos_find_path(tabuleiro, orig, dest);
+        tabuleiro->paths[i] = movimentos_find_path_to_city(tabuleiro, orig, dest);
 
         cost += tabuleiro->paths[i].cost;
         tabuleiro->num_paths_calculated++;
@@ -240,6 +240,7 @@ void calcula_melhor_caminho(unsigned short *vec_cidades_tmp, int num_cidades, in
     if(inicio > 1)
         cost_sum += inicio == 0 ? 0 : (matriz_custo_caminhos[vec_cidades_tmp[inicio-2] + (vec_cidades_tmp[inicio-1]-1)*num_cidades].cost);
 
+    //Se o custo até agora for maior que o minimo não vale a pena continuar a permutar
     if(*min_custo != -1 && cost_sum >= *min_custo)
         return;
 
@@ -302,7 +303,7 @@ static void calcula_matriz_custo_caminhos(Tabuleiro *tabuleiro, Path* matriz_cus
         }
 
         orig = tabuleiro_passeio_get_pontos(tabuleiro)[i];
-        paths = dijkstra2(tabuleiro, orig, destinos, num_destinos);
+        paths = movimentos_find_path_to_multiple_cities(tabuleiro, orig, destinos, num_destinos);
         if(paths == NULL) {
             free(destinos);
             return;
@@ -317,6 +318,7 @@ static void calcula_matriz_custo_caminhos(Tabuleiro *tabuleiro, Path* matriz_cus
             }
             j2++;
         }
+        free(paths);
         free(destinos);
     }
 }
@@ -441,10 +443,22 @@ void print_tabuleiro(Tabuleiro* tabuleiro, int w, int h) {
     }
 }
 
+#ifdef DEBUG
+Vector2 last;
+#endif
+
 static void imprime_caminho(Tabuleiro* tabuleiro, Path path, FILE * fp) {
     for(int i = 0; i<path.length; i++) {
         Vector2 p = path.points[i];
         fprintf(fp, "%d %d %d\n", p.y, p.x, tabuleiro_get_cost(tabuleiro, p));
+        #ifdef DEBUG
+        if(last.x != -1) {
+            if(!do_points_make_L(last, p)) {
+                printf("ALGO ESTA ERRADO!!!!!\n");
+            }
+        }
+        last = p;
+        #endif
     }
 }
 
@@ -477,6 +491,9 @@ void tabuleiro_write_valid_file(Tabuleiro *tabuleiro, FILE* fp) {
     }
 
     if(valid) {
+        #ifdef DEBUG
+        last = vector2_new(-1, -1);
+        #endif
         for(int path_i = 0; path_i<tabuleiro->num_pontos-1; path_i++) {
             //Imprime cada caminho
             imprime_caminho(tabuleiro, tabuleiro->paths[path_i], fp);

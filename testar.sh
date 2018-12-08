@@ -13,7 +13,8 @@ for file in testfiles/*; do
         filename_without_extension="${filename%.*}"
         echo FICHEIRO: $filename_without_extension
 
-        ./tuktuk testfiles/$filename
-        diff testfiles/$filename_without_extension.walks testfiles_walks/$filename_without_extension.walks;
+	./tuktuk testfiles/$filename
+#	valgrind --leak-check=summary ./tuktuk testfiles/$filename
+#        diff testfiles/$filename_without_extension.walks testfiles_walks/$filename_without_extension.walks;
     fi
 done
