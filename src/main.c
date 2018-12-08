@@ -10,16 +10,11 @@ void print_usage(char* program_name) {
     printf("Usage: %s file.cities\n", program_name);
 }
 
-bool tabuleiro_and_passeio_is_valid(Tabuleiro* tab) {
-    char modo = tabuleiro_get_tipo_passeio(tab);
-    return ((modo == 'A' && tabuleiro_get_num_pontos(tab) == 2) || (modo == 'B' && tabuleiro_get_num_pontos(tab) >= 2) || (modo == 'C' && tabuleiro_get_num_pontos(tab) >= 2))
-        && passeio_get_valid(tab);
-}
-
 Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
     int num_pts_turisticos = 0;
     Tabuleiro* tabuleiro = NULL;
 
+    //Lê o numero de pontos turisticos do cabeçalho
     if(fscanf(fp, "%d", &num_pts_turisticos) != 1) {
         fprintf(stderr, "Erro de leitura");
         exit(0);
@@ -27,18 +22,22 @@ Tabuleiro* read_file(FILE* fp, int w, int h, char modo) {
 
     //Cria o tabuleiro
     tabuleiro = tabuleiro_new(w, h, modo);
+    
+    //Lê os pontos turisticos. Marca o tabueiro como invalido se algum ponto estiver fora do mapa
     tabuleiro_read_passeio_from_file(tabuleiro, num_pts_turisticos, fp);
+    //TODO mudar passeio_get_valid para tabuleiro_get_valid
 
-    if(!tabuleiro_and_passeio_is_valid(tabuleiro)) {
-        //Se for inválido(tem um ponto fora) não vale a pena ler a matriz para o tabuleiro
-        tabuleiro_set_valid(tabuleiro, false);
-        tabuleiro_read_matrix_from_file_invalid(tabuleiro, fp);
-    } else {
+    //Se o tabuleiro ainda é válido verifica se o modo é válido e tem pontos suficientes também
+    if(passeio_get_valid(tabuleiro) && tabuleiro_is_mode_valid(tabuleiro)) {
         //Se for válido lê matriz para o tabuleiro
         tabuleiro_read_matrix_from_file(tabuleiro, fp);
 
         //Verifica se as cidades do passeio são todas válidas (custo != 0), e se são todas accesiveis
         tabuleiro_check_passeio_invalid(tabuleiro);
+    } else {
+        //Se for inválido(tem um ponto fora) não vale a pena ler a matriz para o tabuleiro
+        
+        tabuleiro_read_matrix_from_file_invalid(tabuleiro, fp);
     }
 
 
@@ -77,11 +76,10 @@ void read_and_write_files(char* filename) {
         char modo;
         //Lê cada um dos tabuleiros no ficheiro
 
-        //Tenta ler o cabeçalho(tamanho do tabuleiro e modo)
+        //Tenta ler parte do cabeçalho(tamanho do tabuleiro e modo)
         if(fscanf(fp, "%d %d %c", &h, &w, &modo) != 3) {
             break; // Fim do ficheiro (Se não conseguiu ler mais nenhum tabuleiro para a leitura)
         }
-
 
         tabuleiro = read_file(fp, w, h, modo);
 
