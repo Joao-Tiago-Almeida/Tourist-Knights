@@ -18,19 +18,4 @@ void acervo_print(Acervo *acervo);
 void acervo_free(Acervo** acervo);
 void acervo_init(Acervo *acervo, Tabuleiro* tabuleiro);
 
-//nao sei se é para tar aqui
-int acervo_feather_city(Acervo* acervo, int a, int b, Tabuleiro *tabuleiro);
-
-/*int acervo_get_insert_pos(Acervo *acervo);
-int acervo_get_lower(Acervo *acervo, int v, int n);
-unsigned int acervo_get_upper(int v);
-void acervo_fix_up(Acervo *acervo, int p, Tabuleiro *tabuleiro);
-void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro);
-void exchange_cities_acervo(Acervo *acervo, int p);*/
-//NOTE: talvez possam ser precisas
-// void sort_acervo();
-// void remove_city();
-// void concatenate_acervo();
-// void free_acervo();
-
 #endif
