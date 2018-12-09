@@ -10,6 +10,8 @@ static unsigned int acervo_get_upper(int v);
 static void acervo_fix_up(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 static void acervo_fix_down(Acervo *acervo, int p, Tabuleiro *tabuleiro);
 static void exchange_cities_acervo(Acervo *acervo, int p, Tabuleiro *tabuleiro);
+static int acervo_feather_city(Acervo* acervo, int a, int b, Tabuleiro *tabuleiro);
+
 
 struct acervo_t{
     Vector2* vetor; //  vetor de pontos
