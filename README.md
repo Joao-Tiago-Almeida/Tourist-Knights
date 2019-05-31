@@ -1,5 +1,5 @@
 # Tourist-Knights
-Final project for the Algorithms and Data Structures course at [Instituto Superior Técnico](https://tecnico.ulisboa.pt), second year first semester where we got 19/20 in the automatic submissions (done on Mooshak) and 17 after submiting the report and the professor's review.
+Final project for the Algorithms and Data Structures course at [Instituto Superior Técnico](https://tecnico.ulisboa.pt), second year first semester where we got 20/20 in the automatic submissions (done on Mooshak) and 19 after submiting the report and the professor's review.
 
 The project had three different challenges:
 * Given a Source point and a Destination source find the shortest path between them (Part A)
